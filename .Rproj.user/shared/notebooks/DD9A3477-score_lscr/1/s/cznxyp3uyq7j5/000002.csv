@@ -1,0 +1,16 @@
+"0","```r
+sev_vars <- 
+  lg_data_wf %>% 
+  select(contains(\"sev_con\")) %>% 
+  names()
+sub_sev_vars <-
+  lg_data_wf %>% 
+  select(
+    contains(\"_sev\"),
+    -contains(\"_con\"),
+    -contains(\"_ls_\"),
+    -contains(\"_lk\"),
+    -contains(\"_kh\")
+  ) %>% 
+  names()
+```"

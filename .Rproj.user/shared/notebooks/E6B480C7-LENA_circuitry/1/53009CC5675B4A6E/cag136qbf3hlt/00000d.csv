@@ -1,0 +1,20 @@
+"0","d %>% 
+  select(
+    av_coherence_z,
+    front_coherence_z,
+    temp_coherence_z,
+    awc_rate_1,
+    ctc_rate_1,
+    awc_max_1,
+    ctc_max_1,
+    cvc_max_1,
+    awc_prop_1,
+    ctc_prop_2
+  ) %>% 
+  correlate(method = ""pearson"")
+"
+"2","
+Correlation method: 'pearson'
+Missing treated using: 'pairwise.complete.obs'
+
+"

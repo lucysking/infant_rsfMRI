@@ -1,0 +1,14 @@
+"0","```r
+ml_SC_lo <- lmer(
+  sens_fin ~ 
+    episode_re * continuity_ac_lo + 
+    Condition + 
+    site + 
+    (1|ID), 
+  REML = FALSE,
+  data = data_lf
+  )
+
+summary(ml_SC_lo)
+std_beta(ml_SC_lo)
+```"

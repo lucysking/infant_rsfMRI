@@ -1,0 +1,10 @@
+"0","```r
+identify_outliers_hist(lena_d1, ctc_daily_rate)
+identify_outliers_hist(lena_d1, awc_daily_rate)
+identify_outliers_hist(lena_d1, ctc_prop)
+identify_outliers_hist(lena_d1, awc_prop)
+identify_outliers_hist(lena_d1, AM_ctc_rate)
+identify_outliers_hist(lena_d1, MID_ctc_rate)
+identify_outliers_hist(lena_d1, AFT_ctc_rate)
+identify_outliers_hist(lena_d1, PM_ctc_rate)
+```"

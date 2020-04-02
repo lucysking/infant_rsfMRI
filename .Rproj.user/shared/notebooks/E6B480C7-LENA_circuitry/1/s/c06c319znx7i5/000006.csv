@@ -1,0 +1,7 @@
+"0","d <-"
+"0","  d %>% "
+"0","  mutate("
+"0","    included = !is.na(front_coherence_z) & !is.na(ctc_hour_max_1)"
+"0","  )"
+"0","d %>% "
+"0","  count(included)"

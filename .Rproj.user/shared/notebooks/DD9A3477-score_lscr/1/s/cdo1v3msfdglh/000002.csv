@@ -1,0 +1,6 @@
+"0","```r
+prec_exp_vars <-
+  lg_data_t1 %>% 
+  select(contains(\"prec\")) %>% 
+  names()
+```"

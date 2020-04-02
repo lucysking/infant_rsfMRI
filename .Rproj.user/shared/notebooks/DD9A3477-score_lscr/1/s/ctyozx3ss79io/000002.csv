@@ -1,0 +1,24 @@
+"0","```r
+lg_data_sum_sev_preg <- 
+  lg_data_preg %>% 
+  gather(
+    event, 
+    rating, 
+    sev_preg_disas:sev_preg_other2
+  ) %>% 
+  select(ID, event, rating) %>% 
+  group_by(ID, event) %>% 
+  summarise(
+    rating = max(rating, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    rating = if_else(
+      rating == -Inf,
+      0, rating
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  summarise(
+    sum_sev_preg = sum(rating)
+  )
+```"

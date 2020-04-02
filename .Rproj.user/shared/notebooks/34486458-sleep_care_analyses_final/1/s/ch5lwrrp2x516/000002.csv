@@ -1,0 +1,27 @@
+"0","```r
+ml_WT <- lmer(
+  sens_fin ~ 
+    episode_re * wake_time_ac + 
+    Condition + 
+    site + 
+    (1|ID), 
+  REML = FALSE,
+  data = data_lf
+  )
+
+
+interactions::johnson_neyman(
+  ml_WT, 
+  pred = episode_re, 
+  modx = wake_time_ac, 
+  control.fdr = TRUE
+)
+ggsave(\"~/Desktop/BABIES/manber_sleep/manber_sleep_sync/plots/johnson_neyman_wt.jpeg\", width = 9, height = 7)
+
+data_wf %>% 
+  mutate(WT_group = wake_time_ac >= 52) %>% 
+  filter(!is.na(WT_group)) %>% 
+  count(WT_group) %>% 
+  mutate(per = n / sum(n))
+  
+```"

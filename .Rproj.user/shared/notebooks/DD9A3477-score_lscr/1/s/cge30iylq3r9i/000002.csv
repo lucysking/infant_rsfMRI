@@ -1,0 +1,53 @@
+"0","```r
+lg_data_num_types <- 
+  lg_data %>% 
+  gather(
+    event, 
+    endorsed, 
+    lscr_disas,
+    lscr_witacc,
+    lscr_acc,
+    lscr_famjail,
+    lscr_jail,
+    lscr_adopt,
+    lscr_pardivorce,
+    lscr_divorce,
+    lscr_money,
+    lscr_ill,
+    lscr_emoab,
+    lscr_emoab_2,
+    lscr_physneg,
+    lscr_abort,
+    lscr_sepchild,
+    lscr_care,
+    lscr_death1,
+    lscr_death2,
+    lscr_famviol,
+    lscr_witmug,
+    lscr_mug,
+    lscr_physab,
+    lscr_domviol,
+    lscr_sexharas,
+    lscr_sextouch1,
+    lscr_sextouch2,
+    lscr_rape1,
+    lscr_rape2,
+    lscr_other1,
+    lscr_other2
+  ) %>% 
+  select(ID, event, endorsed) %>% 
+  group_by(ID, event) %>% 
+  summarise(
+    endorsed = max(endorsed, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    endorsed = if_else(
+      endorsed == -Inf,
+      0, endorsed
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  summarise(
+    num_types = sum(endorsed)
+  )
+```"

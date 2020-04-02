@@ -1,0 +1,7 @@
+"0","```r
+childhood_exp_vars <-
+  cs_data %>% 
+  select(contains(\"child\")) %>% 
+  select(-contains(\"sepchild\")) %>% 
+  names()
+```"

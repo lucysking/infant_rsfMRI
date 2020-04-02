@@ -1,0 +1,5 @@
+"0","```r
+all_data %>% 
+  ggplot(aes(sum_sev_child)) +
+  geom_histogram(binwidth = .5)
+```"

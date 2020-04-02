@@ -1,0 +1,11 @@
+"0","```r
+lena_5min <-
+  lena_5min %>% 
+  bind_rows(lena_5min2) %>% 
+  arrange(ID) %>% 
+  mutate(
+    dob = parse_date_time(dob, c(\"Ymd\", \"mdy\")),
+    date_record = date(time_record),
+    age = (dob %--% date_record) / months(1)
+  )
+```"

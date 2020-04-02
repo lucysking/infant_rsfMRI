@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1580837936321.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1234633049",
+    "id" : "DC40E0C6",
+    "lastKnownWriteTime" : 1585841423,
+    "last_content_update" : 1585841423498,
+    "path" : "~/Desktop/BABIES/infant_rsfMRI/LENA_circuitry.Rmd",
+    "project_path" : "LENA_circuitry.Rmd",
+    "properties" : {
+        "cursorPosition" : "734,6",
+        "scrollLine" : "730",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

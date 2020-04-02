@@ -1,0 +1,189 @@
+---
+title: "Score Shipley Vocabulary Test"
+author: "Lucy King"
+date: "2/8/2020"
+output: html_document
+---
+
+# Environment set up
+```{r}
+library(tidyverse)
+
+# 6-month data 
+shipley_cs_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/raw_data/shipley_6mo_cs_20200204.csv"
+shipley_lg_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/raw_data/shipley_6mo_lg_20200204.csv"
+```
+
+# Read in data
+```{r}
+shipley <-
+  read_csv(shipley_cs_file) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.numeric(ID)) %>% 
+  bind_rows(
+    read_csv(shipley_lg_file) %>% 
+      rename(ID = record_id) %>% 
+      mutate(ID = as.numeric(ID))
+  ) %>% 
+  filter(
+    shipley_complete == 2
+  )
+```
+
+# Score
+```{r}
+shipley_scored <- 
+  shipley %>% 
+  mutate_at(
+    vars(
+      shipley_1, 
+      shipley_5, 
+      shipley_6, 
+      shipley_13, 
+      shipley_14,  
+      shipley_16, 
+      shipley_22, 
+      shipley_25, 
+      shipley_30, 
+      shipley_32, 
+      shipley_38, 
+      shipley_40
+    ),
+    funs(
+      . %>% 
+        recode(
+          "1" = 0,
+          "2" = 0,
+          "3" = 1,
+          "4" = 0
+        )
+    )
+  ) %>% 
+  mutate_at(
+    vars(
+      shipley_2,
+      shipley_4,
+      shipley_11,
+      shipley_19,
+      shipley_23,
+      shipley_24,
+      shipley_28,
+      shipley_29,
+      shipley_33,
+      shipley_34,
+      shipley_37,
+      shipley_39
+    ),
+    funs(
+      . %>% 
+        recode(
+          "1" = 1,
+          "2" = 0,
+          "3" = 0,
+          "4" = 0
+        )
+    )
+  ) %>% 
+  mutate_at(
+    vars(
+      shipley_3,
+      shipley_9,
+      shipley_12,
+      shipley_15,
+      shipley_18,
+      shipley_26,
+      shipley_27,
+      shipley_31,
+      shipley_35
+    ),
+    funs(
+      . %>% 
+        recode(
+          "0" = NA_real_,
+          "1" = 0,
+          "2" = 1,
+          "3" = 0,
+          "4" = 0
+        )
+    )
+  ) %>% 
+  mutate_at(
+    vars(
+      shipley_7,
+      shipley_8,
+      shipley_10,
+      shipley_17,
+      shipley_20,
+      shipley_21,
+      shipley_36
+    ),
+    funs(
+      . %>% 
+        recode(
+          "1" = 0,
+          "2" = 0,
+          "3" = 0,
+          "4" = 1
+        )
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  mutate(
+    shipley_6mo_total = mean(
+      c(
+        shipley_1, 
+        shipley_5,
+        shipley_6, 
+        shipley_13, 
+        shipley_14,  
+        shipley_16, 
+        shipley_22, 
+        shipley_25, 
+        shipley_30, 
+        shipley_32, 
+        shipley_38, 
+        shipley_40,
+        shipley_2,
+        shipley_4,
+        shipley_11,
+        shipley_19,
+        shipley_23,
+        shipley_24,
+        shipley_28,
+        shipley_29,
+        shipley_33,
+        shipley_34,
+        shipley_37,
+        shipley_39,
+        shipley_3,
+        shipley_9,
+        shipley_12,
+        shipley_15,
+        shipley_18,
+        shipley_26,
+        shipley_27,
+        shipley_31,
+        shipley_35,
+        shipley_7,
+        shipley_8,
+        shipley_10,
+        shipley_17,
+        shipley_20,
+        shipley_21,
+        shipley_36
+      ),
+      na.rm = TRUE
+    ) * 40 
+  )
+```
+
+```{r}
+shipley_scored %>% 
+  ggplot(aes(shipley_6mo_total)) +
+  geom_histogram()
+```
+
+```{r}
+write_csv(shipley_scored, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/shipley_6mo_final_20200208.csv")
+```
+

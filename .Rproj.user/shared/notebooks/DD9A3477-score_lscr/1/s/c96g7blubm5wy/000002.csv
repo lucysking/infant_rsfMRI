@@ -1,0 +1,11 @@
+"0","```r
+preg_sev_vars <-
+  cs_data %>% 
+  select(contains(\"sev_preg\")) %>% 
+  names() %>% 
+  str_replace(\"sub_\", \"\") 
+preg_sub_sev_vars <-
+  cs_data %>% 
+  select(contains(\"sub_sev_preg\")) %>% 
+  names() 
+```"

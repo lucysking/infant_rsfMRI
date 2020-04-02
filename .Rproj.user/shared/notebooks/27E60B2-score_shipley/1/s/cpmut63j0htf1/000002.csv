@@ -1,0 +1,4 @@
+"0","library(tidyverse)"
+"0","# 6-month data "
+"0","shipley_cs_file <- ""~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/raw_data/shipley_6mo_cs_20200204.csv"""
+"0","shipley_lg_file <- ""~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/raw_data/shipley_6mo_lg_20200204.csv"""

@@ -1,0 +1,78 @@
+"0","```r
+lena_followup <-
+  read_csv(lena_followup_long_file) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.integer(ID)) %>% 
+  select(
+    ID,
+    lena_caregivers___1:percent_mother,
+    lena_notes,
+    lena_day_1_followup_questions_complete
+  ) %>% 
+  filter(lena_day_1_followup_questions_complete == 2) %>% 
+  bind_rows(
+    read_csv(lena_followup_cs_file) %>% 
+      rename(ID = record_id) %>% 
+      mutate(
+        ID = as.integer(ID), 
+        lena_day_1_followup_questions_complete = as.integer(lena_day_1_followup_questions_complete)
+      ) %>% 
+      select(
+        ID,
+        lena_caregivers___1:percent_mother,
+        lena_notes,
+        lena_day_1_followup_questions_complete
+      ) %>% 
+      filter(lena_day_1_followup_questions_complete == 2)
+  ) 
+```"
+"1","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_1_followup_questions_timestamp = [31mcol_character()[39m,
+  lenaday_date = [31mcol_character()[39m,
+  lena_recordno = [33mcol_logical()[39m,
+  other_caregiver = [31mcol_character()[39m,
+  lena_probyes = [33mcol_logical()[39m,
+  lena_sickyes = [31mcol_character()[39m,
+  lena_crowdstime = [34mcol_time(format = \"\")[39m,
+  lena_notes = [31mcol_character()[39m,
+  lena_day_2_followup_questions_timestamp = [31mcol_character()[39m,
+  lenaday_date_2 = [31mcol_character()[39m,
+  lena_recordno_2 = [33mcol_logical()[39m,
+  other_caregiver_2 = [33mcol_logical()[39m,
+  lena_probyes_2 = [33mcol_logical()[39m,
+  lena_sickyes_2 = [31mcol_character()[39m,
+  lena_crowdstime_2 = [34mcol_time(format = \"\")[39m,
+  lena_notes_2 = [31mcol_character()[39m
+)
+See spec(...) for full column specifications.
+Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_1_followup_questions_timestamp = [31mcol_character()[39m,
+  lenaday_date = [31mcol_character()[39m,
+  lena_recordno = [31mcol_character()[39m,
+  other_caregiver = [31mcol_character()[39m,
+  lena_probyes = [31mcol_character()[39m,
+  lena_sick = [31mcol_character()[39m,
+  lena_sickyes = [31mcol_character()[39m,
+  lena_crowdstime = [31mcol_character()[39m,
+  lena_notes = [31mcol_character()[39m,
+  lena_day_1_followup_questions_complete = [31mcol_character()[39m,
+  lena_day_2_followup_questions_timestamp = [31mcol_character()[39m,
+  lenaday_date_2 = [31mcol_character()[39m,
+  lena_recordno_2 = [31mcol_character()[39m,
+  other_caregiver_2 = [31mcol_character()[39m,
+  lena_probyes_2 = [33mcol_logical()[39m,
+  lena_sickyes_2 = [31mcol_character()[39m,
+  lena_crowdstime_2 = [34mcol_time(format = \"\")[39m,
+  lena_notes_2 = [31mcol_character()[39m
+)
+See spec(...) for full column specifications.
+NAs introduced by coercion
+"

@@ -1,0 +1,21 @@
+"0","asq %>% 
+  select(
+    asq_23e3_25, 
+    asq_23e3_26, 
+    asq_23e3_27, 
+    asq_23e3_28, 
+    asq_23e3_29, 
+    asq_23e3_30
+  ) %>% 
+  alpha()
+"
+"1","
+Reliability analysis "
+"1"," "
+"1"," 
+"
+"1","Call: "
+"1","alpha(x = .)
+"
+"1","
+ "

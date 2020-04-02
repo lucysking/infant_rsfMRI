@@ -1,0 +1,17 @@
+"0","```r
+childhood_exp <- function(data, exp, age_exp) {
+  exp <- enquo(exp)
+  age_exp <- enquo(age_exp)
+  var_name <- paste0(quo_name(exp), \"_child\")
+  
+                     
+  data %>% 
+    mutate(
+      !! var_name :=
+        if_else(
+          !!age_exp < 18,
+          1, 0
+        )
+    )
+}
+```"

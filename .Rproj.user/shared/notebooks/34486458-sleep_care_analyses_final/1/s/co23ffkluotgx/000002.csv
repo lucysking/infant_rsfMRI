@@ -1,0 +1,15 @@
+"0","```r
+ml_income_ac <- lmer(
+  sens_fin ~ 
+    episode_re * sleep_continuity_ac + 
+    episode_re * scale(income) +
+    Condition + 
+    site + 
+    (1|ID), 
+  REML = FALSE,
+  data = data_lf_ndays_ac
+)
+
+summary(ml_income_ac)
+std_beta(ml_income_ac)
+```"

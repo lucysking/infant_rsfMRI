@@ -1,0 +1,20 @@
+"0","```r
+lena_5min_cl_wf %>% 
+  summarise_at(
+    vars(awc_prop_dur_D1, ctc_prop_dur_D1),
+    funs(min, max, mean, sd), na.rm = TRUE
+  )
+```"
+"1","funs() is soft deprecated as of dplyr 0.8.0
+Please use a list of either functions or lambdas: 
+
+  # Simple named list: 
+  list(mean = mean, median = median)
+
+  # Auto named with `tibble::lst()`: 
+  tibble::lst(mean, median)
+
+  # Using lambdas
+  list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+[90mThis warning is displayed once per session.[39m
+"

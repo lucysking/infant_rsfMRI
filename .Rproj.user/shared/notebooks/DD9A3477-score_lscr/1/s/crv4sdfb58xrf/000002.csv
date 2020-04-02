@@ -1,0 +1,34 @@
+"0","```r
+lg_data_wf <-
+  lg_data_wf %>% 
+  mutate_at(
+    vars(sev_vars),
+    as.double
+  ) %>% 
+  mutate_at(
+    vars(sub_sev_vars),
+    as.double
+  ) %>% 
+  mutate(
+    max_sev = pmap_dbl(
+      select(., sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    max_sub_sev = pmap_dbl(
+      select(., sub_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    )
+  ) %>% 
+  mutate(
+    max_sev = if_else(
+      max_sev == -Inf,
+      0, max_sev
+    ),
+    max_sub_sev = if_else(
+      max_sub_sev == -Inf,
+      0, max_sub_sev
+    )
+  )
+```"
+"1","no non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Inf
+"

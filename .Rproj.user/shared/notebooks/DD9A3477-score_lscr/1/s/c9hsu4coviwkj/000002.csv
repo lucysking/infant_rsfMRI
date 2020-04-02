@@ -1,0 +1,16 @@
+"0","```r
+preconception_exp <- function(data, exp, preg_exp) {
+  exp <- enquo(exp)
+  preg_exp <- enquo(preg_exp)
+  var_name <- paste0(quo_name(exp), \"_prec\")
+  
+  data %>% 
+    mutate(
+      !! var_name :=
+        if_else(
+          !!exp == 1 & (!!preg_exp == 0 | is.na(!!preg_exp)),
+          1, 0
+        )
+    )
+}
+```"

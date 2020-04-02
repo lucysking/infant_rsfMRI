@@ -1,0 +1,182 @@
+"0","ses <-"
+"0","  read_csv(demographics_file) %>% "
+"0","  select("
+"0","    ID,"
+"0","    annual_income_num,"
+"0","    annual_income_num,"
+"0","    annual_income_txt,"
+"0","    education, "
+"0","    education_txt,"
+"0","    employment_status_txt,"
+"0","    partner_educ,"
+"0","    partner_educ_txt,"
+"0","    partner_employ_txt,"
+"0","    mom_pob,"
+"0","    partner_pob,"
+"0","    marital_status_txt,"
+"0","    primarylang,"
+"0","    income_needs"
+"0","  ) %>% "
+"0","  mutate("
+"0","    mom_immigrant = case_when("
+"0","      mom_pob == ""United States"" ~ 0,"
+"0","      mom_pob == ""US"" ~ 0, "
+"0","      mom_pob == ""USA"" ~ 0,"
+"0","      TRUE ~ 1"
+"0","    ),"
+"0","    partner_immigrant = case_when("
+"0","      partner_pob == ""United States"" ~ 0,"
+"0","      partner_pob == ""US"" ~ 0, "
+"0","      partner_pob == ""USA"" ~ 0,"
+"0","      TRUE ~ 1"
+"0","    ),"
+"0","    marital_partnered = if_else("
+"0","      marital_status_txt == ""Married/domestic partnership"","
+"0","      1, 0"
+"0","    ),"
+"0","    primary_english = if_else("
+"0","      primarylang == ""English"", 1, 0"
+"0","    ),"
+"0","    employed = if_else("
+"0","      employment_status_txt == ""Employed for wages"", "
+"0","      1, 0"
+"0","    ),"
+"0","    partner_employed = if_else("
+"0","      partner_employ_txt == ""Employed for wages"", "
+"0","      1, 0"
+"0","    )"
+"0","  ) %>% "
+"0","  select(-primarylang, -mom_pob, -partner_pob) %>% "
+"0","  left_join("
+"0","    read_csv(prams_file) %>% "
+"0","      select(ID, preg_att_money),"
+"0","    by = ""ID"""
+"0","  ) %>% "
+"0","  left_join("
+"0","    read_csv(crisys_file) %>% "
+"0","      select(ID, sixmonth_crisys_ses_total),"
+"0","    by = ""ID"""
+"0","  ) %>% "
+"0","  left_join("
+"0","    read_csv(lscr_file) %>% "
+"0","      select(ID, lscr_money_post),"
+"0","    by = ""ID"""
+"0","  ) %>% "
+"0","  left_join("
+"0","    read_csv(sep_file) %>% "
+"0","      select(ID, sixmonth_usstatus_ladder, sixmonth_commstatus_ladder),"
+"0","    by = ""ID"""
+"0","  ) %>% "
+"0","  left_join("
+"0","    read_csv(home_file),"
+"0","    by = ""ID"""
+"0","  ) %>% "
+"0","  arrange(ID)"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  due_date = [34mcol_date(format = """")[39m,
+  baby_dob = [34mcol_date(format = """")[39m,
+  mom_dob = [34mcol_date(format = """")[39m,
+  baby_race = [31mcol_character()[39m,
+  baby_race_describe = [31mcol_character()[39m,
+  mom_race = [31mcol_character()[39m,
+  momrace_describe = [31mcol_character()[39m,
+  annual_income_txt = [31mcol_character()[39m,
+  education_txt = [31mcol_character()[39m,
+  employment_status_txt = [31mcol_character()[39m,
+  marital_status_txt = [31mcol_character()[39m,
+  partner_educ_txt = [31mcol_character()[39m,
+  partner_employ_txt = [31mcol_character()[39m,
+  educ_describe = [33mcol_logical()[39m,
+  employment_explain = [31mcol_character()[39m,
+  mom_pob = [31mcol_character()[39m,
+  mom_native_lang = [31mcol_character()[39m,
+  primarylang = [31mcol_character()[39m,
+  secondlang_type = [31mcol_character()[39m,
+  marital_explain = [31mcol_character()[39m
+  # ... with 23 more columns
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  preg_prev_describe = [31mcol_character()[39m,
+  gotpreg_contra_reasons_describe = [31mcol_character()[39m,
+  gotpreg_contra_method_describe = [33mcol_logical()[39m,
+  planb_ever = [31mcol_character()[39m,
+  perscription_type = [31mcol_character()[39m,
+  prenatal_otherdrug_type = [31mcol_character()[39m,
+  now_contra_reasons_describe = [31mcol_character()[39m,
+  newborn_contra_method_describe = [31mcol_character()[39m,
+  n_newborn_cigarettes = [31mcol_character()[39m,
+  n_newborn_drinks = [31mcol_character()[39m,
+  preg_weight_chg = [31mcol_character()[39m,
+  labor_status = [31mcol_character()[39m,
+  labor_mode = [31mcol_character()[39m,
+  nicu_describe = [31mcol_character()[39m,
+  apgar_score = [31mcol_character()[39m,
+  congenital_describe = [31mcol_character()[39m,
+  n_prenatal_cigarettes = [31mcol_character()[39m,
+  n_prenatal_drinks = [31mcol_character()[39m,
+  n_prenatal_mostdrinks = [31mcol_character()[39m,
+  redcap_event_name = [31mcol_character()[39m
+  # ... with 9 more columns
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  ID = [32mcol_double()[39m,
+  neonatal_crisys_neg_total = [32mcol_double()[39m,
+  neonatal_crisys_neg_win = [32mcol_double()[39m,
+  neonatal_crisys_ses_total = [32mcol_double()[39m,
+  neonatal_crisys_ses_win = [32mcol_double()[39m,
+  neonatal_crisys_total = [32mcol_double()[39m,
+  neonatal_crisys_win = [32mcol_double()[39m,
+  pregnancy_crisys_neg_total = [32mcol_double()[39m,
+  pregnancy_crisys_neg_win = [32mcol_double()[39m,
+  pregnancy_crisys_ses_total = [32mcol_double()[39m,
+  pregnancy_crisys_ses_win = [32mcol_double()[39m,
+  pregnancy_crisys_total = [32mcol_double()[39m,
+  pregnancy_crisys_win = [32mcol_double()[39m,
+  sixmonth_crisys_neg_total = [32mcol_double()[39m,
+  sixmonth_crisys_neg_win = [32mcol_double()[39m,
+  sixmonth_crisys_ses_total = [32mcol_double()[39m,
+  sixmonth_crisys_ses_win = [32mcol_double()[39m,
+  sixmonth_crisys_total = [32mcol_double()[39m,
+  sixmonth_crisys_win = [32mcol_double()[39m
+)
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double()
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  ID = [32mcol_double()[39m,
+  neonatal_commstatus_ladder = [32mcol_double()[39m,
+  neonatal_usstatus_ladder = [32mcol_double()[39m,
+  pregnancy_commstatus_ladder = [32mcol_double()[39m,
+  pregnancy_usstatus_ladder = [32mcol_double()[39m,
+  sixmonth_commstatus_ladder = [32mcol_double()[39m,
+  sixmonth_usstatus_ladder = [32mcol_double()[39m
+)
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  pregwork_change = [31mcol_character()[39m,
+  babycare_other_hrs = [33mcol_logical()[39m,
+  pregwork_hours_txt = [31mcol_character()[39m,
+  work_return_txt = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"

@@ -1,0 +1,843 @@
+---
+title: "Clean LENA 5-minute data"
+date: "02/08/2020"
+author: "Lucy King"
+output: html_notebook
+---
+
+## Environment set up
+
+```{r load_data}
+# Libraries
+library(tidyverse)
+library(lubridate)
+library(hms)
+library(psych)
+
+# Files
+
+lena_5min_file_1 <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_5min_data/LENAExport_5Minute_20181220_cleaned.csv"
+lena_5min_file_2 <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_5min_data/LENAExport_5Minute_new_20190726.csv"
+lena_5min_files_old <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_5min_data/individual_5min_lsk_format_cleaned"
+lena_5min_files_new <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_5min_data/individual_5min_fq_cleaned_20200207"
+
+lena_followup_day1_cs_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_followupQs_data/LENA_followup_day1_cs_complete.csv"
+lena_followup_day2_cs_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_followupQs_data/LENA_followup_day2_cs_complete.csv"
+
+lena_followup_day1_lg_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_followupQs_data/LENA_followup_day1_lg_complete.csv"
+lena_followup_day2_lg_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/raw_followupQs_data/LENA_followup_day2_lg_complete.csv"
+
+lena_5min_old_files_df <-
+  tibble(
+    path = 
+      list.files(
+        path = lena_5min_files_old,
+        all.files = TRUE,
+        no.. = TRUE,
+        full.names = TRUE
+      )
+  ) %>% 
+  filter(
+    str_detect(path, "/.DS_Store") == FALSE
+  )
+
+lena_5min_new_files_df <-
+  tibble(
+    path = 
+      list.files(
+        path = lena_5min_files_new,
+        all.files = TRUE,
+        no.. = TRUE,
+        full.names = TRUE
+      )
+  ) %>% 
+  filter(
+    str_detect(path, "/.DS_Store") == FALSE
+  )
+
+
+# Functions
+source("~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/identify_outliers_histogram.R")
+source("~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/winsorize.R")
+
+
+# Themes
+theme_lena <-
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 18), 
+    legend.text = element_text(size = 16),
+    legend.position = "bottom"
+  )
+```
+
+# Read in and reformat 5 minute data from LENA SP 
+
+```{r}
+lena_5min_sp <-
+  read_csv(lena_5min_file_2) %>% 
+  mutate(
+    ExternalReferenceID = as.integer(ExternalReferenceID),
+    Recording_DOB = as.character(Recording_DOB),
+    StartTime = as.character(StartTime)
+  ) %>% 
+  select(
+    ExternalReferenceID,
+    Recording_DOB,
+    StartTime,
+    Duration_Secs,
+    AWC_COUNT,
+    CT_COUNT,
+    CV_COUNT,
+    Recording_Gender,
+    Meaningful,
+    Distant, 
+    TV_Elec,
+    Overlap,
+    Noise,
+    Silence
+  ) %>% 
+  mutate(
+    ID = ExternalReferenceID,
+    dob = Recording_DOB,
+    AWC.Actual = AWC_COUNT,
+    CTC.Actual = CT_COUNT,
+    CVC.Actual = CV_COUNT,
+    Sex = Recording_Gender,
+    Duration = as.hms(Duration_Secs),
+    Meaningful = as.hms(Meaningful),
+    Distant = as.hms(Distant),
+    TV = as.hms(TV_Elec),
+    Overlap = as.hms(Overlap),
+    Noise = as.hms(Noise),
+    Silence = as.hms(Silence),
+    Timestamp = StartTime
+  ) %>% 
+  select(
+    -ExternalReferenceID,
+    -Recording_DOB,
+    -Recording_Gender,
+    -CT_COUNT,
+    -CV_COUNT,
+    -AWC_COUNT,
+    -Duration_Secs
+  ) %>% 
+  mutate(
+    Timestamp = str_replace(Timestamp, " \\(America/Los_Angeles\\)", ""),
+    time_record = parse_date_time(Timestamp, "mdy HMS p!")
+  ) %>% 
+  select(
+    -Timestamp
+  )
+```
+
+## Read in 5-minute LENA Pro data and combine with LENA SP data 
+
+```{r warning=FALSE}
+lena_5min <-
+  read_csv(lena_5min_file_1) %>% 
+  mutate(
+    Birthdate = as.character(Birthdate),
+    Timestamp = as.character(Timestamp),
+    Meaningful = as.hms(Meaningful)
+  ) %>% 
+  select(
+    -Type,
+    -ChildKey,
+    -Id,
+    -Age,
+    -AVA_StdScore:-AVA_AvgScore_Pct,
+    -Firstname,
+    ID = Lastname,
+    dob = Birthdate
+  ) %>% 
+  mutate(
+    time_record = parse_date_time(Timestamp, "mdy HM")
+  ) %>% 
+  bind_rows(
+    lena_5min_sp
+  ) %>% 
+  mutate(
+    ID = as.numeric(ID)
+  ) %>% 
+  select(
+    -Timestamp
+  )
+```
+
+## Read in data from individual files (Pro license 1)
+
+```{r warning=FALSE}
+lena_5min2_old <-
+  lena_5min_old_files_df %>%
+  mutate(
+    data = map(
+      path, 
+      read_csv, 
+      col_names = TRUE,
+      col_types = 
+        list(
+          Firstname = col_character(),
+          Birthdate = col_character(),
+          Timestamp = col_character(),
+          AVA_StdScore = col_character(),
+          Lastname = col_character(),
+          Sex = col_character(),
+          ChildKey = col_character()
+        )
+      )
+  ) %>% 
+  unnest(data) %>% 
+  select(-path) %>% 
+  mutate(
+    Birthdate = as.character(Birthdate),
+    Timestamp = as.character(Timestamp)
+  ) %>% 
+  select(
+    -Type,
+    -ChildKey,
+    -Id,
+    -Age,
+    -AVA_StdScore:-AVA_AvgScore_Pct,
+    ID1 = Firstname,
+    ID2 = Lastname,
+    dob = Birthdate
+  ) %>% 
+  mutate(
+    ID = as.numeric(
+      if_else(
+        is.na(ID2),
+        ID1, ID2
+      )
+    ),
+    time_record = parse_date_time(Timestamp, c("mdy HM", "ymd HM"))
+  ) %>% 
+  select(
+    ID,
+    everything(),
+    -Timestamp,
+    -ID1,
+    -ID2
+  )
+```
+
+## Read in data from individual files (LENA SP)
+
+```{r warning=FALSE}
+lena_5min2_new <-
+  lena_5min_new_files_df %>%
+  mutate(
+    data = map(
+      path, 
+      read_csv,
+      col_names = TRUE,
+      col_types = 
+        list(
+          Recording_Gender = col_character(),
+          ErrorCodes = col_character()
+        )
+    )
+  ) %>% 
+  unnest(data) %>% 
+  mutate(
+    ExternalReferenceID = as.integer(ExternalReferenceID),
+    Recording_DOB = as.character(Recording_DOB),
+    StartTime = as.character(StartTime)
+  ) %>% 
+  select(
+    ExternalReferenceID,
+    Recording_DOB,
+    StartTime,
+    Duration_Secs,
+    AWC_COUNT,
+    CT_COUNT,
+    CV_COUNT,
+    Recording_Gender,
+    Meaningful,
+    Distant, 
+    TV_Elec,
+    Overlap,
+    Noise,
+    Silence
+  ) %>% 
+  mutate(
+    ID = ExternalReferenceID,
+    dob = Recording_DOB,
+    AWC.Actual = AWC_COUNT,
+    CTC.Actual = CT_COUNT,
+    CVC.Actual = CV_COUNT,
+    Sex = Recording_Gender,
+    Duration = as.hms(Duration_Secs),
+    Meaningful = as.hms(Meaningful),
+    Distant = as.hms(Distant),
+    TV = as.hms(TV_Elec),
+    Overlap = as.hms(Overlap),
+    Noise = as.hms(Noise),
+    Silence = as.hms(Silence),
+    Timestamp = StartTime
+  ) %>% 
+  select(
+    -ExternalReferenceID,
+    -Recording_DOB,
+    -Recording_Gender,
+    -CT_COUNT,
+    -CV_COUNT,
+    -AWC_COUNT,
+    -Duration_Secs
+  ) %>% 
+  mutate(
+    Timestamp = str_replace(Timestamp, " \\(America/Los_Angeles\\)", ""),
+    time_record = parse_date_time(Timestamp, "mdy HMS p!")
+  ) %>% 
+  select(
+    -Timestamp
+  )
+```
+
+
+
+## Combine all data
+```{r}
+lena_5min <-
+  lena_5min %>% 
+  bind_rows(lena_5min2_old) %>% 
+  bind_rows(lena_5min2_new) %>% 
+  arrange(ID) %>% 
+  mutate(
+    dob = parse_date_time(dob, c("Ymd", "mdy")),
+    date_record = date(time_record),
+    age = (dob %--% date_record) / months(1)
+  )
+```
+
+# Clean 5-minute data to identify observations to retain
+Retain observations that occured between ages 5-8 months
+Retain observations totaling at least 8 hours of recording
+
+## Reformat data 
+```{r}
+lena_5min_cl <- 
+  lena_5min %>% 
+  group_by(ID) %>% 
+  mutate(
+    duration = as.numeric(
+      as.duration(hms(as.numeric(Duration))),
+      "hours"
+    )
+  ) %>% 
+  ungroup() %>% 
+  group_by(ID, date_record, age) %>% 
+  summarise(
+    duration = sum(duration)
+  ) %>% 
+  ungroup() %>% 
+  group_by(ID) %>% 
+  arrange(ID, date_record) %>% 
+  mutate(
+    day_type = wday(date_record),
+    day_type = if_else(day_type == 1 | day_type == 7, "weekend", "weekday"),
+    day = 1:n()
+  ) %>% 
+  ungroup()
+```
+
+## Identify who will be removed 
+```{r}
+lena_5min_cl <-
+  lena_5min_cl %>% 
+  mutate(
+    age_exclude = if_else(
+      age < 5 | age > 8,
+      1, 0
+    ),
+    duration_exclude = if_else(
+      duration < 8,
+      1, 0
+    ),
+    include = if_else(
+      age_exclude == 0 & duration_exclude == 0,
+      1, 0
+    )
+  )
+
+write_csv(lena_5min_cl, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/inclusion_exclusion_final.csv")
+```
+
+```{r}
+lena_5min_cl %>% 
+  count(age_exclude, duration_exclude)
+
+lena_5min_cl %>% 
+  count(include)
+```
+
+
+```{r}
+lena_5min_cl <-
+  lena_5min_cl %>% 
+  filter(age_exclude == 0 & duration_exclude == 0) %>% 
+  arrange(ID, date_record) %>% 
+  group_by(ID) %>% 
+  mutate(
+    day = 1:n()
+  ) %>% 
+  ungroup() %>% 
+  rename(
+    baby_age_lena = age
+  ) %>% 
+  select(-include)
+
+lena_5min_cl %>% 
+  count(day)
+
+lena_5min_cl %>% 
+  count(day_type)
+
+lena_5min_cl %>% 
+  count(day, day_type)
+
+write_csv(lena_5min_cl, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/included_final.csv")
+```
+
+# Read in LENA follow-up data
+
+```{r}
+lena_followup_cs_day1 <-
+  read_csv(lena_followup_day1_cs_file) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.integer(ID), day = 1) %>% 
+  filter(lena_day_1_followup_questions_complete == 2) %>% 
+  select(ID, day, lena_caregivers___1:lena_notes)
+
+lena_followup_cs_day2 <-
+  read_csv(lena_followup_day2_cs_file) %>% 
+  rename_all(
+    funs(str_replace(., "_2", ""))
+  ) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.integer(ID), day = 2) %>% 
+  filter(lena_day_followup_questions_complete == 2) %>% 
+  select(ID, day, lena_caregivers___1:lena_notes)
+
+lena_followup_lg_day1 <-
+  read_csv(lena_followup_day1_lg_file) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.integer(ID), day = 1) %>% 
+  filter(lena_day_1_followup_questions_complete == 2) %>% 
+  select(ID, day, lena_caregivers___1:lena_notes)
+
+lena_followup_lg_day2 <-
+  read_csv(lena_followup_day2_lg_file) %>% 
+  rename_all(
+    funs(str_replace(., "_2", ""))
+  ) %>% 
+  rename(ID = record_id) %>% 
+  mutate(ID = as.integer(ID), day = 2) %>% 
+  filter(lena_day_followup_questions_complete == 2) %>% 
+  select(ID, day, lena_caregivers___1:lena_notes)
+
+lena_followup <-
+  lena_followup_cs_day1 %>% 
+  bind_rows(
+    lena_followup_cs_day2
+  ) %>% 
+  bind_rows(
+    lena_followup_lg_day1
+  ) %>% 
+  bind_rows(
+    lena_followup_lg_day2
+  ) %>% 
+  select(
+    -lena_prob:-lena_notes
+  )
+```
+
+# Compute LENA metrics 
+
+## Create long-form data frame with time variables
+```{r}
+lena_time <- 
+  lena_5min %>% 
+  group_by(ID) %>% 
+  mutate(
+    time_hours = hour(time_record) + minute(time_record) / 60,
+    duration = as.numeric(
+      as.duration(hms(as.numeric(Duration))),
+      "hours"
+    )
+  ) 
+```
+
+## Filter raw 5-minute data to only include usable observations as determined above
+```{r}
+ids_dates_included <-
+  lena_5min_cl %>% 
+  select(
+    ID,
+    date_record,
+    day
+  ) %>% 
+  mutate(
+    included = 1,
+    date_record = date(date_record)
+  )
+
+lena_time_cl <-
+  lena_time %>% 
+  left_join(ids_dates_included, by = c("ID", "date_record")) %>% 
+  filter(included == 1)
+```
+
+## Identify value and times of first and last CT and AW of the day
+```{r}
+lena_time_cl <-
+  lena_time_cl %>% 
+  arrange(ID, time_hours) %>% 
+  group_by(ID, day) %>% 
+  mutate(
+    # first ct
+    ct_first_row = head(which(CTC.Actual != 0), 1),
+    ct_first = nth(CTC.Actual, n = ct_first_row[1]),
+    ct_first_time = nth(time_hours, n = ct_first_row[1]),
+    # last ct
+    ct_last_row = tail(which(CTC.Actual != 0), 1),
+    ct_last = nth(CTC.Actual, n = ct_last_row[1]),
+    ct_last_time = nth(time_hours, n = ct_last_row[1]),
+    # create grouping variable for time of day 
+    time_day = case_when(
+      time_hours >= ct_first_time & time_hours <= 10 ~ "AM",
+      time_hours >= 10 & time_hours < 13 ~ "MID",
+      time_hours >= 13 & time_hours < 17 ~ "AFT",
+      time_hours >= 17 & time_hours < ct_last_time ~ "PM"
+    )
+  ) %>% 
+  select(-ct_last_row, -ct_first_row) %>% 
+  # remove observations froms times of day before first CT or after last CT
+  filter(!is.na(time_day))
+```
+
+## Compute hourly maximums
+```{r}
+min(lena_time_cl$time_hours, na.rm = TRUE)
+max(lena_time_cl$time_hours, na.rm = TRUE)
+
+lena_hourly_max <- 
+  lena_time_cl %>% 
+  mutate(
+    time_hours_round = round(time_hours)
+  ) %>% 
+  group_by(ID, day, time_hours_round) %>% 
+  summarise(
+    awc_hour_sum = sum(AWC.Actual),
+    ctc_hour_sum = sum(CTC.Actual),
+    cvc_hour_sum = sum(CVC.Actual)
+  ) %>% 
+  group_by(ID, day) %>% 
+  summarise(
+    awc_hour_max = max(awc_hour_sum),
+    ctc_hour_max = max(ctc_hour_sum),
+    cvc_hour_max = max(cvc_hour_sum)
+  )
+
+
+```
+
+## Calculate rates and consistency during each phase of day and across each day
+``` {r}
+lena_time_day <- 
+  lena_time_cl %>% 
+  group_by(ID, date_record, day, time_day, age) %>% 
+  summarise(
+    duration_time_day = sum(duration),
+    ctc_time_day = sum(CTC.Actual),
+    awc_time_day = sum(AWC.Actual),
+    cvc_time_day = sum(CVC.Actual),
+    ctc_depend_time_day = sum(CTC.Actual >= 1),
+    awc_depend_time_day = sum(AWC.Actual >= 1),
+    ctc_max = max(CTC.Actual),
+    awc_max = max(AWC.Actual),
+    cvc_max = max(CVC.Actual)
+  ) %>% 
+  ungroup() %>% 
+  group_by(ID) %>% 
+  mutate(
+    ctc_time_rate = ctc_time_day / duration_time_day,
+    awc_time_rate = awc_time_day / duration_time_day,
+    cvc_time_rate = cvc_time_day / duration_time_day,
+    ctc_time_prop = ctc_depend_time_day / ((duration_time_day * 60) / 5),
+    awc_time_prop = awc_depend_time_day / ((duration_time_day * 60) / 5),
+    #calculating of N 5-minute segments will sometimes result in proportion values >1, correct to = 1,
+    ctc_time_prop = if_else(
+      ctc_time_prop > 1,
+      1, ctc_time_prop
+    ),
+    awc_time_prop = if_else(
+      awc_time_prop > 1,
+      1, awc_time_prop
+    )
+  ) %>% 
+  group_by(ID, day) %>% 
+  mutate(
+    ctc_max = max(ctc_max),
+    awc_max = max(awc_max),
+    cvc_max = max(cvc_max),
+    ctc_rate = sum(ctc_time_day) / sum(duration_time_day),
+    awc_rate = sum(awc_time_day) / sum(duration_time_day),
+    cvc_rate = sum(cvc_time_day) / sum(duration_time_day),
+    ctc_prop = sum(ctc_depend_time_day) / sum(((duration_time_day * 60) / 5)),
+    awc_prop = sum(awc_depend_time_day) / sum(((duration_time_day * 60) / 5))
+  ) %>% 
+  ungroup()
+```
+
+## Merge with follow-up data
+```{r}
+lena_final_lf <-
+  lena_time_day %>% 
+  left_join(lena_hourly_max, by = c("ID", "day")) %>% 
+  left_join(lena_followup, by = c("ID", "day")) %>% 
+  mutate(
+    day_type = wday(date_record),
+    day_type = if_else(day_type == 1 | day_type == 7, "weekend", "weekday")
+  )
+```
+
+## Create final wide-format data frames with basic variables
+
+### Both day 1 and day 2
+```{r}
+lena_final_wf <-
+  lena_final_lf %>% 
+  distinct(ID, day, ctc_prop, .keep_all = TRUE) %>% 
+  select(
+    -time_day, 
+    -date_record,
+    -cvc_time_rate,
+    -ctc_time_rate,
+    -ctc_time_prop,
+    -cvc_time_day,
+    -ctc_depend_time_day,
+    -ctc_time_day,
+    -awc_time_rate,
+    -awc_time_prop,
+    -awc_depend_time_day,
+    -awc_time_day,
+    -duration_time_day
+  ) %>% 
+  gather(variable, value, age:day_type) %>% 
+  unite(temp, variable, day) %>% 
+  spread(temp, value) %>% 
+  mutate_at(
+    vars(age_1:cvc_rate_2, percent_mother_1, percent_mother_2),
+    as.double
+  )
+```
+
+### Day 1 only
+```{r}
+lena_day1 <- 
+  lena_final_wf %>% 
+  #if missing day 1, use day 2
+  mutate(
+    age = if_else(
+      is.na(age_1), age_2, age_1
+    ),
+    cvc_max = if_else(
+      is.na(cvc_max_1), cvc_max_2, cvc_max_1
+    ),
+    cvc_rate = if_else(
+      is.na(cvc_max_1), cvc_rate_2, cvc_rate_1
+    ),
+    awc_max = if_else(
+      is.na(cvc_max_1), awc_max_2, awc_max_1
+    ),
+    awc_prop = if_else(
+      is.na(cvc_max_1), awc_prop_2, awc_prop_1
+    ),
+    awc_rate = if_else(
+      is.na(cvc_max_1), awc_rate_2, awc_rate_1
+    ),
+    ctc_max = if_else(
+      is.na(cvc_max_1), ctc_max_2, ctc_max_1
+    ),
+    ctc_prop = if_else(
+      is.na(cvc_max_1), ctc_prop_2, ctc_prop_1
+    ),
+    ctc_rate = if_else(
+      is.na(cvc_max_1), ctc_rate_2, ctc_rate_1
+    ),
+    awc_hour_max = if_else(
+      is.na(awc_hour_max_1), awc_hour_max_2, awc_hour_max_1
+    ),
+    ctc_hour_max = if_else(
+      is.na(ctc_hour_max_1), ctc_hour_max_2, ctc_hour_max_1
+    ),
+    cvc_hour_max = if_else(
+      is.na(cvc_hour_max_1), cvc_hour_max_2, cvc_hour_max_1
+    ),
+    day_type = if_else(
+      is.na(cvc_max_1), day_type_2, day_type_1
+    ),
+    lena_caregivers___1 = if_else(
+      is.na(cvc_max_1), lena_caregivers___1_2, lena_caregivers___1_1
+    ),
+    lena_caregivers___2 = if_else(
+      is.na(cvc_max_1), lena_caregivers___2_2, lena_caregivers___2_1
+    ),
+    lena_caregivers___3 = if_else(
+      is.na(cvc_max_1), lena_caregivers___3_2, lena_caregivers___3_1
+    ),
+    lena_caregivers___4 = if_else(
+      is.na(cvc_max_1), lena_caregivers___4_2, lena_caregivers___4_1
+    ),
+    lena_caregivers___5 = if_else(
+      is.na(cvc_max_1), lena_caregivers___5_2, lena_caregivers___5_1
+    ),
+    lena_caregivers___6 = if_else(
+      is.na(cvc_max_1), lena_caregivers___6_2, lena_caregivers___6_1
+    ),
+    lena_caregivers___7 = if_else(
+      is.na(cvc_max_1), lena_caregivers___7_2, lena_caregivers___7_1
+    ),
+    lena_caregivers___8 = if_else(
+      is.na(cvc_max_1), lena_caregivers___8_2, lena_caregivers___8_1
+    ),
+    lena_caregivers___9 = if_else(
+      is.na(cvc_max_1), lena_caregivers___9_2, lena_caregivers___9_1
+    ),
+    lena_caregivers___10 = if_else(
+      is.na(cvc_max_1), lena_caregivers___10_2, lena_caregivers___10_1
+    ),
+    other_caregiver = if_else(
+      is.na(cvc_max_1), other_caregiver_2, other_caregiver_1
+    ),
+    percent_mother = if_else(
+      is.na(cvc_max_1), percent_mother_2, percent_mother_1
+    )
+  ) %>% 
+  select(ID, age:percent_mother)
+  
+```
+
+## Histograms
+```{r}
+identify_outliers_hist(lena_final_wf, ctc_hour_max_1)
+identify_outliers_hist(lena_final_wf, awc_hour_max_1)
+
+identify_outliers_hist(lena_final_wf, ctc_prop_1)
+identify_outliers_hist(lena_final_wf, awc_prop_1)
+```
+
+# LENA reliability
+```{r}
+lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    awc_rate_1,
+    awc_rate_2
+  ) %>% 
+  psych::ICC()
+
+lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    ctc_rate_1,
+    ctc_rate_2
+  ) %>% 
+  psych::ICC()
+
+lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    awc_hour_max_1,
+    awc_hour_max_2
+  ) %>% 
+  psych::ICC()
+
+lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    ctc_hour_max_1,
+    ctc_hour_max_2
+  ) %>% 
+  psych::ICC()
+
+lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    cvc_hour_max_1,
+    cvc_hour_max_2
+  ) %>% 
+  psych::ICC()
+```
+
+# Visualize 5 minute level data
+```{r}
+library(ggsci)
+
+lena_5min_viz <-
+  lena_time_cl %>% 
+  left_join(
+    lena_final_wf %>% 
+      select(
+        ID,
+        awc_hour_max_1,
+        ctc_hour_max_1,
+        awc_prop_1,
+        ctc_prop_1
+      ),
+    by = "ID"
+  ) %>% 
+  filter(day == 1) %>% 
+  ungroup()
+
+lena_5min_viz %>% 
+  filter(ID == 1081 | ID == 21) %>% 
+  mutate(
+    ID = as.factor(ID),
+    ID = recode(
+      ID,
+      "1081" = "- Consistency, + Quantity",
+      "21" = "- Quantity, + Consistency"
+    )
+  ) %>% 
+  ggplot(aes(time_hours, CTC.Actual, color = ID)) +
+  geom_step(direction = "vh", size = 1) +
+  scale_color_npg() +
+  theme_minimal() +
+  theme(
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 24),
+    axis.text = element_text(size = 22),
+    legend.title = element_text(size = 17), 
+    legend.text = element_text(size = 20),
+    legend.position = "bottom"
+  ) +
+  labs(
+    color = NULL,
+    x = "Time\n(hours since midnight)",
+    y = "Conversational turns\nper 5-minute epoch"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/quantity_v_consistency.png",
+  width = 8.75,
+  height = 7
+)
+```
+
+
+
+
+## Write file 
+
+```{r}
+write_csv(lena_final_lf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_lf_20200208.csv")
+write_csv(lena_final_wf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1day2_20200208.csv")
+write_csv(lena_day1, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1_20200208.csv")
+```

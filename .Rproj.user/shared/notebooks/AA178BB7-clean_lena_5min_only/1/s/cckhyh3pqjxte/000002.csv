@@ -1,0 +1,16 @@
+"0","```r
+ids_dates <-
+  lena_d1 %>% 
+  select(
+    ID,
+    date_record
+  ) %>% 
+  mutate(
+    included = 1,
+    date_record = date(date_record)
+  )
+lena_time_cl <-
+  lena_time %>% 
+  left_join(ids_dates, by = c(\"ID\", \"date_record\")) %>% 
+  filter(included == 1)
+```"

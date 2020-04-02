@@ -1,0 +1,16 @@
+"0","```r
+lena_time_cl %>% 
+  ggplot(aes(time_hours, CTC.Actual)) +
+  geom_jitter(alpha = 1/6, aes(color = time_day)) +
+  geom_smooth(color = \"black\") +
+  scale_x_continuous(breaks = seq.int(0, 24, 2)) +
+  scale_y_continuous(breaks = seq.int(0, 35, 5)) +
+  theme_lena +
+  theme(
+    legend.position = \"none\"
+  ) +
+  labs(
+    x = \"Time of day\n(hours since midnight)\",
+    y = \"Conversational turn count\"
+  )
+```"

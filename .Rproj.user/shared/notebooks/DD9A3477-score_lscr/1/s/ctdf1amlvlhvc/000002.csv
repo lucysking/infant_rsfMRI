@@ -1,0 +1,33 @@
+"0","```r
+lg_data_t1 <-
+  lg_data_t1 %>% 
+  preconception_exp(lscr_disas, lscr_disas_preg) %>% 
+  preconception_exp(lscr_acc, lscr_acc_preg) %>% 
+  preconception_exp(lscr_witacc, lscr_witacc_preg) %>% 
+  preconception_exp(lscr_famjail, lscr_famjail_preg) %>%
+  preconception_exp(lscr_jail, lscr_jail_preg) %>% 
+  preconception_exp(lscr_adopt, lscr_adopt_preg) %>% 
+  preconception_exp(lscr_pardivorce, lscr_pardivorce_preg) %>% 
+  preconception_exp(lscr_divorce, lscr_divorce_preg) %>% 
+  preconception_exp(lscr_money, lscr_money_preg) %>% 
+  preconception_exp(lscr_ill, lscr_ill_preg) %>% 
+  preconception_exp(lscr_emoab, lscr_emoab_preg) %>% 
+  preconception_exp(lscr_physneg, lscr_physneg_preg) %>% 
+  preconception_exp(lscr_abort, lscr_abort_preg) %>% 
+  preconception_exp(lscr_sepchild, lscr_sepchild_preg) %>% 
+  preconception_exp(lscr_care, lscr_care_preg) %>% 
+  preconception_exp(lscr_death1, lscr_death1_preg) %>% 
+  preconception_exp(lscr_death2, lscr_death2_preg) %>% 
+  preconception_exp(lscr_famviol, lscr_famviol_preg) %>% 
+  preconception_exp(lscr_witmug, lscr_witmug_preg) %>% 
+  preconception_exp(lscr_mug, lscr_mug_preg) %>% 
+  preconception_exp(lscr_physab, lscr_physab_preg) %>% 
+  preconception_exp(lscr_domviol, lscr_domviol_preg) %>% 
+  preconception_exp(lscr_sexharas, lscr_sexharas_preg) %>% 
+  preconception_exp(lscr_sextouch1, lscr_sextouch1_preg) %>% 
+  preconception_exp(lscr_sextouch2, lscr_sextouch2_preg) %>% 
+  preconception_exp(lscr_rape1, lscr_rape1_preg) %>% 
+  preconception_exp(lscr_rape2, lscr_rape2_preg) %>% 
+  preconception_exp(lscr_other1, lscr_other1_preg) %>% 
+  preconception_exp(lscr_other2, lscr_other2_preg) 
+```"

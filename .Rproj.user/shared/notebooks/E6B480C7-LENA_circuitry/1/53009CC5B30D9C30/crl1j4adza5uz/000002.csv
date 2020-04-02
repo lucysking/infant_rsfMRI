@@ -1,0 +1,7 @@
+"0","#adjust p-value based on Holm-Bonferonni method
+p.adjust(.0063, method = ""holm"", n = 8)
+"
+"1","[1]"
+"1"," 0.0504"
+"1","
+"

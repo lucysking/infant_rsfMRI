@@ -1,0 +1,36 @@
+"0","```r
+cs_data <-
+  cs_data %>% 
+  mutate(
+    num_types_child = pmap_int(
+      select(., childhood_exp_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    sum_sev_child = pmap_dbl(
+      select(., childhood_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sev_child =  pmap_dbl(
+      select(., childhood_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    sum_sub_sev_child = pmap_dbl(
+      select(., childhood_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sub_sev_child =  pmap_dbl(
+      select(., childhood_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    max_sev_child = if_else(
+      max_sev_child == -Inf,
+      0, max_sev_child
+    ),
+    max_sub_sev_child = if_else(
+      max_sev_child == -Inf,
+      0, max_sev_child
+    )
+  )
+```"
+"1","no non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Inf
+"

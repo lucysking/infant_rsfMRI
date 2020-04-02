@@ -1,0 +1,11 @@
+"0","```r
+lena_5min_cl <-
+  lena_5min_cl %>% 
+  group_by(ID) %>% 
+  mutate(
+    day_type = wday(date_record),
+    day_type = if_else(day_type == 1 | day_type == 7, \"weekend\", \"weekday\"),
+    day = 1:n()
+  ) %>% 
+  ungroup()
+```"

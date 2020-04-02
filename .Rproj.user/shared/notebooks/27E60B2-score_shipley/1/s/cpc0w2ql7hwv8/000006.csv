@@ -1,0 +1,80 @@
+"0","shipley_scored %>% 
+  select(
+    shipley_1:shipley_40,
+    -shipley_1,
+    -shipley_4,
+    -shipley_18,
+    -shipley_39
+  ) %>% 
+  psych::alpha()
+"
+"2","Adding missing grouping variables: `ID`
+"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Some items were negatively correlated with the total scale and probably 
+should be reversed.  
+To do this, run the function again with the 'check.keys=TRUE' option"
+"1","Some items ("
+"1"," "
+"1","ID"
+"1"," "
+"1","shipley_3"
+"1"," "
+"1","shipley_12"
+"1"," "
+"1","shipley_40"
+"1"," "
+"1",") were negatively correlated with the total scale and 
+probably should be reversed.  
+To do this, run the function again with the 'check.keys=TRUE' option"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","In smc, the correlation matrix was not invertible, smc's returned as 1s
+"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","In smc, the correlation matrix was not invertible, smc's returned as 1s
+"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"2","Matrix was not positive definite, smoothing was done"
+"1","
+Reliability analysis "
+"1"," "
+"1"," 
+"
+"1","Call: "
+"1","psych::alpha(x = .)
+"
+"1","
+ "

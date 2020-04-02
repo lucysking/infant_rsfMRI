@@ -1,0 +1,951 @@
+---
+title: "BABIES demographic data"
+author: "Lucy King"
+output: html_document
+---
+
+```{r}
+# Libraries
+library(tidyverse)
+library(lubridate)
+
+
+# Files
+demo_cs_6mo_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/demo_cs_6mo_complete.csv"
+demo_lg_preg_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/demo_lg_preg_complete.csv"
+demo_lg_nb_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/demo_lg_nb_complete.csv"
+demo_lg_6mo_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/demo_lg_6mo_complete.csv"
+dob_cs_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/dob_sex_cs_complete.csv"
+dob_lg_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/dob_lg_complete.csv"
+visit_date_cs_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/crf_cs_complete.csv"
+visit_date_lg_6mo_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/raw_data/crf_lg_complete.csv"
+scan_dates_6mo_file <- "~/Box/Mooddata_Coordinating/MRI_Scans/Scan_Projects/BABIES/BABIES_Crossectional/Tracker/BABIES_Scan_Tracker.xlsx"
+scan_dates_nb_file <- "~/Box/Mooddata_Coordinating/MRI_Scans/Scan_Projects/BABIES/BABIES_Longitudinal/Tracker/BABIES_Longitudinal_Scan_Tracker.xlsx"
+
+# Functions
+#source("identify_outliers_histogram.R")
+```
+
+# Read in and join data 
+
+# Newborn scan dates
+```{r}
+scan_age_nb <-
+  readxl::read_xlsx(scan_dates_nb_file) %>% 
+  select(
+    ID = `Subject ID`,
+    scan_date_nb = `Date of Scan 1 (Newborn Scan)`,
+    age_scan = `Age at Scan 1 (weeks)`,
+    age_scan_corr = `Corrected Age at Scan 1...9`,
+    Rescan
+  ) %>% 
+  mutate(
+    ID = str_replace(ID, "x", ""),
+    ID = as.numeric(ID),
+    Rescan = if_else(
+      Rescan == "Y", 1, 0
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  # keep data from rescan if rescan completed
+  mutate(
+    rescanned = sum(Rescan),
+    keep = if_else(
+      rescanned == 0 | (Rescan == 1 & rescanned == 1),
+      1, 0
+    )
+  ) %>% 
+  arrange(ID) %>% 
+  ungroup() %>% 
+  filter(keep == 1) %>% 
+  select(
+    ID,
+    scan_date_t2 = scan_date_nb,
+    age_scan_t2 = age_scan,
+    age_scan_corr_t2 = age_scan_corr
+  )
+```
+
+# 6-month scan dates
+```{r}
+scan_age_6mo <-
+  readxl::read_xlsx(scan_dates_6mo_file) %>% 
+  rename(
+    ID = Grant_ID,
+    scan_date_6mo = Date_of_Scan_1,
+    age_scan = `Age at Scan 1`,
+    age_scan_corr = `Corrected Age at Scan 1`
+    ) %>% 
+  mutate(
+    ID = str_replace(ID, "x", ""),
+    ID = as.numeric(ID),
+    Is_Rescan = as.numeric(Is_Rescan)
+  ) %>% 
+  group_by(ID) %>% 
+  # keep data from rescan if rescan completed
+  mutate(
+    rescanned = sum(Is_Rescan),
+    keep = if_else(
+      rescanned == 0 | (Is_Rescan == 1 & rescanned == 1),
+      1, 0
+    )
+  ) %>% 
+  arrange(ID) %>% 
+  ungroup() %>% 
+  filter(keep == 1) %>% 
+  select(
+    ID,
+    scan_date_t3 = scan_date_6mo,
+    age_scan_t3 = age_scan,
+    age_scan_corr_t3 = age_scan_corr
+  )
+```
+
+# cross-sectional data
+
+Final cross-sectional N = 97 
+```{r}
+demo_cs <-
+  read_csv(demo_cs_6mo_file) %>% 
+  select(record_id, mom_ethnicity:child_pob) %>% 
+  mutate(record_id = as.numeric(record_id)) %>% 
+  rename(ID = record_id) %>% 
+  left_join(
+    read_csv(dob_cs_file) %>% 
+      mutate(record_id = as.numeric(record_id)) %>% 
+      rename(ID = record_id), 
+    by = "ID"
+  ) %>% 
+  left_join(
+    read_csv(visit_date_cs_file) %>% 
+      mutate(record_id = as.numeric(record_id)) %>% 
+      rename(ID = record_id) %>% 
+      filter(!is.na(ID)) %>% 
+      select(ID, behav_visit_date = crf_date),
+    by = "ID"
+  ) %>% 
+  left_join(
+    scan_age_6mo %>% 
+      rename(age_scan = age_scan_t3, age_scan_corr = age_scan_corr_t3),
+    by = "ID"
+  ) %>% 
+  rename(
+    due_date = baby_due_date,
+    baby_race = child_race,
+    baby_ethnicity = child_ethnicity,
+    baby_race_describe = childrace_describe,
+    baby_pob = child_pob
+  ) %>% 
+  mutate(
+    male = if_else(
+      baby_sex == 1,
+      0, 1
+    ),
+    mom_dob = parse_date(mom_dob, "%m/%d/%y"),
+    baby_dob = parse_date(baby_dob, "%m/%d/%y"),
+    due_date = parse_date(due_date, "%m/%d/%y"),
+    behav_visit_date = parse_date(behav_visit_date, format = "%m/%d/%y"),
+    conception_date = due_date - weeks(40),
+    gestational_weeks_birth = (conception_date %--% baby_dob) / weeks(1),
+    age_behav = (baby_dob %--% behav_visit_date) / months(1),
+    mom_age = (mom_dob %--% behav_visit_date) / years(1)
+  ) %>% 
+  select(-baby_sex) %>% 
+  filter(!is.na(behav_visit_date) | !is.na(scan_date_t3)) %>% 
+  mutate(partner_age = as.numeric(partner_age)) %>% 
+  rename(
+    mom_latinx = mom_ethnicity,
+    baby_latinx = baby_ethnicity,
+    in_home_partner = ppl_in_home___1,
+    in_home_infant = ppl_in_home___2,
+    in_home_preschool = ppl_in_home___3,
+    in_home_olderchild = ppl_in_home___4,
+    in_home_maternal_grandmom = ppl_in_home___5,
+    in_home_maternal_granddad = ppl_in_home___6,
+    in_home_paternal_grandpar = ppl_in_home___7,
+    in_home_friend = ppl_in_home___8,
+    in_home_otherfam = ppl_in_home___9,
+    live_alone = ppl_in_home___10,
+    in_home_other = ppl_in_home___11,
+    ppl_in_home_allinfants = ppl_in_home_infants,
+    ppl_in_home_allpreschool = ppl_in_home_preschool,
+    ppl_in_home_allolderchild = ppl_in_home_schoolage
+  ) %>% 
+  mutate(
+    mom_race = factor(
+      mom_race, 
+      levels = c(1, 2, 3, 4, 5, 6),
+      labels = c(
+        "American Indian/Alaska Native",
+        "Asian",
+        "Black/African American",
+        "Native Hawaiian/Other Pacific Islander",
+        "White",
+        "Other"
+      )
+    ),
+    education = recode(
+      education,
+      "0" = "0",
+      "2" = "1",
+      "3" = "2",
+      "4" = "3",
+      "5" = "4",
+      "6" = "5",
+      "7" = "6",
+      "8" = "7",
+      "9" = "8",
+      "10" = "9"
+    ), 
+    education_txt = factor(
+      education,
+      levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+      labels = c(
+        "No schooling completed",
+        "Nursery school-8th grade",
+        "Some high school, no diploma",
+        "High school graduate/diploma/equivalent (i.e. GED)",
+        "Some college credit, no degree",
+        "Trade/technical/vocational training",
+        "Associate degree",
+        "Bachelor's degree",
+        "Graduate degree",
+        "Other"
+      )
+    ),
+    employment_status_txt = factor(
+      employment_status,
+      levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+      labels = c(
+        "Employed for wages",
+        "Self-employed",
+        "Out of work, looking for work",
+        "Out of work, not looking for work",
+        "Homemaker",
+        "Student",
+        "Military",
+        "Retired",
+        "Unable to work",
+        "Other"
+      )
+    ),
+    marital_status_txt = factor(
+      marital_status, 
+      levels = c(1, 2, 3, 4, 5, 6),
+      labels = c(
+        "Single, never married",
+        "Married/domestic partnership",
+        "Widowed",
+        "Divorced",
+        "Separated",
+        "Other"
+      )
+    ),
+    partner_educ = recode(
+      education,
+      "0" = "0",
+      "2" = "1",
+      "3" = "2",
+      "4" = "3",
+      "5" = "4",
+      "6" = "5",
+      "7" = "6",
+      "8" = "7",
+      "9" = "8",
+      "10" = "9"
+    ), 
+    partner_educ_txt = factor(
+      partner_educ,
+      levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+      labels = c(
+        "No schooling completed",
+        "Nursery school-8th grade",
+        "Some high school, no diploma",
+        "High school graduate/diploma/equivalent (i.e. GED)",
+        "Some college credit, no degree",
+        "Trade/technical/vocational training",
+        "Associate degree",
+        "Bachelor's degree",
+        "Graduate degree",
+        "Other"
+      )
+    ),
+    partner_employ_txt =  factor(
+      partner_employ,
+      levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+      labels = c(
+        "Employed for wages",
+        "Self-employed",
+        "Out of work, looking for work",
+        "Out of work, not looking for work",
+        "Homemaker",
+        "Student",
+        "Military",
+        "Retired",
+        "Unable to work",
+        "Other"
+      )
+    ),
+    annual_income_txt = factor(
+      annual_income,
+      levels = c(1, 2, 3, 4, 5, 6, 7),
+      labels = c(
+        "$0-5,000",
+        "$5,001-15,000",
+        "$15,001-30,000",
+        "30,001-60,000",
+        "60,001-90,000",
+        "90,001-150,000",
+        ">$150,000"
+      )
+    ),
+    baby_race = factor(
+      baby_race,
+      levels = c(1, 2, 3, 4, 5, 6, 7),
+      labels = c(
+        "American Indian/Alaska Native",
+        "Asian",
+        "Black/African American",
+        "Prefer not to answer",
+        "Native Hawaiian/Other Pacific Islander",
+        "White",
+        "Other"
+      )
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  mutate(
+    ppl_in_home_tot = ppl_in_home_adults + ppl_in_home_allchild,
+    annual_income_num = recode(
+      annual_income,
+      "1" = 2500,
+      "2" = 10000,
+      "3" = 22500,
+      "4" = 45000,
+      "5" = 75000,
+      "6" = 120000,
+      "7" = 150000
+    ),
+    #santa clara country low-income limit : 80% of median income (ratios <= 1 are therefore "low income")
+    #https://www.huduser.gov/portal/datasets/il/il2017/2017summary.odn
+    ppl_in_home_tot_SClimit = recode(
+      ppl_in_home_tot,
+      "1" = 59350,
+      "2" = 67800,
+      "3" = 76300, 
+      "4" = 84750,
+      "5" = 91500,
+      "6" = 98350,
+      "7" = 105100,
+      "8" = 111900,
+      .default = 111900
+    ),
+    income_needs = annual_income_num / ppl_in_home_tot_SClimit
+  ) %>% 
+  ungroup() %>% 
+  select(-partner_in_home, -mom_dob) 
+```
+
+# Longitudinal data
+
+## pregnancy (T1)
+```{r}
+demo_lg_preg <-
+  read_csv(demo_lg_preg_file) %>% 
+  # remove ids who never attended a T1 session
+  filter(!is.na(demograph_date_preg)) %>% 
+  select(
+    record_id, 
+    demograph_date_preg, 
+    mom_ethnicity:tenth_childsex
+  ) %>% 
+  mutate(record_id = as.numeric(record_id), date = demograph_date_preg) %>% 
+  rename(ID = record_id) %>% 
+  rename_at(
+    vars(-ID),
+    funs(paste0(., "_t1"))
+  )
+```
+
+## newborn (T2)
+```{r}
+demo_lg_nb <-
+  read_csv(demo_lg_nb_file) %>% 
+  select(
+    record_id, 
+    demograph_date_preg, 
+    mom_ethnicity:tenth_childsex, 
+    baby_ethnicity:baby_race_describe,
+    baby_sex,
+    baby_pob
+  ) %>% 
+  mutate(record_id = as.numeric(record_id)) %>% 
+  rename(ID = record_id, date = demograph_date_preg) %>% 
+  rename_at(
+    vars(-ID),
+    funs(paste0(., "_t2"))
+  )
+```
+
+## 6 months (T3)
+```{r}
+demo_lg_6mo <-
+  read_csv(demo_lg_6mo_file) %>% 
+  select(
+    record_id, 
+    mom_ethnicity:tenth_childsex, 
+    baby_ethnicity:baby_race_describe,
+    baby_sex,
+    baby_pob
+  ) %>% 
+  mutate(record_id = as.numeric(record_id)) %>% 
+  rename(ID = record_id) %>% 
+  rename_at(
+    vars(-ID),
+    funs(paste0(., "_t3"))
+  )
+```
+
+## join all data across timepoints 
+```{r}
+demo_lg <-
+  demo_lg_preg %>% 
+  left_join(demo_lg_nb, by = "ID") %>% 
+  left_join(demo_lg_6mo, by = "ID") %>% 
+  left_join(
+    read_csv(dob_lg_file) %>% 
+      mutate(record_id = as.numeric(record_id)) %>% 
+      rename(ID = record_id),
+    by = "ID"
+  ) %>% 
+  left_join(
+    read_csv(visit_date_lg_6mo_file) %>% 
+      mutate(record_id = as.numeric(record_id)) %>% 
+      rename(ID = record_id) %>% 
+      filter(ID >= 1000 & !is.na(ID)) %>% 
+      select(ID, crf_date),
+    by = "ID"
+  ) %>% 
+  left_join(scan_age_nb, by = "ID") %>% 
+  left_join(
+    scan_age_6mo %>% 
+      filter(ID >= 1000),
+    by = "ID"
+  ) %>% 
+  rename(
+    visit_date_t1 = date_t1,
+    #newborn visit is scan only 
+    visit_date_t2 = date_t2,
+    behav_visit_date_t3 = crf_date
+  ) %>% 
+  rename(
+    due_date = baby_due_date
+  ) %>% 
+  mutate(
+    due_date = parse_date(due_date, format = "%m/%d/%y"),
+    baby_dob = parse_date(baby_dob, format = "%m/%d/%y"),
+    mom_dob = parse_date(mom_dob, format = "%m/%d/%y"),
+    visit_date_t1 = parse_date(visit_date_t1, format = "%m/%d/%y"),
+    #behav_visit_date_t3 = parse_date(behav_visit_date_t3, format = "%m/%d/%y"),
+    conception_date = due_date - weeks(40),
+    gestational_weeks_t1 = (conception_date %--% visit_date_t1) / weeks(1),
+    gestational_weeks_birth = (conception_date %--% baby_dob) / weeks(1),
+    age_behav_t3 = (baby_dob %--% behav_visit_date_t3) / months(1),
+    mom_age_t1 = (mom_dob %--% visit_date_t1) / years(1),
+    mom_age_t2 = (mom_dob %--% visit_date_t2) / years(1),
+    mom_age_t3 = (mom_dob %--% behav_visit_date_t3) / years(1),
+    male = case_when(
+      baby_sex_t2 == 1 | baby_sex_t3 == 1 ~ 0,
+      baby_sex_t2 == 2 | baby_sex_t3 == 2 ~ 1
+    ),
+    baby_pob = case_when(
+      !is.na(baby_pob_t2) ~ baby_pob_t2,
+      is.na(baby_pob_t2) & !is.na(baby_pob_t3) ~ baby_pob_t3,
+      TRUE ~ NA_character_
+    ),
+    baby_ethnicity = case_when(
+      !is.na(baby_ethnicity_t2) ~ baby_ethnicity_t2,
+      is.na(baby_ethnicity_t2) & !is.na(baby_ethnicity_t3) ~ baby_ethnicity_t3,
+      TRUE ~ NA_real_
+    ),
+    baby_race = case_when(
+      !is.na(baby_race_t2) ~ baby_race_t2,
+      is.na(baby_race_t2) & !is.na(baby_race_t3) ~ baby_race_t3,
+      TRUE ~ NA_real_
+    ),
+    baby_race_describe = case_when(
+      !is.na(baby_race_describe_t2) ~ baby_race_describe_t2,
+      is.na(baby_race_describe_t2) & !is.na(baby_race_describe_t3) ~ baby_race_describe_t3,
+      TRUE ~ NA_character_
+    ),
+    mom_ethnicity = case_when(
+      !is.na(mom_ethnicity_t1) ~ mom_ethnicity_t1,
+      is.na(mom_ethnicity_t1) & !is.na(mom_ethnicity_t2) ~ mom_ethnicity_t2,
+      is.na(mom_ethnicity_t1) & is.na(mom_ethnicity_t2) ~ mom_ethnicity_t3,
+      TRUE ~ NA_real_
+    ),
+    mom_race = case_when(
+      !is.na(mom_race_t1) ~ mom_race_t1,
+      is.na(mom_race_t1) & !is.na(mom_race_t2) ~ mom_race_t2,
+      is.na(mom_race_t1) & is.na(mom_race_t2) ~ mom_race_t3,
+      TRUE ~ NA_real_
+    ),
+    mom_race_describe = case_when(
+      !is.na(momrace_describe_t1) ~ momrace_describe_t1,
+      is.na(momrace_describe_t1) & !is.na(momrace_describe_t2) ~ momrace_describe_t2,
+      is.na(momrace_describe_t1) & is.na(momrace_describe_t2) ~ momrace_describe_t3,
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  select(
+    -c(
+      baby_sex_t2, 
+      baby_sex_t3,
+      baby_race_t2,
+      baby_race_t3,
+      baby_race_describe_t2,
+      baby_race_describe_t3,
+      baby_ethnicity_t2,
+      baby_ethnicity_t3,
+      mom_ethnicity_t1,
+      mom_ethnicity_t2,
+      mom_ethnicity_t3,
+      mom_race_t1,
+      mom_race_t2,
+      mom_race_t3,
+      momrace_describe_t1,
+      momrace_describe_t2,
+      momrace_describe_t3
+    )
+  ) %>% 
+  rename(
+    mom_latinx = mom_ethnicity,
+    baby_latinx = baby_ethnicity,
+    in_home_partner_t1 = ppl_in_home___1_t1,
+    in_home_partner_t2 = ppl_in_home___1_t2,
+    in_home_partner_t3 = ppl_in_home___1_t3,
+    in_home_infant_t1 = ppl_in_home___2_t1,
+    in_home_infant_t2 = ppl_in_home___2_t2,
+    in_home_infant_t3 = ppl_in_home___2_t3,
+    in_home_preschool_t1 = ppl_in_home___3_t1,
+    in_home_preschool_t2 = ppl_in_home___3_t2,
+    in_home_preschool_t3 = ppl_in_home___3_t3,
+    in_home_olderchild_t1 = ppl_in_home___4_t1,
+    in_home_olderchild_t2 = ppl_in_home___4_t2,
+    in_home_olderchild_t3 = ppl_in_home___4_t3,
+    in_home_maternal_grandmom_t1 = ppl_in_home___5_t1,
+    in_home_maternal_grandmom_t2 = ppl_in_home___5_t2,
+    in_home_maternal_grandmom_t3 = ppl_in_home___5_t3,
+    in_home_maternal_granddad_t1 = ppl_in_home___6_t1,
+    in_home_maternal_granddad_t2 = ppl_in_home___6_t2,
+    in_home_maternal_granddad_t3 = ppl_in_home___6_t3,
+    in_home_paternal_grandpar_t1 = ppl_in_home___7_t1,
+    in_home_paternal_grandpar_t2 = ppl_in_home___7_t2,
+    in_home_paternal_grandpar_t3 = ppl_in_home___7_t3,
+    in_home_friend_t1 = ppl_in_home___8_t1,
+    in_home_friend_t2 = ppl_in_home___8_t2,
+    in_home_friend_t3 = ppl_in_home___8_t3,
+    in_home_otherfam_t1 = ppl_in_home___9_t1,
+    in_home_otherfam_t2 = ppl_in_home___9_t2,
+    in_home_otherfam_t3 = ppl_in_home___9_t3,
+    live_alone_t1 = ppl_in_home___10_t1,
+    live_alone_t2 = ppl_in_home___10_t2,
+    live_alone_t3 = ppl_in_home___10_t3,
+    in_home_other_t1 = ppl_in_home___11_t1,
+    in_home_other_t2 = ppl_in_home___11_t2,
+    in_home_other_t3 = ppl_in_home___11_t3,
+    ppl_in_home_allinfants_t1 = ppl_in_home_infants_t1,
+    ppl_in_home_allinfants_t2 = ppl_in_home_infants_t2,
+    ppl_in_home_allinfants_t3 = ppl_in_home_infants_t3,
+    ppl_in_home_allpreschool_t1 = ppl_in_home_preschool_t1,
+    ppl_in_home_allpreschool_t2 = ppl_in_home_preschool_t2,
+    ppl_in_home_allpreschool_t3 = ppl_in_home_preschool_t3,
+    ppl_in_home_allolderchild_t1 = ppl_in_home_schoolage_t1,
+    ppl_in_home_allolderchild_t2 = ppl_in_home_schoolage_t2,
+    ppl_in_home_allolderchild_t3 = ppl_in_home_schoolage_t3
+  ) %>% 
+  mutate_at(
+    vars(
+      ppl_in_home_allinfants_t1, 
+      ppl_in_home_allinfants_t2,
+      ppl_in_home_allinfants_t3,
+      ppl_in_home_allpreschool_t1, 
+      ppl_in_home_allpreschool_t2, 
+      ppl_in_home_allpreschool_t3, 
+      ppl_in_home_allolderchild_t1,
+      ppl_in_home_allolderchild_t2,
+      ppl_in_home_allolderchild_t3,
+      ppl_in_home_adults_t1,
+      ppl_in_home_adults_t2,
+      ppl_in_home_adults_t3,
+      ppl_in_home_allchild_t1,
+      ppl_in_home_allchild_t2,
+      ppl_in_home_allchild_t3
+    ),
+    as.double
+  )  %>% 
+  mutate(
+    mom_race = factor(
+      mom_race, 
+      levels = c(1, 2, 3, 4, 5, 6),
+      labels = c(
+        "American Indian/Alaska Native",
+        "Asian",
+        "Black/African American",
+        "Native Hawaiian/Other Pacific Islander",
+        "White",
+        "Other"
+      )
+    ),
+    baby_race = factor(
+      baby_race,
+      levels = c(1, 2, 3, 4, 5, 6, 7),
+      labels = c(
+        "American Indian/Alaska Native",
+        "Asian",
+        "Black/African American",
+        "Prefer not to answer",
+        "Native Hawaiian/Other Pacific Islander",
+        "White",
+        "Other"
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(education_t1, education_t2, education_t3),
+    funs(
+      . %>% 
+        recode(
+          "0" = "0",
+          "2" = "1",
+          "3" = "2",
+          "4" = "3",
+          "5" = "4",
+          "6" = "5",
+          "7" = "6",
+          "8" = "7",
+          "9" = "8",
+          "10" = "9"
+        )
+    )
+  ) %>% 
+  mutate_at(
+    vars(education_t1, education_t2, education_t3),
+    funs(
+      "txt" = factor(
+        .,
+        levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+        labels = c(
+          "No schooling completed",
+          "Nursery school-8th grade",
+          "Some high school, no diploma",
+          "High school graduate/diploma/equivalent (i.e. GED)",
+          "Some college credit, no degree",
+          "Trade/technical/vocational training",
+          "Associate degree",
+          "Bachelor's degree",
+          "Graduate degree",
+          "Other"
+        )
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(employment_status_t1, employment_status_t2, employment_status_t3),
+    funs(
+      "txt" = factor(
+        .,
+        levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+        labels = c(
+          "Employed for wages",
+          "Self-employed",
+          "Out of work, looking for work",
+          "Out of work, not looking for work",
+          "Homemaker",
+          "Student",
+          "Military",
+          "Retired",
+          "Unable to work",
+          "Other"
+        )
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(marital_status_t1, marital_status_t2, marital_status_t3),
+    funs(
+      "txt" =  factor(
+        ., 
+        levels = c(1, 2, 3, 4, 5, 6),
+        labels = c(
+          "Single, never married",
+          "Married/domestic partnership",
+          "Widowed",
+          "Divorced",
+          "Separated",
+          "Other"
+        )
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(partner_educ_t1, partner_educ_t2, partner_educ_t3),
+    funs(
+      . %>% 
+        recode(
+          "0" = "0",
+          "2" = "1",
+          "3" = "2",
+          "4" = "3",
+          "5" = "4",
+          "6" = "5",
+          "7" = "6",
+          "8" = "7",
+          "9" = "8",
+          "10" = "9"
+        )
+    )
+  ) %>% 
+  mutate_at(
+    vars(partner_educ_t1, partner_educ_t2, partner_educ_t3),
+    funs(
+      "txt" = factor(
+        .,
+        levels = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9),
+        labels = c(
+          "No schooling completed",
+          "Nursery school-8th grade",
+          "Some high school, no diploma",
+          "High school graduate/diploma/equivalent (i.e. GED)",
+          "Some college credit, no degree",
+          "Trade/technical/vocational training",
+          "Associate degree",
+          "Bachelor's degree",
+          "Graduate degree",
+          "Other"
+        )
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(partner_employ_t1, partner_employ_t2, partner_employ_t3),
+    funs(
+      "txt" = factor(
+        .,
+        levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+        labels = c(
+          "Employed for wages",
+          "Self-employed",
+          "Out of work, looking for work",
+          "Out of work, not looking for work",
+          "Homemaker",
+          "Student",
+          "Military",
+          "Retired",
+          "Unable to work",
+          "Other"
+        )
+      )
+    )
+  ) %>% 
+  mutate_at(
+    vars(annual_income_t1, annual_income_t2, annual_income_t3),
+    funs(
+      "txt" = factor(
+        .,
+        levels = c(1, 2, 3, 4, 5, 6, 7),
+        labels = c(
+          "$0-5,000",
+          "$5,001-15,000",
+          "$15,001-30,000",
+          "30,001-60,000",
+          "60,001-90,000",
+          "90,001-150,000",
+          ">$150,000"
+        )
+      )
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  mutate(
+    ppl_in_home_tot_t1 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t1,
+    ppl_in_home_tot_t2 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t2,
+    ppl_in_home_tot_t3 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t3
+  ) %>% 
+  ungroup() %>% 
+  mutate_at(
+    vars(annual_income_t1, annual_income_t2, annual_income_t3),
+    funs(
+      "num" =
+        . %>% 
+        recode(
+          "1" = 2500,
+          "2" = 10000,
+          "3" = 22500,
+          "4" = 45000,
+          "5" = 75000,
+          "6" = 120000,
+          "7" = 150000
+        )
+    )
+  ) %>% 
+  #santa clara country low-income limit : 80% of median income (ratios <= 1 are therefore "low income")
+  #https://www.huduser.gov/portal/datasets/il/il2017/2017summary.odn
+  mutate_at(
+    vars(ppl_in_home_tot_t1, ppl_in_home_tot_t2, ppl_in_home_tot_t3),
+    funs(
+      "SClimit" = 
+        . %>% 
+        recode(
+          "1" = 59350,
+          "2" = 67800,
+          "3" = 76300, 
+          "4" = 84750,
+          "5" = 91500,
+          "6" = 98350,
+          "7" = 105100,
+          "8" = 111900,
+          # anything > 8 is set at the same value
+          .default = 111900
+        )
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  mutate(
+    income_needs_t1 = annual_income_t1_num / ppl_in_home_tot_t1_SClimit,
+    income_needs_t2 = annual_income_t2_num / ppl_in_home_tot_t2_SClimit,
+    income_needs_t3 = annual_income_t3_num / ppl_in_home_tot_t3_SClimit
+  ) %>% 
+  ungroup() %>% 
+  select(
+    -demograph_date_preg_t1,
+    -visit_date_t2,
+    -partner_in_home_t1,
+    -partner_in_home_t2,
+    -partner_in_home_t3
+  ) 
+
+write_csv(
+  demo_lg, 
+  "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/demo_longitudinal_cleaned_final.csv"
+)
+```
+    
+
+
+
+    
+    
+    
+    
+
+# Longitudinal retention
+
+```{r}
+demo_lg %>% 
+  count(!is.na(scan_date_t2))
+
+demo_lg %>% 
+  count(!is.na(behav_visit_date_t3))
+
+demo_lg %>% 
+  count(!is.na(scan_date_t2) | !is.na(behav_visit_date_t3))
+
+demo_lg %>% 
+  count(!is.na(visit_date_t1), !is.na(scan_date_t2), !is.na(behav_visit_date_t3))
+
+nb_ids <-
+  demo_lg %>% 
+  filter(!is.na(scan_date_t2)) %>% 
+  select(ID)
+
+demo_lg %>% 
+  filter(is.na(scan_date_t2))
+```
+
+A total of 90 women participated:
+N = 90 completed T1; of whom 62 completed at least T2 or T3 
+N = 49 completed a newborn scan session 
+N = 47 completed a 6-month session 
+N = 34 completed all sessions 
+
+## 6-month data only from both arms
+```{r}
+demo_6mo <-
+  demo_lg %>% 
+  filter(!is.na(behav_visit_date_t3)) %>% 
+  select(
+    ID,
+    male,
+    due_date,
+    baby_dob,
+    mom_dob,
+    gestational_weeks_birth,
+    baby_race,
+    baby_race_describe,
+    baby_latinx,
+    mom_race,
+    momrace_describe = mom_race_describe,
+    mom_latinx,
+    annual_income_t3_num,
+    annual_income_t3_txt,
+    ppl_in_home_tot_t3_SClimit,
+    education_t3_txt,
+    employment_status_t3_txt,
+    marital_status_t3_txt,
+    partner_educ_t3_txt,
+    partner_employ_t3_txt,
+    ends_with("t3")
+  ) %>% 
+  rename_at(
+    vars(-ID:-mom_latinx),
+    funs(str_replace(., "_t3", ""))
+  ) %>% 
+  bind_rows(demo_cs) %>% 
+  select(-conception_date, -scan_date, -scan_date_t3)
+
+write_csv(
+  demo_6mo, 
+  "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/demo_6mo_cleaned_final.csv"
+)
+```
+
+
+```{r}
+dob_sex_race <-
+  demo_lg %>% 
+  select(
+    ID,
+    baby_dob,
+    mom_dob,
+    male,
+    baby_latinx,
+    mom_latinx,
+    baby_race,
+    mom_race,
+    mom_race_describe
+  ) %>% 
+  bind_rows(
+    demo_6mo %>% 
+      select(
+        ID,
+        baby_dob,
+        mom_dob,
+        male,
+        baby_latinx,
+        mom_latinx,
+        baby_race,
+        mom_race
+      ) 
+  ) %>% 
+  distinct(ID, baby_dob, .keep_all = TRUE)
+
+write_csv(
+  dob_sex_race, 
+  "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/dob_sex_race_final.csv"
+)
+```
+
+  
+    
+

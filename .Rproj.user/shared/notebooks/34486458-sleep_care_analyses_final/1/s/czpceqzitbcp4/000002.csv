@@ -1,0 +1,13 @@
+"0","```r
+ml_base <- lmer(
+  sens_fin ~ 
+    episode_re + 
+    Condition + 
+    site + 
+    (1|ID), 
+  REML = FALSE,
+  data = data_lf
+  )
+
+summary(ml_base)
+```"

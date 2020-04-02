@@ -1,0 +1,11 @@
+"0","```r
+childhood_sev_vars <-
+  lg_data_t1 %>% 
+  select(contains(\"sev_child\")) %>% 
+  names() %>% 
+  str_replace(\"sub_\", \"\") 
+childhood_sub_sev_vars <-
+  lg_data_t1 %>% 
+  select(contains(\"sub_sev_child\")) %>% 
+  names() 
+```"

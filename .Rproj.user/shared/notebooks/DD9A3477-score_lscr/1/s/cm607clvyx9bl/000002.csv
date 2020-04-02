@@ -1,0 +1,6 @@
+"0","```r
+preg_exp_vars <- 
+  lg_data %>% 
+  select(contains(\"preg\")) %>% 
+  names()
+```"

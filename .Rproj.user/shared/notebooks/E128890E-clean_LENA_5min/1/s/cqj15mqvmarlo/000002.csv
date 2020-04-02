@@ -1,0 +1,8 @@
+"0","lena_final_lf <-"
+"0","  lena_time_day %>% "
+"0","  left_join(lena_hourly_max, by = c(""ID"", ""day"")) %>% "
+"0","  left_join(lena_followup, by = c(""ID"", ""day"")) %>% "
+"0","  mutate("
+"0","    day_type = wday(date_record),"
+"0","    day_type = if_else(day_type == 1 | day_type == 7, ""weekend"", ""weekday"")"
+"0","  )"

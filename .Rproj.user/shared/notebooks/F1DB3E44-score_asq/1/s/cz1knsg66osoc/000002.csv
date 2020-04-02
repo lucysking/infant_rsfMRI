@@ -1,0 +1,7 @@
+"0","```r
+asq$asq_comm <- rowMeans(subset(asq, select = c(asq_23e3_1, asq_23e3_2, asq_23e3_3, asq_23e3_4, asq_23e3_5, asq_23e3_6)), na.rm = T)*6
+asq$asq_grossmotor <- rowMeans(subset(asq, select = c(asq_23e3_7, asq_23e3_8, asq_23e3_9, asq_23e3_10, asq_23e3_11, asq_23e3_12)), na.rm = T)*6
+asq$asq_finemotor <- rowMeans(subset(asq, select = c(asq_23e3_13, asq_23e3_14, asq_23e3_15, asq_23e3_16, asq_23e3_17, asq_23e3_18)), na.rm = T)*6
+asq$asq_prbsolv <- rowMeans(subset(asq, select = c(asq_23e3_19, asq_23e3_20, asq_23e3_21, asq_23e3_22, asq_23e3_23, asq_23e3_24)), na.rm = T)*6
+asq$asq_personsoc <- rowMeans(subset(asq, select = c(asq_23e3_25, asq_23e3_26, asq_23e3_27, asq_23e3_28, asq_23e3_29, asq_23e3_30)), na.rm = T)*6
+```"

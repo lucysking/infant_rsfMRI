@@ -1,0 +1,12 @@
+"0","# Pearson correlations"
+"0","efa_3 <- fa(r = ses_efa, nfactors = 3, rotate = ""varimax"", cor = ""cor"") "
+"0","efa_3"
+"1","Factor Analysis using method = "
+"1"," "
+"1","minres"
+"1","
+Call: "
+"1","fa(r = ses_efa, nfactors = 3, rotate = ""varimax"", cor = ""cor"")
+"
+"1","Standardized loadings (pattern matrix) based upon correlation matrix
+"

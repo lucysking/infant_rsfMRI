@@ -1,0 +1,18 @@
+"0","```r
+preconception_exp <- function(data, age, exp, age_exp, preg_exp) {
+  age <- enquo(age)
+  exp <- enquo(exp)
+  age_exp <- enquo(age_exp)
+  preg_exp <- enquo(preg_exp)
+  var_name <- paste0(quo_name(exp), \"_prec\")
+  
+  data %>% 
+    mutate(
+      !! var_name :=
+        if_else(
+          !!age_exp <= !!age & (!!preg_exp == 0 | is.na(!!preg_exp)),
+          1, 0
+        )
+    )
+}
+```"

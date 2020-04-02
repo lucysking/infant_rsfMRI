@@ -1,0 +1,28 @@
+"0","```r
+lg_data_sum_sub_sev <- 
+  lg_data %>% 
+  gather(
+    event, 
+    rating, 
+    contains(\"_sev\"),
+    -contains(\"_con\"),
+    -contains(\"_ls_\"),
+    -contains(\"_lk\"),
+    -contains(\"_kh\")
+  ) %>% 
+  select(ID, event, rating) %>% 
+  group_by(ID, event) %>% 
+  summarise(
+    rating = max(rating, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    rating = if_else(
+      rating == -Inf,
+      0, rating
+    )
+  ) %>% 
+  group_by(ID) %>% 
+  summarise(
+    sum_sub_sev = sum(rating)
+  )
+```"

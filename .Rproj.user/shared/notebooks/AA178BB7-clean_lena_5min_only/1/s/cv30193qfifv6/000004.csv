@@ -1,0 +1,6 @@
+"0","```r
+## based on duration
+lena_5min_cl %>%
+  filter(day == 1) %>% 
+  count(duration < 8)
+```"

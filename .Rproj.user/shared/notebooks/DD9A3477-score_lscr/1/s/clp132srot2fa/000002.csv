@@ -1,0 +1,15 @@
+"0","```r
+sev_vars <- 
+  lg_data_preg_wf %>% 
+  select(
+    contains(\"sev_preg\"),
+    -contains(\"sub\")
+    ) %>% 
+  names()
+sub_sev_vars <-
+  lg_data_preg_wf %>% 
+  select(
+    contains(\"sub_sev_preg\")
+  ) %>% 
+  names()
+```"

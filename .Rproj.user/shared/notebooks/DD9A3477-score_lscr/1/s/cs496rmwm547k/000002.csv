@@ -1,0 +1,14 @@
+"0","```r
+library(tidyverse)
+library(lubridate)
+library(psych)
+library(readxl)
+# cross-sectional data
+cs_stress_file1 <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/stress_rating_files/final_cleaned/cs_LSCR_201811_6mo_rated_cleaned.xlsx\"
+cs_stress_file2 <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/stress_rating_files/final_cleaned/cs_LSCR_201904_6mo_rated_cleaned.xlsx\"
+cs_dob_file <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/demo_data/cs_dob.csv\"
+cs_visit_date_file <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/demo_data/cs_visit_date.csv\"
+# longitudinal data
+lg_stress_T1_file <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/stress_rating_files/final_cleaned/long_LSCR_201906_preg_rated_cleaned.xlsx\"
+lg_stress_T3_file <- \"~/Box/lucy_king_files/BABIES/stress_interview/data/stress_rating_files/final_cleaned/long_LSCR_202002_6mo_rated_cleaned.xlsx\"
+```"

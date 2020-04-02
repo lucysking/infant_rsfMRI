@@ -1,0 +1,8 @@
+"0","ses_efa %>% "
+"0","  correlate() %>% "
+"0","  fashion()"
+"2","
+Correlation method: 'pearson'
+Missing treated using: 'pairwise.complete.obs'
+
+"

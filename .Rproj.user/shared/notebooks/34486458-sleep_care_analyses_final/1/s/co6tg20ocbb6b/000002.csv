@@ -1,0 +1,30 @@
+"0","```r
+data_wf %>% 
+  count(n_days_ac) %>% 
+  ggplot(aes(x = n_days_ac, y = n)) +
+  geom_col() +
+  scale_x_continuous(breaks = seq.int(1, 8, 1)) +
+  labs(
+    x = \"Days of actigraphy\",
+    y = \"Count\"
+  )
+
+ggsave(\"~/Desktop/BABIES/manber_sleep/manber_sleep_sync/plots/days_ac_hist.png\")
+
+data_lf_ndays_ac <-
+  data_lf %>% 
+  filter(n_days_ac >= 4)
+
+ml_nday_ac <- lmer(
+  sens_fin ~ 
+    episode_re * sleep_continuity_ac + 
+    Condition + 
+    site + 
+    (1|ID), 
+  REML = FALSE,
+  data = data_lf_ndays_ac
+)
+
+summary(ml_nday_ac)
+std_beta(ml_nday_ac)
+```"

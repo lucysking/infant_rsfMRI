@@ -1,0 +1,34 @@
+"0","```r
+cs_data <-
+  cs_data %>% 
+  childhood_exp(lscr_disas, lscr_disas_age) %>% 
+  childhood_exp(lscr_acc, lscr_acc_age) %>% 
+  childhood_exp(lscr_witacc, lscr_witacc_age) %>% 
+  childhood_exp(lscr_famjail, lscr_famjail_age) %>%
+  childhood_exp(lscr_jail, lscr_jail_age) %>% 
+  childhood_exp(lscr_adopt, lscr_adopt_age) %>% 
+  childhood_exp(lscr_pardivorce, lscr_pardivorce_age) %>% 
+  childhood_exp(lscr_divorce, lscr_divorce_age) %>% 
+  childhood_exp(lscr_money, lscr_money_age) %>% 
+  childhood_exp(lscr_ill, lscr_ill_age) %>% 
+  childhood_exp(lscr_emoab, lscr_emoab_age) %>% 
+  childhood_exp(lscr_physneg, lscr_physneg_age) %>% 
+  childhood_exp(lscr_abort, lscr_abort_age) %>% 
+  childhood_exp(lscr_sepchild, lscr_sepchild_age) %>% 
+  childhood_exp(lscr_care, lscr_care_age) %>% 
+  childhood_exp(lscr_death1, lscr_death1_age) %>% 
+  childhood_exp(lscr_death2, lscr_death2_age) %>% 
+  childhood_exp(lscr_famviol, lscr_famviol_age) %>% 
+  childhood_exp(lscr_witmug, lscr_witmug_age) %>% 
+  childhood_exp(lscr_mug, lscr_mug_age) %>% 
+  childhood_exp(lscr_physab, lscr_physab_age) %>% 
+  childhood_exp(lscr_domviol, lscr_domviol_age) %>% 
+  childhood_exp(lscr_sexharas, lscr_sexharas_age) %>% 
+  childhood_exp(lscr_sextouch1, lscr_sextouch1_age) %>% 
+  childhood_exp(lscr_sextouch2, lscr_sextouch2_age) %>% 
+  childhood_exp(lscr_rape1, lscr_rape1_age) %>% 
+  childhood_exp(lscr_rape2, lscr_rape2_age) %>% 
+  childhood_exp(lscr_other1, lscr_other1_age) %>% 
+  childhood_exp(lscr_other2, lscr_other2_age) %>% 
+  childhood_exp(lscr_other3, lscr_other3_age)
+```"

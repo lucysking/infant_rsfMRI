@@ -1,0 +1,76 @@
+"0","```r
+cs_data <-
+  cs_data %>% 
+  mutate_at(
+    vars(childhood_exp_vars),
+    as.integer
+  ) %>% 
+  mutate(
+    #objective
+    sev_child_disas = calc_stage_sev(lscr_disas_child, sev_con_disas),
+    sev_child_witacc = calc_stage_sev(lscr_witacc_child, sev_con_witacc),
+    sev_child_acc = calc_stage_sev(lscr_acc_child, sev_con_acc),
+    sev_child_famjail = calc_stage_sev(lscr_famjail_child, sev_con_famjail),
+    sev_child_jail = calc_stage_sev(lscr_jail_child, sev_con_jail),
+    sev_child_adopt = calc_stage_sev(lscr_adopt_child, sev_con_adopt),
+    sev_child_pardivorce = calc_stage_sev(lscr_pardivorce_child, sev_con_pardivorce),
+    sev_child_divorce = calc_stage_sev(lscr_divorce_child, sev_con_divorce),
+    sev_child_money = calc_stage_sev(lscr_money_child, sev_con_money),
+    sev_child_ill = calc_stage_sev(lscr_ill_child, sev_con_ill),
+    sev_child_emoab = calc_stage_sev(lscr_emoab_child, sev_con_emoab),
+    sev_child_physneg = calc_stage_sev(lscr_physneg_child, sev_con_physneg),
+    sev_child_abort = calc_stage_sev(lscr_abort_child, sev_con_abort),
+    sev_child_sepchild = calc_stage_sev(lscr_sepchild_child, sev_con_sepchild),
+    sev_child_care = calc_stage_sev(lscr_care_child, sev_con_care),
+    sev_child_death1 = calc_stage_sev(lscr_death1_child, sev_con_death1),
+    sev_child_death2 = calc_stage_sev(lscr_death2_child, sev_con_death2),
+    sev_child_famviol = calc_stage_sev(lscr_famviol_child, sev_con_famviol),
+    sev_child_witmug = calc_stage_sev(lscr_witmug_child, sev_con_witmug),
+    sev_child_mug = calc_stage_sev(lscr_mug_child, sev_con_mug),
+    sev_child_physab = calc_stage_sev(lscr_physab_child, sev_con_physab),
+    sev_child_domviol = calc_stage_sev(lscr_domviol_child, sev_con_domviol),
+    sev_child_sexharas = calc_stage_sev(lscr_sexharas_child, sev_con_sexharas),
+    sev_child_sextouch1 = calc_stage_sev(lscr_sextouch1_child, sev_con_sextouch1),
+    sev_child_sextouch2 = calc_stage_sev(lscr_sextouch2_child, sev_con_sextouch2),
+    sev_child_rape1 = calc_stage_sev(lscr_rape1_child, sev_con_rape1),
+    sev_child_rape2 = calc_stage_sev(lscr_rape2_child, sev_con_rape2),
+    sev_child_other1 = calc_stage_sev(lscr_other1_child, sev_con_other1),
+    sev_child_other2 = calc_stage_sev(lscr_other2_child, sev_con_other2),
+    sev_child_other3 = calc_stage_sev(lscr_other2_child, sev_con_other3)
+  )
+cs_data <-
+  cs_data %>% 
+  mutate(
+    #subjective
+    sub_sev_child_disas = calc_stage_sev(lscr_disas_child, lscr_disas_sev),
+    sub_sev_child_witacc = calc_stage_sev(lscr_witacc_child, lscr_witacc_sev),
+    sub_sev_child_acc = calc_stage_sev(lscr_acc_child, lscr_acc_sev),
+    sub_sev_child_famjail = calc_stage_sev(lscr_famjail_child, lscr_famjail_sev),
+    sub_sev_child_jail = calc_stage_sev(lscr_jail_child, lscr_jail_sev),
+    sub_sev_child_adopt = calc_stage_sev(lscr_adopt_child, lscr_adopt_sev),
+    sub_sev_child_pardivorce = calc_stage_sev(lscr_pardivorce_child, lscr_pardivorce_sev),
+    sub_sev_child_divorce = calc_stage_sev(lscr_divorce_child, lscr_divorce_sev),
+    sub_sev_child_money = calc_stage_sev(lscr_money_child, lscr_money_sev),
+    sub_sev_child_ill = calc_stage_sev(lscr_ill_child, lscr_ill_sev),
+    sub_sev_child_emoab = calc_stage_sev(lscr_emoab_child, lscr_emoab_sev),
+    sub_sev_child_physneg = calc_stage_sev(lscr_physneg_child, lscr_physneg_sev),
+    sub_sev_child_abort = calc_stage_sev(lscr_abort_child, lscr_abort_sev),
+    sub_sev_child_sepchild = calc_stage_sev(lscr_sepchild_child, lscr_sepchild_sev),
+    sub_sev_child_care = calc_stage_sev(lscr_care_child, lscr_care_sev),
+    sub_sev_child_death1 = calc_stage_sev(lscr_death1_child, lscr_death1_sev),
+    sub_sev_child_death2 = calc_stage_sev(lscr_death2_child, lscr_death2_sev),
+    sub_sev_child_famviol = calc_stage_sev(lscr_famviol_child, lscr_famviol_sev),
+    sub_sev_child_witmug = calc_stage_sev(lscr_witmug_child, lscr_witmug_sev),
+    sub_sev_child_mug = calc_stage_sev(lscr_mug_child, lscr_mug_sev),
+    sub_sev_child_physab = calc_stage_sev(lscr_physab_child, lscr_physab_sev),
+    sub_sev_child_domviol = calc_stage_sev(lscr_domviol_child, lscr_domviol_sev),
+    sub_sev_child_sexharas = calc_stage_sev(lscr_sexharas_child, lscr_sexharas_sev),
+    sub_sev_child_sextouch1 = calc_stage_sev(lscr_sextouch1_child, lscr_sextouch1_sev),
+    sub_sev_child_sextouch2 = calc_stage_sev(lscr_sextouch2_child, lscr_sextouch2_sev),
+    sub_sev_child_rape1 = calc_stage_sev(lscr_rape1_child, lscr_rape1_sev),
+    sub_sev_child_rape2 = calc_stage_sev(lscr_rape2_child, lscr_rape2_sev),
+    sub_sev_child_other1 = calc_stage_sev(lscr_other1_child, lscr_other1_sev),
+    sub_sev_child_other2 = calc_stage_sev(lscr_other2_child, lscr_other2_sev),
+    sub_sev_child_other3 = calc_stage_sev(lscr_other3_child, lscr_other3_sev)
+  ) 
+```"

@@ -1,0 +1,4 @@
+"0","```r
+lg_data <-
+  bind_rows(lg_data_t1, lg_data_t3)
+```"

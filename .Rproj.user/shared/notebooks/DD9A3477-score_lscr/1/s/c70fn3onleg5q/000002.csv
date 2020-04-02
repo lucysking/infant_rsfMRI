@@ -1,0 +1,11 @@
+"0","```r
+post_sev_vars <-
+  cs_data %>% 
+  select(contains(\"sev_post\")) %>% 
+  names() %>% 
+  str_replace(\"sub_\", \"\") 
+post_sub_sev_vars <-
+  cs_data %>% 
+  select(contains(\"sub_sev_post\")) %>% 
+  names() 
+```"

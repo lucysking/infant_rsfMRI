@@ -1,0 +1,26 @@
+"0","```r
+data_wf <-
+  data_wf %>% 
+  group_by(ID) %>% 
+  mutate(
+    sleep_disturbed_sd = scale(
+      ((scale(wake_time_sd, scale = TRUE) + scale(wake_bouts_sd, scale = TRUE)) -
+         (scale(sleep_time_sd, scale = TRUE) + scale(quality_sd, scale = TRUE))),
+      scale = TRUE
+    ), 
+    sleep_continuity_ac = scale(
+      (scale(wake_time_ac, scale = TRUE) + scale(wake_bouts_ac, scale = TRUE)),
+      scale = TRUE
+    ) * -1
+  ) %>% 
+  ungroup()
+
+data_wf %>% 
+  ggplot(aes(sleep_disturbed_sd)) +
+  geom_histogram()
+
+data_wf %>% 
+  ggplot(aes(sleep_continuity_ac)) +
+  geom_histogram()
+
+```"

@@ -1,0 +1,5 @@
+"0","```r
+lena_d1 <- 
+  lena_followup_and_data %>% 
+  filter(day == 1) 
+```"

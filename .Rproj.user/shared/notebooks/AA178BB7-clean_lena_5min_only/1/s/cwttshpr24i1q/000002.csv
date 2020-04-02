@@ -1,0 +1,12 @@
+"0","```r
+lena_time <- 
+  lena_5min %>% 
+  group_by(ID) %>% 
+  mutate(
+    time_hours = hour(time_record) + minute(time_record) / 60,
+    duration = as.numeric(
+      as.duration(hms(as.numeric(Duration))),
+      \"hours\"
+    )
+  ) 
+```"

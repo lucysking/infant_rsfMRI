@@ -1,0 +1,4 @@
+"0","```r
+lena_5min_cl %>%
+  filter(day == 1 & age > 8)
+```"

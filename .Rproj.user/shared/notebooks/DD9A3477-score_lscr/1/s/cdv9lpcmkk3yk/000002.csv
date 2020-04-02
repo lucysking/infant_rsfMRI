@@ -1,0 +1,8 @@
+"0","```r
+lg_data_lifetime <-
+  lg_data_wf %>% 
+  select(ID, max_sev, max_sub_sev) %>% 
+  left_join(lg_data_num_types, by = \"ID\") %>% 
+  left_join(lg_data_sum_sev, by = \"ID\") %>% 
+  left_join(lg_data_sum_sub_sev, by = \"ID\")
+```"

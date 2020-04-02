@@ -1,0 +1,5 @@
+"0","```r
+all_data %>% 
+  ggplot(aes(sum_sev_post)) +
+  geom_histogram(binwidth = .5)
+```"

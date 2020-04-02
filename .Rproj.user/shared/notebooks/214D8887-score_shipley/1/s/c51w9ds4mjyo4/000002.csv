@@ -1,0 +1,6 @@
+"0","write_csv(shipley_scored, ""~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/shipley_6mo_final_20200208.csv)
+"
+"2","Error: unexpected '/' in:
+""write_csv(""~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/shipley/shipley_6mo_final_20200208.csv)
+write_csv(shipley_scored, ""~/""
+"

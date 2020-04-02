@@ -1,0 +1,8 @@
+"0","```r
+lg_data_post <-
+  lg_data_t3 %>% 
+  select(
+    ID,
+    num_types_post:max_sub_sev_post
+  )
+```"

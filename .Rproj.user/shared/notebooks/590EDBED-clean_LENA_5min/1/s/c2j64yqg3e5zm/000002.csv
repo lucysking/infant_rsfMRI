@@ -1,0 +1,79 @@
+"0","lena_5min_sp <-"
+"0","  read_csv(lena_5min_file_2) %>% "
+"0","  mutate("
+"0","    ExternalReferenceID = as.integer(ExternalReferenceID),"
+"0","    Recording_DOB = as.character(Recording_DOB),"
+"0","    StartTime = as.character(StartTime)"
+"0","  ) %>% "
+"0","  select("
+"0","    ExternalReferenceID,"
+"0","    Recording_DOB,"
+"0","    StartTime,"
+"0","    Duration_Secs,"
+"0","    AWC_COUNT,"
+"0","    CT_COUNT,"
+"0","    CV_COUNT,"
+"0","    Recording_Gender,"
+"0","    Meaningful,"
+"0","    Distant, "
+"0","    TV_Elec,"
+"0","    Overlap,"
+"0","    Noise,"
+"0","    Silence"
+"0","  ) %>% "
+"0","  mutate("
+"0","    ID = ExternalReferenceID,"
+"0","    dob = Recording_DOB,"
+"0","    AWC.Actual = AWC_COUNT,"
+"0","    CTC.Actual = CT_COUNT,"
+"0","    CVC.Actual = CV_COUNT,"
+"0","    Sex = Recording_Gender,"
+"0","    Duration = as.hms(Duration_Secs),"
+"0","    Meaningful = as.hms(Meaningful),"
+"0","    Distant = as.hms(Distant),"
+"0","    TV = as.hms(TV_Elec),"
+"0","    Overlap = as.hms(Overlap),"
+"0","    Noise = as.hms(Noise),"
+"0","    Silence = as.hms(Silence),"
+"0","    Timestamp = StartTime"
+"0","  ) %>% "
+"0","  select("
+"0","    -ExternalReferenceID,"
+"0","    -Recording_DOB,"
+"0","    -Recording_Gender,"
+"0","    -CT_COUNT,"
+"0","    -CV_COUNT,"
+"0","    -AWC_COUNT,"
+"0","    -Duration_Secs"
+"0","  ) %>% "
+"0","  mutate("
+"0","    Timestamp = str_replace(Timestamp, "" \\(America/Los_Angeles\\)"", """"),"
+"0","    time_record = parse_date_time(Timestamp, ""mdy HMS p!"")"
+"0","  ) %>% "
+"0","  select("
+"0","    -Timestamp"
+"0","  )"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  ChildKey = [31mcol_character()[39m,
+  RecordingDate = [31mcol_character()[39m,
+  StartTime = [31mcol_character()[39m,
+  EndTime = [31mcol_character()[39m,
+  IT_Secs = [33mcol_logical()[39m,
+  Non_Meaningful = [33mcol_logical()[39m,
+  ProgramType = [31mcol_character()[39m,
+  Recording_DOB = [31mcol_character()[39m,
+  Recording_Gender = [31mcol_character()[39m,
+  HiddenRec = [33mcol_logical()[39m,
+  ExcludeFromAnalysis = [33mcol_logical()[39m,
+  FilteredRec = [33mcol_logical()[39m,
+  ErrorCodes = [33mcol_logical()[39m,
+  ITS_File_Name = [31mcol_character()[39m,
+  DatabaseInsertDateTime = [31mcol_character()[39m,
+  RecorderTransferDateTime = [31mcol_character()[39m,
+  Timezone = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"

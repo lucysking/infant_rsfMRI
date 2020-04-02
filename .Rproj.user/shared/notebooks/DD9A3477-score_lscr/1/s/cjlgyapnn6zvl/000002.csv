@@ -1,0 +1,13 @@
+"0","```r
+preg_exp_vars <- 
+  cs_data %>% 
+  select(contains(\"preg\")) %>% 
+  names()
+calc_stage_sev <- function(stage_exp, sev) { #pregnancy
+  case_when(
+    stage_exp == 1 ~ sev,
+    stage_exp == 0 ~ NA_real_,
+    is.na(stage_exp) ~ NA_real_
+  )
+}
+```"

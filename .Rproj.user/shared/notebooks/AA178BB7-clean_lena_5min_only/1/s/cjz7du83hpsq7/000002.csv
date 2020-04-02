@@ -1,0 +1,8 @@
+"0","```r
+lena_5min_cl <-
+  lena_5min_cl %>% 
+  filter(
+    (age >= 5 & age <= 8),
+    duration >= 8
+  ) 
+```"

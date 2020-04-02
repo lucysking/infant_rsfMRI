@@ -1,0 +1,95 @@
+"0","crisys <-"
+"0","  read_csv(crisys_preg_file) %>% "
+"0","  rename(ID = record_id) %>% "
+"0","  mutate(ID = as.integer(ID)) %>% "
+"0","  select(-redcap_survey_identifier:-crisys_timestamp) %>% "
+"0","  bind_rows("
+"0","    read_csv(crisys_nb_cs_file) %>% "
+"0","      rename(ID = record_id) %>% "
+"0","      mutate(ID = as.integer(ID)) %>% "
+"0","      select(-redcap_survey_identifier:-crisys_timestamp)"
+"0","  ) %>% "
+"0","  bind_rows("
+"0","    read_csv(crisys_6mo_cs_file) %>% "
+"0","      rename(ID = record_id) %>% "
+"0","      mutate(ID = as.integer(ID)) %>% "
+"0","      select(-redcap_survey_identifier:-crisys_timestamp) "
+"0","  ) %>% "
+"0","  bind_rows("
+"0","    read_csv(crisys_6mo_lg_file) %>% "
+"0","      rename(ID = record_id) %>% "
+"0","      mutate(ID = as.integer(ID)) %>% "
+"0","      select(-redcap_survey_identifier:-crisys_timestamp)"
+"0","  ) %>% "
+"0","  filter(!is.na(crisys_1)) %>% "
+"0","  mutate("
+"0","    n_crisys = pmap_dbl("
+"0","        select(., c(crisys_1:crisys_72)),"
+"0","        function(...) sum(!is.na(c(...)), na.rm = TRUE)"
+"0","      ), "
+"0","    crisys_total = as.double("
+"0","      pmap_dbl("
+"0","        select(., c(crisys_1:crisys_72)),"
+"0","        function(...) mean(c(...), na.rm = TRUE)"
+"0","      ) * 72"
+"0","    ) "
+"0","  ) %>% "
+"0","  rename("
+"0","    timepoint = redcap_event_name"
+"0","  ) %>% "
+"0","  mutate("
+"0","    timepoint = if_else("
+"0","      timepoint == ""questionnaires_6mo_arm_1"","
+"0","      ""sixmonth_arm_1"", timepoint"
+"0","    ),"
+"0","    timepoint = str_remove(timepoint, ""_arm_1"")"
+"0","  )"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  crisys_timestamp = [34mcol_datetime(format = """")[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  crisys_timestamp = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  record_id = [31mcol_character()[39m,
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  crisys_timestamp = [34mcol_datetime(format = """")[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","NAs introduced by coercion"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  crisys_timestamp = [34mcol_datetime(format = """")[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","crisys <- "
+"0","  crisys %>% "
+"0","  group_by(timepoint) %>% "
+"0","  mutate("
+"0","    crisys_win = winsorize(crisys_total, product = 3)"
+"0","  ) %>% "
+"0","  ungroup()"

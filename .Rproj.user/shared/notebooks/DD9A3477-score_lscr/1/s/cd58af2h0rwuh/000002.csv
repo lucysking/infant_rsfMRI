@@ -1,0 +1,15 @@
+"0","```r
+lg_data <-
+  lg_data_lifetime %>% 
+  left_join(
+    lg_data_t1 %>% 
+      select(
+        ID,
+        num_types_prec:max_sub_sev_prec,
+        num_types_child:max_sub_sev_child
+      ),
+    by = \"ID\"
+  ) %>% 
+  left_join(lg_data_preg, by = \"ID\") %>% 
+  left_join(lg_data_post, by = \"ID\") 
+```"

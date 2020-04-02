@@ -1,0 +1,6 @@
+"0","nb_ids <-"
+"0","  demo_lg %>% "
+"0","  filter(!is.na(scan_date_t2)) %>% "
+"0","  select(ID)"
+"0","demo_lg %>% "
+"0","  filter(is.na(scan_date_t2))"

@@ -1,0 +1,6 @@
+"0","```r
+post_exp_vars <-
+  cs_data %>% 
+  select(contains(\"post\")) %>% 
+  names()
+```"

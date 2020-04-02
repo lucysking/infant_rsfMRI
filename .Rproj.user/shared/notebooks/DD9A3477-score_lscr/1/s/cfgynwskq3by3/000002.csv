@@ -1,0 +1,705 @@
+"0","```r
+glimpse(cs_data)
+
+```"
+"1","Observations: 96
+Variables: 698
+$ ID                       [3m[38;5;246m<dbl>[39m[23m 1, 2, 7, 9, 10, 12, 14, 16, 18, 19, 20, 21, 23, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 38, 39…
+$ lscr_disas               [3m[38;5;246m<int>[39m[23m 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1,…
+$ lscr_disas_age           [3m[38;5;246m<dbl>[39m[23m 13, NA, NA, 13, NA, NA, NA, NA, 10, NA, NA, 7, NA, 9, NA, 20, NA, NA, 23, NA, NA, 10, 9, NA, NA, N…
+$ lscr_disas_age_off       [3m[38;5;246m<dbl>[39m[23m 13, NA, NA, 13, NA, NA, NA, NA, 10, NA, NA, 7, NA, 9, NA, 20, NA, NA, 23, NA, NA, 10, 9, NA, NA, N…
+$ lscr_disas_preg          [3m[38;5;246m<int>[39m[23m 0, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, NA, 0, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA, 0, …
+$ lscr_disas_sev           [3m[38;5;246m<dbl>[39m[23m 3, NA, NA, 1, NA, NA, NA, NA, 3, NA, NA, 4, NA, 2, NA, 3, NA, NA, 2, NA, NA, 4, 3, NA, NA, NA, 2, …
+$ lscr_disas_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, NA, 0, NA, 0, NA, NA, 0, NA, NA, 0, 1, NA, NA, NA, 0,…
+$ lscr_notes               [3m[38;5;246m<chr>[39m[23m \"In El Salvador in 2001. 2 big earthquakes, one in January, one in February. Lots of death and des…
+$ sev_kh_disas             [3m[38;5;246m<dbl>[39m[23m 3.0, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, 2.5, NA, 2.5, NA, 1.0, NA, NA, 1.0, NA, NA, 1.0, 2.5…
+$ sev_lk_disas             [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, 2.5, NA, 2.5, NA, 1.0, NA, NA, 1.0, NA, NA, 1.0, 2.5…
+$ sev_ls_disas             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_disas            [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, 2.5, NA, 2.5, NA, 1.0, NA, NA, 1.0, NA, NA, 1.0, 2.5…
+$ lscr_witacc              [3m[38;5;246m<int>[39m[23m 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0,…
+$ lscr_witacc_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 28, NA, 28, 8, NA, 17, NA, NA, 29, NA, NA, NA, 22, 19, 28, NA, 33, NA, NA, 21, NA, NA,…
+$ lscr_witacc_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 28, NA, 28, 8, NA, 17, NA, NA, 29, NA, NA, NA, 22, 19, 28, NA, 33, NA, NA, 21, NA, NA,…
+$ lscr_witacc_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, 0, 0, NA, 0, NA, NA, 0, NA, NA, NA, 0, 0, 0, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA…
+$ lscr_witacc_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 2, NA, 3, 2, NA, 3, NA, NA, 2, NA, NA, NA, 3, 1, 2, NA, 3, NA, NA, 4, NA, NA, 2, 1, NA…
+$ lscr_witacc_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 0, NA, 0, 0, NA, 0, NA, NA, 0, NA, NA, NA, 0, 0, 0, NA, 1, NA, NA, 1, NA, NA, 0, 0, NA…
+$ lscr_witacc_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, \"drive by shooting\", NA, \"Hit by a car crossing the street. Went to the hospital. Bump…
+$ sev_kh_witacc            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3.0, NA, 2.0, 2.0, NA, 1.5, NA, NA, 1.5, NA, NA, NA, 3.5, 1.0, 2.0, NA, 2.5, NA, NA, 3…
+$ sev_lk_witacc            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3.0, NA, 1.5, 2.0, NA, 2.0, NA, NA, 1.5, NA, NA, NA, 3.5, 1.0, 2.0, NA, 2.5, NA, NA, 3…
+$ sev_ls_witacc            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_witacc           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3.0, NA, 1.5, 2.0, NA, 1.5, NA, NA, 1.5, NA, NA, NA, 3.5, 1.0, 2.0, NA, 2.5, NA, NA, 3…
+$ lscr_acc                 [3m[38;5;246m<int>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, 1, 1, NA, NA, NA, 1, NA, NA, NA, …
+$ lscr_acc_age             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 17, NA, NA, NA, NA, NA, 19, NA, NA, NA, NA, 19, NA, NA, 34, 9, NA, NA, NA, 19, NA, NA,…
+$ lscr_acc_age_off         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 17, NA, NA, NA, NA, NA, 19, NA, NA, NA, NA, 19, NA, NA, 34, 9, NA, NA, NA, 19, NA, NA,…
+$ lscr_acc_preg            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA, 0, NA, NA, NA, …
+$ lscr_acc_sev             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, 2, NA, NA, 3, 3, NA, NA, NA, 3, NA, NA, NA, …
+$ lscr_acc_intp            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 1, NA, NA, 0, 0, NA, NA, NA, 1, NA, NA, NA, …
+$ lscr_acc_notes           [3m[38;5;246m<chr>[39m[23m NA, NA, NA, \"Picked up friend, got side-swiped by a drunk driver. Hit front of car, friend didn't …
+$ sev_kh_acc               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1.5, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, 2.0, NA, NA, 2.5, 2.5, NA, NA, NA, 2.0, …
+$ sev_lk_acc               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1.5, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, 1.5, NA, NA, 2.0, 2.5, NA, NA, NA, 2.0, …
+$ sev_ls_acc               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_acc              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1.5, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, 1.5, NA, NA, 2.5, 2.5, NA, NA, NA, 2.0, …
+$ lscr_famjail             [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,…
+$ lscr_famjail_age         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 14, NA, NA, NA, NA, 11, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 15, NA, NA…
+$ lscr_famjail_age_off     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 14, NA, NA, NA, NA, 11, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 15, NA, NA…
+$ lscr_famjail_preg        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, N…
+$ lscr_famjail_sev         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, N…
+$ lscr_famjail_intp        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, N…
+$ lscr_famjail_notes       [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, \"Mom sent to jail when she was 14 bc didn't follow a court order to see a …
+$ sev_kh_famjail           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA,…
+$ sev_lk_famjail           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, NA, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA,…
+$ sev_ls_famjail           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_famjail          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.0, NA,…
+$ lscr_jail                [3m[38;5;246m<int>[39m[23m 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ lscr_jail_age            [3m[38;5;246m<dbl>[39m[23m NA, NA, 24, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_jail_age_off        [3m[38;5;246m<dbl>[39m[23m NA, NA, 30, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_jail_preg           [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_jail_sev            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_jail_intp           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_jail_notes          [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_kh_jail              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_lk_jail              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_ls_jail              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_jail             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_adopt               [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,…
+$ lscr_adopt_age           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 7.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_adopt_age_off       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 7, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_preg          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_sev           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_notes         [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, \"Put into foster care. In foster care for two weeks. Abuse. Physical, to her. Whol…
+$ sev_kh_adopt             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_lk_adopt             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_ls_adopt             [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_adopt            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_pardivorce          [3m[38;5;246m<int>[39m[23m 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0,…
+$ lscr_pardivorce_age      [3m[38;5;246m<dbl>[39m[23m 4, 16, NA, 21, NA, NA, 2, 10, NA, 16, 4, 23, NA, NA, NA, NA, NA, NA, NA, 11, NA, NA, NA, NA, 6, NA…
+$ lscr_pardivorce_age_off  [3m[38;5;246m<dbl>[39m[23m 4, 16, NA, 22, NA, NA, 2, 10, NA, 16, 4, 23, NA, NA, NA, NA, NA, NA, NA, 11, NA, NA, NA, NA, 6, NA…
+$ lscr_pardivorce_preg     [3m[38;5;246m<int>[39m[23m 0, 0, NA, 0, NA, NA, 0, 0, NA, 0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, …
+$ lscr_pardivorce_sev      [3m[38;5;246m<dbl>[39m[23m 1, 2, NA, 2, NA, NA, 3, 1, NA, 2, 2, 4, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 4, NA, NA, …
+$ lscr_pardivorce_into     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 0, NA, NA, 1, 0, NA, 0, 0, 1, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA…
+$ lscr_pardivorce_notes    [3m[38;5;246m<chr>[39m[23m \"Didn't really know what was going on at the time, but heard about her dad's affairs later.\", NA, …
+$ sev_kh_pardivorce        [3m[38;5;246m<dbl>[39m[23m 3.0, NA, NA, 3.5, NA, NA, 3.5, 3.5, NA, 3.5, 3.5, 3.5, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA…
+$ sev_lk_pardivorce        [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 3.5, NA, NA, 3.5, 3.5, NA, 3.5, 3.5, 3.5, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA…
+$ sev_ls_pardivorce        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_pardivorce       [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, 3.5, NA, NA, 3.5, 3.5, NA, 3.6, 3.5, 3.5, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA…
+$ lscr_divorce             [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ lscr_divorce_age         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_divorce_age_off     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_divorce_preg        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_divorce_sev         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_divorce_into        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_divorce_notes       [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_kh_divorce           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_lk_divorce           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_ls_divorce           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_divorce          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_money               [3m[38;5;246m<int>[39m[23m 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ lscr_money_age           [3m[38;5;246m<dbl>[39m[23m 23, 18, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 20, NA, NA…
+$ lscr_money_age_off       [3m[38;5;246m<dbl>[39m[23m 24, 19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 21, NA, NA…
+$ lscr_money_preg          [3m[38;5;246m<int>[39m[23m 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, N…
+$ lscr_money_sev           [3m[38;5;246m<dbl>[39m[23m 3, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, N…
+$ lscr_money_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA,…
+$ lscr_money_notes         [3m[38;5;246m<chr>[39m[23m \"When she went back to El Salvador, she didn't have money and had to ask her grandmother if she co…
+$ sev_kh_money             [3m[38;5;246m<dbl>[39m[23m 2.0, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA,…
+$ sev_lk_money             [3m[38;5;246m<dbl>[39m[23m 2.0, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA,…
+$ sev_ls_money             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_money            [3m[38;5;246m<dbl>[39m[23m 2.0, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA,…
+$ lscr_ill                 [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,…
+$ lscr_ill_age             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 18, NA, NA, NA, NA, NA, 23, NA, NA, NA, 14, NA, NA, 20, NA, 16, 22, NA, NA, NA, NA, NA…
+$ lscr_ill_age_off         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 18, NA, NA, NA, NA, NA, 23, NA, NA, NA, 35, NA, NA, 20, NA, 16, 22, NA, NA, NA, NA, NA…
+$ lscr_ill_preg            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, 0, NA, 0, 0, NA, NA, NA, NA, NA, NA, …
+$ lscr_ill_sev             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, 3, NA, NA, 4, NA, 4, 4, NA, NA, NA, NA, NA, NA, …
+$ lscr_ill_intp            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, 1, NA, NA, 1, NA, 1, 1, NA, NA, NA, NA, NA, NA, …
+$ lscr_ill_notes           [3m[38;5;246m<chr>[39m[23m NA, NA, NA, \"Felt suicidal in college.\", NA, NA, NA, NA, NA, \"Most depressed, worst time of life.\"…
+$ sev_kh_ill               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_lk_ill               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_ls_ill               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_ill              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_emoab               [3m[38;5;246m<int>[39m[23m 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ lscr_emoab_age           [3m[38;5;246m<dbl>[39m[23m NA, NA, 11, 0, 5, NA, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, 13, 25, NA, 0, 0, 4, NA, N…
+$ lscr_emoab_age_off       [3m[38;5;246m<dbl>[39m[23m NA, NA, 11, 40, 34, NA, NA, NA, NA, NA, NA, 20, NA, 18, NA, NA, NA, NA, NA, 18, 25, NA, 38, 38, 29…
+$ lscr_emoab_preg          [3m[38;5;246m<int>[39m[23m NA, NA, 0, 1, 0, NA, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, 0, 0, NA, 1, 0, NA, NA, NA,…
+$ lscr_emoab_sev           [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, 4, 4, NA, NA, NA, NA, NA, NA, 3, NA, 3, NA, NA, NA, NA, NA, 4, 3, NA, 4, 4, 3, NA, NA, …
+$ lscr_emoab_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, 1, NA, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, 1, 1, NA, 1, 1, 1, NA, NA,…
+$ lscr_emoab_notes         [3m[38;5;246m<chr>[39m[23m NA, NA, \"Bullied in MS. Life shaping for her self/identity. Verbal teasing during entire school ye…
+$ sev_kh_emoab             [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 4.5, 4.5, NA, NA, NA, NA, NA, NA, 4.5, NA, 4.0, NA, NA, NA, NA, NA, 3.5, 3.0, NA, 4.5…
+$ sev_lk_emoab             [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 4.0, 4.5, NA, NA, NA, NA, NA, NA, 4.5, NA, 4.5, NA, NA, NA, NA, NA, 4.0, 3.0, NA, 4.5…
+$ sev_ls_emoab             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_emoab            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 4.5, 4.5, NA, NA, NA, NA, NA, NA, 4.5, NA, 4.0, NA, NA, NA, NA, NA, 4.0, 3.0, NA, 4.5…
+$ lscr_emoab_type          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_physneg             [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_physneg_age         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 9, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physneg_age_off     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 9, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physneg_preg        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physneg_sev         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physneg_intp        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physneg_notes       [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, \"Parents moved back to Taiwan, lived with brother and babysitter. Brother was 10. …
+$ sev_kh_physneg           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_lk_physneg           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_ls_physneg           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_physneg          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_abort               [3m[38;5;246m<int>[39m[23m 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,…
+$ lscr_abort_age           [3m[38;5;246m<dbl>[39m[23m NA, NA, 37, 34, NA, NA, NA, NA, NA, 23, NA, 37, NA, NA, NA, NA, NA, 33, NA, 30, NA, NA, NA, NA, 18…
+$ lscr_abort_age_off       [3m[38;5;246m<dbl>[39m[23m NA, NA, 38, 34, NA, NA, NA, NA, NA, 23, NA, 37, NA, NA, NA, NA, NA, 37, NA, 31, NA, NA, NA, NA, 44…
+$ lscr_abort_preg          [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, 0…
+$ lscr_abort_sev           [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, 4, NA, NA, NA, NA, NA, 4, NA, 2, NA, NA, NA, NA, NA, 4, NA, 4, NA, NA, NA, NA, NA, 2, N…
+$ lscr_abort_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, 0, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, 1, 0, N…
+$ lscr_abort_notes         [3m[38;5;246m<chr>[39m[23m NA, NA, \"Severe for both, different reasons.\", \"Abortion\", NA, NA, NA, NA, NA, \"Felt like she hate…
+$ sev_kh_abort             [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, …
+$ sev_lk_abort             [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, …
+$ sev_ls_abort             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_abort            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, …
+$ lscr_sepchild            [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ lscr_sepchild_age        [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_sepchild_age_off    [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_sepchild_preg       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_sepchild_sev        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_sepchild_intp       [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_sepchild_notes      [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_kh_sepchild          [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_lk_sepchild          [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_ls_sepchild          [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_sepchild         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_care                [3m[38;5;246m<int>[39m[23m 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,…
+$ lscr_care_age            [3m[38;5;246m<dbl>[39m[23m NA, NA, 40, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 27, NA, NA, NA, NA, NA…
+$ lscr_care_age_off        [3m[38;5;246m<dbl>[39m[23m NA, NA, 40, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 27, NA, NA, NA, NA, NA…
+$ lscr_care_preg           [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, …
+$ lscr_care_sev            [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, …
+$ lscr_care_intp           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA,…
+$ lscr_care_notes          [3m[38;5;246m<chr>[39m[23m NA, NA, \"2 years ago after her mom died. He was living alone, needed a lot of care, had to look af…
+$ sev_kh_care              [3m[38;5;246m<chr>[39m[23m NA, NA, \"2\", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"2\", NA, NA, NA, NA, …
+$ sev_lk_care              [3m[38;5;246m<dbl>[39m[23m NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, …
+$ sev_ls_care              [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_care             [3m[38;5;246m<dbl>[39m[23m NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, …
+$ lscr_death1              [3m[38;5;246m<int>[39m[23m 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0,…
+$ lscr_death1_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, 39, NA, NA, NA, 35, NA, NA, NA, 34, NA, 22, 14, NA, NA, 10, NA, NA, 32, NA, NA, 38, 33, NA…
+$ lscr_death1_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, 39, NA, NA, NA, 35, NA, NA, NA, 34, NA, 22, 14, NA, NA, 34, NA, NA, 32, NA, NA, 38, 33, NA…
+$ lscr_death1_preg         [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, 1, NA, 0, 0, NA, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA,…
+$ lscr_death1_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, 4, NA, NA, NA, 3, NA, 4, 3, NA, NA, 2, NA, NA, 3, NA, NA, 4, 3, NA, NA, NA,…
+$ lscr_death1_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, 0, NA, 1, 0, NA, NA, 0, NA, NA, 1, NA, NA, 1, 0, NA, NA, NA…
+$ lscr_death1_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, \"Mother, heart problems. Operation.\", NA, NA, NA, \"Very sudden, unexpected, 2 months post …
+$ sev_kh_death1            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, NA, NA, NA, 3.5, NA, NA, NA, 2.5, NA, 3.5, 3.0, NA, NA, 3.5, NA, NA, 3.5, NA, NA, 2.5…
+$ sev_lk_death1            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, NA, NA, NA, 3.5, NA, NA, NA, 2.5, NA, 3.5, 3.5, NA, NA, 3.5, NA, NA, 3.5, NA, NA, 2.5…
+$ sev_ls_death1            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_death1           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, NA, NA, NA, 3.5, NA, NA, NA, 2.5, NA, 3.5, 3.5, NA, NA, 3.5, NA, NA, 3.5, NA, NA, 2.5…
+$ lscr_death2              [3m[38;5;246m<int>[39m[23m 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0,…
+$ lscr_death2_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, 30, 20, NA, NA, 32, 15, 33, 19, NA, 21, 8, 33, 9, 33, 35, 9, NA, NA, 25, 25, 34, 29, NA, 3…
+$ lscr_death2_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, 30, 22, NA, NA, 32, 15, 33, 19, NA, 27, 16, 34, 16, 33, 35, 9, NA, NA, 25, 25, 34, 29, NA,…
+$ lscr_death2_preg         [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, NA, NA, 0, 0, 0, 0, NA, 0, 0, 1, NA, 0, 0, 0, NA, NA, 0, 0, 0, 0, NA, 0, 0, NA, NA, …
+$ lscr_death2_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, 3, 4, NA, NA, 4, 2, 3, 2, NA, 2, 2, 4, 2, 3, 2, 3, NA, NA, 2, 3, 4, 4, NA, 3, 4, 3, NA, NA…
+$ lscr_death2_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, NA, NA, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0, NA, NA, 0, 1, 1, 0, NA, 0, 0, 0, NA, N…
+$ lscr_death2_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, \"Friend died from cancer.\", \"20- Uncle  22- Grandfather    Both 3's\", NA, NA, \"Maternal gr…
+$ sev_kh_death2            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, 2.5, NA, NA, 1.0, 1.0, 1.0, 1.0, NA, 1.0, 1.5, 2.5, 2.5, 1.0, 1.0, 1.0, NA, NA, 1.5, …
+$ sev_lk_death2            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, 3.0, NA, NA, 1.0, 1.5, 1.0, 1.0, NA, 1.0, 1.5, 2.5, 2.5, 1.0, 1.0, 1.0, NA, NA, 1.5, …
+$ sev_ls_death2            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_death2           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, 2.5, NA, NA, 1.0, 1.0, 1.0, 1.0, NA, 1.0, 1.5, 2.5, 2.5, 1.0, 1.0, 1.0, NA, NA, 1.5, …
+$ lscr_famviol             [3m[38;5;246m<int>[39m[23m 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1,…
+$ lscr_famviol_age         [3m[38;5;246m<dbl>[39m[23m 15, NA, NA, 6, NA, NA, 10, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 12, NA, NA, 11, NA,…
+$ lscr_famviol_age_off     [3m[38;5;246m<dbl>[39m[23m 16, NA, NA, 10, NA, NA, 10, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 15, NA, NA, 11, NA…
+$ lscr_famviol_preg        [3m[38;5;246m<int>[39m[23m 0, NA, NA, 0, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 0, NA, NA,…
+$ lscr_famviol_sev         [3m[38;5;246m<dbl>[39m[23m 2, NA, NA, 4, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, 4, NA, NA,…
+$ lscr_famviol_intp        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 1, NA, NA…
+$ lscr_famviol_notes       [3m[38;5;246m<chr>[39m[23m \"Her dad would hit her half brothers. He left bruises and marks. It worried her and made her reall…
+$ sev_kh_famviol           [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 4.5, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, NA, 4.…
+$ sev_lk_famviol           [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 4.0, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, NA, 3.…
+$ sev_ls_famviol           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_famviol          [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 4.5, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, NA, 4.…
+$ lscr_witmug              [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1…
+$ lscr_witmug_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 20, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5, NA,…
+$ lscr_witmug_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 20, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5, NA,…
+$ lscr_witmug_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_witmug_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, …
+$ lscr_witmug_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA,…
+$ lscr_witmug_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"Mexico City. Watch robbers on roof.\", NA, NA, NA, NA,…
+$ sev_kh_witmug            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.0,…
+$ sev_lk_witmug            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.0,…
+$ sev_ls_witmug            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_witmug           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.0,…
+$ lscr_mug                 [3m[38;5;246m<int>[39m[23m 0, 0, 1, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1…
+$ lscr_mug_age             [3m[38;5;246m<dbl>[39m[23m NA, NA, 25, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 27, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_mug_age_off         [3m[38;5;246m<dbl>[39m[23m NA, NA, 25, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 27, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_mug_preg            [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_mug_sev             [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_mug_intp            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_mug_notes           [3m[38;5;246m<chr>[39m[23m NA, NA, \"More than once. Described the worst incident. She was pistol whipped with a gun in Mexico…
+$ sev_kh_mug               [3m[38;5;246m<dbl>[39m[23m NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_lk_mug               [3m[38;5;246m<dbl>[39m[23m NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_ls_mug               [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_mug              [3m[38;5;246m<dbl>[39m[23m NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physab              [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_physab_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_physab_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 12, NA,…
+$ lscr_physab_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_physab_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, …
+$ lscr_physab_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_physab_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, \"Both parents. A few times a month. Left mark or bruise, never broke bones, need s…
+$ sev_kh_physab            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, …
+$ sev_lk_physab            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, …
+$ sev_ls_physab            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_physab           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, …
+$ lscr_domviol             [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_domviol_age         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 18, NA, NA, NA, 19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_domviol_age_off     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 18, NA, NA, NA, 19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_domviol_preg        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_domviol_sev         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_domviol_intp        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_domviol_notes       [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, \"Boyfriend came at her with a 2 x 4, and cracked car window. Never…
+$ sev_kh_domviol           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_lk_domviol           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_ls_domviol           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_domviol          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_sexharas            [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0…
+$ lscr_sexharas_age        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 32, NA, NA, NA, NA, NA, NA, NA, 26, NA, NA, 33, NA, NA, 20, 29, NA…
+$ lscr_sexharas_age_off    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 32, NA, NA, NA, NA, NA, NA, NA, 26, NA, NA, 33, NA, NA, 20, 29, NA…
+$ lscr_sexharas_preg       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 1, NA, NA, 0, 0, NA, 0, …
+$ lscr_sexharas_sev        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, 2, NA, NA, 4, 3, NA, 3, …
+$ lscr_sexharas_intp       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, 0, NA, NA, 1, 1, NA, 1, …
+$ lscr_sexharas_notes      [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, \"Boss was creepy, would say 'hey seniorita', try to position himse…
+$ sev_kh_sexharas          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, 3.0, 3.0, NA, NA, 3.0, 2…
+$ sev_lk_sexharas          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, 3.0, 3.0, NA, NA, 3.0, 2…
+$ sev_ls_sexharas          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_sexharas         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, 3.0, 3.0, NA, NA, 3.0, 2…
+$ lscr_sextouch1           [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_sextouch1_age       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 8, NA, NA, NA, NA, 11, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_sextouch1_age_off   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 8, NA, NA, NA, NA, 11, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_sextouch1_preg      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch1_sev       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, 3, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch1_intp      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch1_notes     [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, \"8-14 years. Happening to all kids (3). Unclear if mom was aware. CPS beca…
+$ sev_kh_sextouch1         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, 3.5, NA, 4.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_lk_sextouch1         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, 4.0, NA, 4.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_ls_sextouch1         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_sextouch1        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, 4.0, NA, 4.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_sextouch2           [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ lscr_sextouch2_age       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 17, NA, NA, NA, NA, NA, NA…
+$ lscr_sextouch2_age_off   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 22, NA, NA, NA, NA, NA, NA…
+$ lscr_sextouch2_preg      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA,…
+$ lscr_sextouch2_sev       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA,…
+$ lscr_sextouch2_intp      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA,…
+$ lscr_sextouch2_notes     [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"At school, was 17. Had a …
+$ sev_kh_sextouch2         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA,…
+$ sev_lk_sextouch2         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, N…
+$ sev_ls_sextouch2         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_sextouch2        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA,…
+$ lscr_rape1               [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, NA, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ lscr_rape1_age           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 14, NA, NA, NA, NA, NA, 19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_rape1_age_off       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 14, NA, NA, NA, NA, NA, 19, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_rape1_preg          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape1_sev           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_rape1_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape1_notes         [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, \"Happened one time.\", NA, NA, NA, NA, NA, \"College boyfriend who pressured…
+$ sev_kh_rape1             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_lk_rape1             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_ls_rape1             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_rape1            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape2               [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_rape2_age           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 18, NA, NA, NA, NA, NA, NA, NA, NA, NA, 22, NA, NA, NA, 18, NA, 27…
+$ lscr_rape2_age_off       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 18, NA, NA, NA, NA, NA, NA, NA, NA, NA, 22, NA, NA, NA, 18, NA, 27…
+$ lscr_rape2_preg          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, 0, N…
+$ lscr_rape2_sev           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, 2, N…
+$ lscr_rape2_intp          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, 0, N…
+$ lscr_rape2_notes         [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, \"Making out in a car, tried to do more. Tried to penetrate her. To…
+$ sev_kh_rape2             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, 5.0, NA,…
+$ sev_lk_rape2             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, 5.0, NA,…
+$ sev_ls_rape2             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_rape2            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, 5.0, NA,…
+$ lscr_other1              [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, NA, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, …
+$ lscr_other1_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 26, 32, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other1_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 26, 32, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other1_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other1_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other1_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other1_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \"Moving to California from Texas. They didn't know…
+$ sev_kh_other1            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_lk_other1            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.0, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_ls_other1            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_other1           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other2              [3m[38;5;246m<int>[39m[23m 0, 0, 0, NA, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ lscr_other2_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 20, NA, 36, 25, 24, 24, NA, NA, NA, NA, NA, NA, NA, 20, 37, NA…
+$ lscr_other2_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 25, NA, 36, 25, 24, 24, NA, NA, NA, NA, NA, NA, NA, 20, 37, NA…
+$ lscr_other2_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, 0, 0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0, 1, NA, NA, N…
+$ lscr_other2_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, 3, 3, 4, 2, NA, NA, NA, NA, NA, NA, NA, 4, 4, NA, NA, N…
+$ lscr_other2_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, 1, 1, 0, 1, NA, NA, NA, NA, NA, NA, NA, 1, 0, NA, NA, N…
+$ lscr_other2_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, \"Best friend in a domestic abuse situation.\", NA, \"Friend was …
+$ sev_kh_other2            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, 2.5, NA, 2.0, 3.0, 3.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 1.0,…
+$ sev_lk_other2            [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, 2.5, NA, 2.5, 3.0, 3.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 2.0,…
+$ sev_ls_other2            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_other2           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, 2.5, NA, 2.5, 3.0, 3.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 1.5,…
+$ lscr_other3              [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_age          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_age_off      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_preg         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_sev          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_intp         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_other3_notes        [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_kh_other3            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_lk_other3            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_ls_other3            [3m[38;5;246m<lgl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_con_other3           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ timepoint                [3m[38;5;246m<chr>[39m[23m \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\", \"CX 6mo\"…
+$ sev_con_disaster         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_complete            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ date_phonescr            [3m[38;5;246m<chr>[39m[23m \"5/7/16\", \"5/9/16\", \"7/5/16\", \"7/18/16\", \"7/19/16\", \"7/22/16\", \"7/26/16\", \"7/25/16\", \"7/28/16\", \"8…
+$ mom_dob                  [3m[38;5;246m<dttm>[39m[23m 1988-04-08, 1986-10-14, 1975-04-22, 1976-06-25, 1982-06-19, 1984-10-19, 1981-01-09, 1986-06-14, 1…
+$ baby_dob                 [3m[38;5;246m<dttm>[39m[23m 2016-01-27, 2015-12-22, 2016-02-18, 2016-02-14, 2016-02-08, 2016-01-26, 2016-03-16, 2016-03-28, 2…
+$ baby_due_date            [3m[38;5;246m<dttm>[39m[23m 2016-01-26, 2016-01-06, 2016-02-09, 2016-02-05, 2016-02-16, 2016-02-06, 2016-03-23, 2016-04-08, 2…
+$ visit_date               [3m[38;5;246m<dttm>[39m[23m 2016-05-09, 2016-05-17, 2016-07-20, 2016-08-17, 2016-08-12, 2016-08-08, 2016-09-28, 2016-10-14, 2…
+$ num_types                [3m[38;5;246m<int>[39m[23m 4, 2, 7, 8, 4, 1, 8, 2, 7, 5, 2, 10, 6, 7, 3, 4, 4, 4, 5, 7, 3, 2, 11, 8, 4, 4, 6, 3, 0, 4, 10, 7,…
+$ sum_sev                  [3m[38;5;246m<dbl>[39m[23m 13.0, 2.0, 26.0, 22.5, 18.0, 1.5, 28.0, 4.5, 19.5, 11.6, 6.0, 25.5, 14.5, 23.0, 5.0, 8.0, 8.5, 8.5…
+$ max_sev                  [3m[38;5;246m<dbl>[39m[23m 4.0, 2.0, 5.0, 4.5, 5.0, 1.5, 5.0, 3.5, 5.0, 3.6, 3.5, 4.5, 5.0, 4.0, 2.5, 3.5, 3.5, 3.0, 5.0, 4.0…
+$ sum_sub_sev              [3m[38;5;246m<dbl>[39m[23m 9, 5, 26, 24, 15, 3, 23, 3, 20, 12, 5, 27, 15, 23, 6, 10, 12, 12, 11, 24, 7, 7, 42, 29, 9, 10, 16,…
+$ max_sub_sev              [3m[38;5;246m<dbl>[39m[23m 3, 3, 4, 4, 4, 3, 4, 2, 4, 4, 3, 4, 4, 4, 2, 3, 4, 4, 4, 4, 3, 4, 4, 4, 4, 3, 4, 4, 0, 4, 4, 4, 3,…
+$ sev_preg_disas           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_witacc          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_acc             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_famjail         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_jail            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_adopt           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_pardivorce      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_divorce         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_money           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_ill             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_emoab           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, …
+$ sev_preg_physneg         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_abort           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_sepchild        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_care            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_death1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_preg_death2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_preg_famviol         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_witmug          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_mug             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_physab          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_domviol         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_sexharas        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA,…
+$ sev_preg_sextouch1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_sextouch2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_rape1           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_rape2           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_other1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_preg_other2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, N…
+$ sev_preg_other3          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_disas       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_witacc      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_acc         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_famjail     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_jail        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_adopt       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_pardivorce  [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_divorce     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_money       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_ill         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_emoab       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, …
+$ sub_sev_preg_physneg     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_abort       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_sepchild    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_care        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_death1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_preg_death2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_preg_famviol     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_witmug      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_mug         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_physab      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_domviol     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_sexharas    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA,…
+$ sub_sev_preg_sextouch1   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_sextouch2   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_rape1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_rape2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_other1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_preg_other2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA,…
+$ sub_sev_preg_other3      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ num_types_preg           [3m[38;5;246m<int>[39m[23m 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ sum_sev_preg             [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 0.0, 0.0, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0…
+$ max_sev_preg             [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 0.0, 0.0, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0…
+$ sum_sub_sev_preg         [3m[38;5;246m<dbl>[39m[23m 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 0, 0, 0, 0, 0, 2, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ max_sub_sev_preg         [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 0.0, 0.0, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0…
+$ mom_age_lsc6mo           [3m[38;5;246m<dbl>[39m[23m 28.08493, 29.59016, 41.24384, 40.14521, 34.14795, 31.80328, 35.71858, 30.33425, 33.80601, 28.20548…
+$ mom_age_birth            [3m[38;5;246m<dbl>[39m[23m 27.80328, 29.18852, 40.82514, 39.63934, 33.63934, 31.27049, 35.18306, 29.78689, 33.25410, 27.68852…
+$ conception_date          [3m[38;5;246m<dttm>[39m[23m 2015-05-05, 2015-04-15, 2015-05-19, 2015-05-15, 2015-05-26, 2015-05-16, 2015-07-01, 2015-07-17, 2…
+$ mom_age_concept          [3m[38;5;246m<dbl>[39m[23m 27.07377, 28.50137, 40.07377, 38.88767, 32.93425, 30.57260, 34.47397, 29.09016, 32.55342, 26.96986…
+$ lscr_disas_prec          [3m[38;5;246m<int>[39m[23m 1, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, 1, NA, 1, NA, 1, NA, NA, 1, NA, NA, 1, 1, NA, NA, NA, 1, …
+$ lscr_acc_prec            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, 1, 1, NA, NA, NA, 1, NA, NA, NA, …
+$ lscr_witacc_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, 1, NA, 1, 1, NA, 1, NA, NA, 1, NA, NA, NA, 1, 1, 1, NA, 1, NA, NA, 1, NA, NA, 1, 1, NA…
+$ lscr_famjail_prec        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, N…
+$ lscr_jail_prec           [3m[38;5;246m<int>[39m[23m NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_prec          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_pardivorce_prec     [3m[38;5;246m<int>[39m[23m 1, 1, NA, 1, NA, NA, 1, 1, NA, 1, 1, 1, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, …
+$ lscr_divorce_prec        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_money_prec          [3m[38;5;246m<int>[39m[23m 1, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, N…
+$ lscr_ill_prec            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, 0, NA, NA, 1, NA, 1, 1, NA, NA, NA, NA, NA, NA, …
+$ lscr_emoab_prec          [3m[38;5;246m<int>[39m[23m NA, NA, 1, 0, 0, NA, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, 1, 1, NA, 0, 0, 1, NA, NA, …
+$ lscr_physneg_prec        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_abort_prec          [3m[38;5;246m<int>[39m[23m NA, NA, 1, 1, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, 1, 1, NA…
+$ lscr_sepchild_prec       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_care_prec           [3m[38;5;246m<int>[39m[23m NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, …
+$ lscr_death1_prec         [3m[38;5;246m<int>[39m[23m NA, NA, 1, NA, NA, NA, 0, NA, NA, NA, 0, NA, 1, 1, NA, NA, 1, NA, NA, 1, NA, NA, 0, 1, NA, NA, NA,…
+$ lscr_death2_prec         [3m[38;5;246m<int>[39m[23m NA, NA, 1, 1, NA, NA, 1, 1, 0, 1, NA, 1, 1, 0, 1, 1, 1, 1, NA, NA, 1, 1, 1, 1, NA, 1, 1, 1, NA, NA…
+$ lscr_famviol_prec        [3m[38;5;246m<int>[39m[23m 1, NA, NA, 1, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, 1, NA, NA,…
+$ lscr_witmug_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, …
+$ lscr_mug_prec            [3m[38;5;246m<int>[39m[23m NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physab_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, …
+$ lscr_domviol_prec        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_sexharas_prec       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, 0, NA, NA, 1, 1, NA, 1, …
+$ lscr_sextouch1_prec      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch2_prec      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA,…
+$ lscr_rape1_prec          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape2_prec          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, 1, NA, 1, NA…
+$ lscr_other1_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other2_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, 1, 1, 1, 1, NA, NA, NA, NA, NA, NA, NA, 1, 0, NA, NA, N…
+$ lscr_other3_prec         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_prec_disas           [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, 2.5, NA, 2.5, NA, 1.0, NA, NA, 1.0, NA, NA, 1.0, 2.5…
+$ sev_prec_witacc          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3.0, NA, 1.5, 2.0, NA, 1.5, NA, NA, 1.5, NA, NA, NA, 3.5, 1.0, 2.0, NA, 2.5, NA, NA, 3…
+$ sev_prec_acc             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1.5, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, 1.5, NA, NA, 2.5, 2.5, NA, NA, NA, 2.0, …
+$ sev_prec_famjail         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.0, NA,…
+$ sev_prec_jail            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_prec_adopt           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_prec_pardivorce      [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, 3.5, NA, NA, 3.5, 3.5, NA, 3.6, 3.5, 3.5, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA…
+$ sev_prec_divorce         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_prec_money           [3m[38;5;246m<dbl>[39m[23m 2.0, 2.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA,…
+$ sev_prec_ill             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_prec_emoab           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, 4.0, NA, NA, NA, NA, NA, 4.0, 3.0, NA, NA, N…
+$ sev_prec_physneg         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_prec_abort           [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, NA, NA, 3.0, NA, 3.0, NA, NA, NA, …
+$ sev_prec_sepchild        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_prec_care            [3m[38;5;246m<dbl>[39m[23m NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, …
+$ sev_prec_death1          [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.5, 3.5, NA, NA, 3.5, NA, NA, 3.5, NA, NA, NA, 2…
+$ sev_prec_death2          [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.5, 2.5, NA, NA, 1.0, 1.0, NA, 1.0, NA, 1.0, 1.5, NA, 2.5, 1.0, 1.0, 1.0, NA, NA, 1.5, 3.…
+$ sev_prec_famviol         [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 4.5, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, NA, 4.…
+$ sev_prec_witmug          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.0, …
+$ sev_prec_mug             [3m[38;5;246m<dbl>[39m[23m NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_prec_physab          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, …
+$ sev_prec_domviol         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_prec_sexharas        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, NA, NA, 3.0, NA, NA, NA, NA, NA, 3.0, 2.5…
+$ sev_prec_sextouch1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, 4.0, NA, 4.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_prec_sextouch2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA,…
+$ sev_prec_rape1           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_prec_rape2           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, 5.0, NA,…
+$ sev_prec_other1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.5, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_prec_other2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, 2.5, 3.0, 3.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 1.5, …
+$ sev_prec_other3          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_prec_disas       [3m[38;5;246m<dbl>[39m[23m 3, NA, NA, 1, NA, NA, NA, NA, 3, NA, NA, 4, NA, 2, NA, 3, NA, NA, 2, NA, NA, 4, 3, NA, NA, NA, 2, …
+$ sub_sev_prec_witacc      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 2, NA, 3, 2, NA, 3, NA, NA, 2, NA, NA, NA, 3, 1, 2, NA, 3, NA, NA, 4, NA, NA, 2, 1, NA…
+$ sub_sev_prec_acc         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, 2, NA, NA, 3, 3, NA, NA, NA, 3, NA, NA, NA, …
+$ sub_sev_prec_famjail     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, N…
+$ sub_sev_prec_jail        [3m[38;5;246m<dbl>[39m[23m NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_adopt       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_pardivorce  [3m[38;5;246m<dbl>[39m[23m 1, 2, NA, 2, NA, NA, 3, 1, NA, 2, 2, 4, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 4, NA, NA, …
+$ sub_sev_prec_divorce     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_prec_money       [3m[38;5;246m<dbl>[39m[23m 3, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, N…
+$ sub_sev_prec_ill         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, 4, NA, 4, 4, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_emoab       [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, 3, NA, NA, NA, NA, NA, 4, 3, NA, NA, NA, 3, NA, …
+$ sub_sev_prec_physneg     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_prec_abort       [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, 4, NA, NA, NA, NA, NA, 4, NA, 2, NA, NA, NA, NA, NA, 4, NA, 4, NA, NA, NA, NA, NA, 2, N…
+$ sub_sev_prec_sepchild    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_prec_care        [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, …
+$ sub_sev_prec_death1      [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, 3, NA, NA, 2, NA, NA, 3, NA, NA, NA, 3, NA, NA, …
+$ sub_sev_prec_death2      [3m[38;5;246m<dbl>[39m[23m NA, NA, 3, 4, NA, NA, 4, 2, NA, 2, NA, 2, 2, NA, 2, 3, 2, 3, NA, NA, 2, 3, 4, 4, NA, 3, 4, 3, NA, …
+$ sub_sev_prec_famviol     [3m[38;5;246m<dbl>[39m[23m 2, NA, NA, 4, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, 4, NA, NA,…
+$ sub_sev_prec_witmug      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, …
+$ sub_sev_prec_mug         [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_prec_physab      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, …
+$ sub_sev_prec_domviol     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_sexharas    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, 4, 3, NA, 3,…
+$ sub_sev_prec_sextouch1   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, 3, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sub_sev_prec_sextouch2   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_rape1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_prec_rape2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, 2, N…
+$ sub_sev_prec_other1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_prec_other2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, 3, 3, 4, 2, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, …
+$ sub_sev_prec_other3      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ num_types_prec           [3m[38;5;246m<int>[39m[23m 4, 2, 7, 8, 3, 1, 7, 2, 6, 6, 1, 10, 6, 6, 3, 4, 5, 4, 5, 7, 3, 2, 9, 6, 4, 4, 6, 3, 0, 6, 9, 7, 5…
+$ sum_sev_prec             [3m[38;5;246m<dbl>[39m[23m 13.0, 2.0, 20.0, 18.0, 13.5, 1.5, 24.5, 4.5, 18.5, 11.6, 3.5, 25.5, 14.5, 20.5, 5.0, 8.0, 8.5, 8.5…
+$ max_sev_prec             [3m[38;5;246m<dbl>[39m[23m 4.0, 2.0, 5.0, 4.5, 5.0, 1.5, 5.0, 3.5, 5.0, 3.6, 3.5, 4.5, 5.0, 4.0, 2.5, 3.5, 3.5, 3.0, 5.0, 4.0…
+$ sum_sub_sev_prec         [3m[38;5;246m<dbl>[39m[23m 9, 5, 26, 20, 11, 3, 19, 3, 17, 12, 2, 27, 15, 16, 6, 10, 12, 12, 11, 22, 7, 7, 34, 21, 9, 10, 16,…
+$ max_sub_sev_prec         [3m[38;5;246m<dbl>[39m[23m 4.0, 2.0, 5.0, 4.5, 5.0, 1.5, 5.0, 3.5, 5.0, 3.6, 3.5, 4.5, 5.0, 4.0, 2.5, 3.5, 3.5, 3.0, 5.0, 4.0…
+$ lscr_disas_post          [3m[38;5;246m<int>[39m[23m 0, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, NA, 0, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA, 0, …
+$ lscr_acc_post            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA, 0, NA, NA, NA, …
+$ lscr_witacc_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, 0, 0, NA, 0, NA, NA, 0, NA, NA, NA, 0, 0, 0, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA…
+$ lscr_famjail_post        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, N…
+$ lscr_jail_post           [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_post          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_pardivorce_post     [3m[38;5;246m<int>[39m[23m 0, 0, NA, 0, NA, NA, 0, 0, NA, 0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, …
+$ lscr_divorce_post        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_money_post          [3m[38;5;246m<int>[39m[23m 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, N…
+$ lscr_ill_post            [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, 0, NA, 0, 0, NA, NA, NA, NA, NA, NA, …
+$ lscr_emoab_post          [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, 1, NA, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, 0, 0, NA, 0, 0, 0, NA, NA, …
+$ lscr_physneg_post        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_abort_post          [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, 0, 0, NA…
+$ lscr_sepchild_post       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_care_post           [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, …
+$ lscr_death1_post         [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, 0, NA, 0, 0, NA, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA,…
+$ lscr_death2_post         [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, NA, NA, 0, 0, 0, 0, NA, 0, 0, 0, 0, 0, 0, 0, NA, NA, 0, 0, 0, 0, NA, 0, 0, 0, NA, NA…
+$ lscr_famviol_post        [3m[38;5;246m<int>[39m[23m 0, NA, NA, 0, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 0, NA, NA,…
+$ lscr_witmug_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_mug_post            [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physab_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, …
+$ lscr_domviol_post        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_sexharas_post       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, 0, …
+$ lscr_sextouch1_post      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch2_post      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA,…
+$ lscr_rape1_post          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape2_post          [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, 0, NA…
+$ lscr_other1_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other2_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, 0, 0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, N…
+$ lscr_other3_post         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_disas           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_witacc          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_acc             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_famjail         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_jail            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_adopt           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_pardivorce      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_divorce         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_money           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_ill             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_emoab           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_post_physneg         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_abort           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_sepchild        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_care            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_death1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_death2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_famviol         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_witmug          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_mug             [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_physab          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_domviol         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_sexharas        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_sextouch1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_sextouch2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_rape1           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_rape2           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_other1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_other2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_post_other3          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_disas       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_witacc      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_acc         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_famjail     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_jail        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_adopt       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_pardivorce  [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_divorce     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_money       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_ill         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_emoab       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_post_physneg     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_abort       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_care        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_death1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_death2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_famviol     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_witmug      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_mug         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_physab      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_domviol     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_sexharas    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_sextouch1   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_sextouch2   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_rape1       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_rape2       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_other1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_other2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_post_other3      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ num_types_post           [3m[38;5;246m<int>[39m[23m 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ sum_sev_post             [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ max_sev_post             [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ sum_sub_sev_post         [3m[38;5;246m<dbl>[39m[23m 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ max_sub_sev_post         [3m[38;5;246m<dbl>[39m[23m 0.0, 0.0, 0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0…
+$ lscr_disas_child         [3m[38;5;246m<int>[39m[23m 1, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, 1, NA, 1, NA, 0, NA, NA, 0, NA, NA, 1, 1, NA, NA, NA, 1, …
+$ lscr_acc_child           [3m[38;5;246m<int>[39m[23m NA, NA, NA, 1, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, 0, NA, NA, 0, 1, NA, NA, NA, 0, NA, NA, NA, …
+$ lscr_witacc_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, 0, 1, NA, 1, NA, NA, 0, NA, NA, NA, 0, 0, 0, NA, 0, NA, NA, 0, NA, NA, 1, 0, NA…
+$ lscr_famjail_child       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, N…
+$ lscr_jail_child          [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_adopt_child         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ lscr_pardivorce_child    [3m[38;5;246m<int>[39m[23m 1, 1, NA, 0, NA, NA, 1, 1, NA, 1, 1, 0, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, NA, …
+$ lscr_divorce_child       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_money_child         [3m[38;5;246m<int>[39m[23m 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, N…
+$ lscr_ill_child           [3m[38;5;246m<int>[39m[23m NA, NA, NA, 0, NA, NA, NA, NA, NA, 0, NA, NA, NA, 1, NA, NA, 0, NA, 1, 0, NA, NA, NA, NA, NA, NA, …
+$ lscr_emoab_child         [3m[38;5;246m<int>[39m[23m NA, NA, 1, 1, 1, NA, NA, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, 1, 0, NA, 1, 1, 1, NA, NA, …
+$ lscr_physneg_child       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_abort_child         [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, NA, 0, NA, 0, NA, NA, NA, NA, 0, 0, NA…
+$ lscr_sepchild_child      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ lscr_care_child          [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, …
+$ lscr_death1_child        [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, 0, NA, 0, 1, NA, NA, 1, NA, NA, 0, NA, NA, 0, 0, NA, NA, NA,…
+$ lscr_death2_child        [3m[38;5;246m<int>[39m[23m NA, NA, 0, 0, NA, NA, 0, 1, 0, 0, NA, 0, 1, 0, 1, 0, 0, 1, NA, NA, 0, 0, 0, 0, NA, 0, 1, 0, NA, NA…
+$ lscr_famviol_child       [3m[38;5;246m<int>[39m[23m 1, NA, NA, 1, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, 1, NA, NA,…
+$ lscr_witmug_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, …
+$ lscr_mug_child           [3m[38;5;246m<int>[39m[23m NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_physab_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, …
+$ lscr_domviol_child       [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_sexharas_child      [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, 0, NA, NA, 0, 0, NA, 0, …
+$ lscr_sextouch1_child     [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, 1, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lscr_sextouch2_child     [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, NA,…
+$ lscr_rape1_child         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, 1, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_rape2_child         [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, NA, NA, 0, NA, 0, NA…
+$ lscr_other1_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ lscr_other2_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, NA, 0, 0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0, 0, NA, NA, N…
+$ lscr_other3_child        [3m[38;5;246m<int>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_disas          [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, 2.5, NA, 2.5, NA, NA, NA, NA, NA, NA, NA, 1.0, 2.5, …
+$ sev_child_witacc         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 2.0, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_child_acc            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.5, NA, NA, NA, NA, NA, …
+$ sev_child_famjail        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, NA, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2.0, NA,…
+$ sev_child_jail           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_adopt          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sev_child_pardivorce     [3m[38;5;246m<dbl>[39m[23m 3.5, NA, NA, NA, NA, NA, 3.5, 3.5, NA, 3.6, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, NA, …
+$ sev_child_divorce        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_money          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_ill            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_emoab          [3m[38;5;246m<dbl>[39m[23m NA, NA, 3.0, 4.5, 4.5, NA, NA, NA, NA, NA, NA, 4.5, NA, 4.0, NA, NA, NA, NA, NA, 4.0, NA, NA, 4.5,…
+$ sev_child_physneg        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_child_abort          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_sepchild       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_care           [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_death1         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.5, NA, NA, 3.5, NA, NA, NA, NA, NA, NA, NA, …
+$ sev_child_death2         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, 1.0, NA, NA, NA, NA, 1.5, NA, 2.5, NA, NA, 1.0, NA, NA, NA, NA, NA, NA…
+$ sev_child_famviol        [3m[38;5;246m<dbl>[39m[23m 4.0, NA, NA, 4.5, NA, NA, 4.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4.5, NA, NA, 4.…
+$ sev_child_witmug         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1.0, N…
+$ sev_child_mug            [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_physab         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3.0, …
+$ sev_child_domviol        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_sexharas       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_sextouch1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, 4.0, NA, 4.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_child_sextouch2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA,…
+$ sev_child_rape1          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sev_child_rape2          [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_other1         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_other2         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sev_child_other3         [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_disas      [3m[38;5;246m<dbl>[39m[23m 3, NA, NA, 1, NA, NA, NA, NA, 3, NA, NA, 4, NA, 2, NA, NA, NA, NA, NA, NA, NA, 4, 3, NA, NA, NA, 2…
+$ sub_sev_child_witacc     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 2, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_child_acc        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_child_famjail    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, NA, N…
+$ sub_sev_child_jail       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_adopt      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_child_pardivorce [3m[38;5;246m<dbl>[39m[23m 1, 2, NA, NA, NA, NA, 3, 1, NA, 2, 2, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 4, NA, NA…
+$ sub_sev_child_divorce    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_money      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_ill        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_child_emoab      [3m[38;5;246m<dbl>[39m[23m NA, NA, 4, 4, 4, NA, NA, NA, NA, NA, NA, 3, NA, 3, NA, NA, NA, NA, NA, 4, NA, NA, 4, 4, 3, NA, NA,…
+$ sub_sev_child_physneg    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 3, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_child_abort      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_sepchild   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_care       [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_death1     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ sub_sev_child_death2     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, 2, NA, 2, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_famviol    [3m[38;5;246m<dbl>[39m[23m 2, NA, NA, 4, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, 4, NA, NA,…
+$ sub_sev_child_witmug     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 3, NA,…
+$ sub_sev_child_mug        [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_physab     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA, …
+$ sub_sev_child_domviol    [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_sexharas   [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_sextouch1  [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, 4, NA, NA, NA, NA, 3, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ sub_sev_child_sextouch2  [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA,…
+$ sub_sev_child_rape1      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_rape2      [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_other1     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_other2     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ sub_sev_child_other3     [3m[38;5;246m<dbl>[39m[23m NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ num_types_child          [3m[38;5;246m<int>[39m[23m 3, 1, 1, 4, 4, 0, 6, 2, 3, 1, 1, 4, 1, 5, 1, 0, 1, 1, 3, 2, 1, 1, 3, 4, 2, 1, 3, 0, 0, 2, 5, 3, 3,…
+$ sum_sev_child            [3m[38;5;246m<dbl>[39m[23m 11.0, 0.0, 3.0, 10.5, 18.0, 0.0, 23.5, 4.5, 7.5, 3.6, 3.5, 12.5, 1.5, 14.0, 2.5, 0.0, 3.5, 1.0, 5.…
+$ max_sev_child            [3m[38;5;246m<dbl>[39m[23m 4.0, 0.0, 3.0, 4.5, 5.0, 0.0, 5.0, 3.5, 3.5, 3.6, 3.5, 4.5, 1.5, 4.0, 2.5, 0.0, 3.5, 1.0, 3.0, 4.0…
+$ sum_sub_sev_child        [3m[38;5;246m<dbl>[39m[23m 11.0, 0.0, 3.0, 10.5, 18.0, 0.0, 23.5, 4.5, 7.5, 3.6, 3.5, 12.5, 1.5, 14.0, 2.5, 0.0, 3.5, 1.0, 5.…
+$ max_sub_sev_child        [3m[38;5;246m<dbl>[39m[23m 4.0, 0.0, 3.0, 4.5, 5.0, 0.0, 5.0, 3.5, 3.5, 3.6, 3.5, 4.5, 1.5, 4.0, 2.5, 0.0, 3.5, 1.0, 3.0, 4.0…
+"

@@ -1,0 +1,53 @@
+"0","```r
+lena_5min2 <-
+  lena_5min_files_df %>%
+  mutate(
+    data = map(
+      path, 
+      read_csv, 
+      col_names = TRUE,
+      col_types = 
+        list(
+          Firstname = col_character(),
+          Birthdate = col_character(),
+          Timestamp = col_character(),
+          AVA_StdScore = col_character(),
+          Lastname = col_character(),
+          Sex = col_character(),
+          ChildKey = col_character()
+        )
+      )
+  ) %>% 
+  unnest(data) %>% 
+  select(-path) %>% 
+  mutate(
+    Birthdate = as.character(Birthdate),
+    Timestamp = as.character(Timestamp)
+  ) %>% 
+  select(
+    -Type,
+    -ChildKey,
+    -Id,
+    -Age,
+    -AVA_StdScore:-AVA_AvgScore_Pct,
+    ID1 = Firstname,
+    ID2 = Lastname,
+    dob = Birthdate
+  ) %>% 
+  mutate(
+    ID = as.numeric(
+      if_else(
+        is.na(ID2),
+        ID1, ID2
+      )
+    ),
+    time_record = parse_date_time(Timestamp, c(\"mdy HM\", \"ymd HM\"))
+  ) %>% 
+  select(
+    ID,
+    everything(),
+    -Timestamp,
+    -ID1,
+    -ID2
+  )
+```"

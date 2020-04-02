@@ -1,0 +1,21 @@
+"0","```r
+# join first and last variables with day 1 LENA data 
+lena_d1 <-
+  lena_d1 %>% 
+  left_join(
+    lena_time_cl %>% 
+      select(
+        ID, 
+        ct_last, 
+        ct_last_time, 
+        aw_last, 
+        aw_last_time,
+        ct_first,
+        ct_first_time,
+        aw_first,
+        aw_first_time
+        ) %>% 
+      distinct(ID, ct_last, .keep_all = TRUE),
+    by = \"ID\"
+  ) 
+```"

@@ -1,0 +1,24 @@
+"0","```r
+lg_data_t1 <-
+  read_xlsx(lg_stress_T1_file) %>% 
+  filter(!is.na(lscr_disas)) %>% 
+  mutate(
+    timepoint = \"LG_T1\"
+  ) %>% 
+  select(
+    -redcap_event_name:-lscr_file,
+    -lscr_interviewer,
+    -contains(\"date\")
+  ) %>% 
+  rename(
+    ID = record_id
+  ) %>% 
+  mutate(
+    ID = as.double(ID)
+  )
+```"
+"1","
+-
+/
+                                                                                                                                    
+"

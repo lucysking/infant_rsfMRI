@@ -1,0 +1,36 @@
+"0","```r
+lg_data_t1 <-
+  lg_data_t1 %>% 
+  mutate(
+    num_types_prec = pmap_int(
+      select(., prec_exp_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    sum_sev_prec = pmap_dbl(
+      select(., prec_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sev_prec =  pmap_dbl(
+      select(., prec_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    sum_sub_sev_prec = pmap_dbl(
+      select(., prec_sub_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sub_sev_prec =  pmap_dbl(
+      select(., prec_sub_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    max_sev_prec = if_else(
+      max_sev_prec == -Inf,
+      0, max_sev_prec
+    ),
+    max_sub_sev_prec = if_else(
+      max_sev_prec == -Inf,
+      0, max_sev_prec
+    )
+  )
+```"
+"1","no non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Inf
+"

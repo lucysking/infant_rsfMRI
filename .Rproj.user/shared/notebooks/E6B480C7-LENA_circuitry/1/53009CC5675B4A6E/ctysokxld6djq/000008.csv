@@ -1,0 +1,101 @@
+"0","d <-
+  read_csv(rs_file) %>% 
+  left_join(read_csv(demo_file), by = ""ID"") %>% 
+  left_join(read_csv(lena_file), by = ""ID"") %>% 
+  left_join(read_csv(scanner_file), by = ""ID"") %>% 
+  left_join(read_csv(dti_avs_file), by = ""ID"") %>% 
+  left_join(read_csv(dti_fa_file), by = ""ID"") %>% 
+  left_join(home, by = ""ID"")  %>% 
+  left_join(read_csv(shipley_file), by = ""ID"") %>% 
+  rename(
+    age_1_lena = age_1,
+    age_2_lena = age_2
+  ) %>% 
+  mutate(
+    primary_english = if_else(
+      primarylang == ""English"",
+      1, 0
+    ),
+    age_diff_lena_scan = age_1_lena - age_scan
+  )
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double()
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  due_date = [34mcol_date(format = """")[39m,
+  baby_race = [31mcol_character()[39m,
+  baby_race_describe = [31mcol_character()[39m,
+  mom_race = [31mcol_character()[39m,
+  momrace_describe = [31mcol_character()[39m,
+  annual_income_txt = [31mcol_character()[39m,
+  education_txt = [31mcol_character()[39m,
+  employment_status_txt = [31mcol_character()[39m,
+  marital_status_txt = [31mcol_character()[39m,
+  partner_educ_txt = [31mcol_character()[39m,
+  partner_employ_txt = [31mcol_character()[39m,
+  educ_describe = [33mcol_logical()[39m,
+  employment_explain = [31mcol_character()[39m,
+  mom_pob = [31mcol_character()[39m,
+  mom_native_lang = [31mcol_character()[39m,
+  primarylang = [31mcol_character()[39m,
+  secondlang_type = [31mcol_character()[39m,
+  marital_explain = [31mcol_character()[39m,
+  partner_educ_describe = [33mcol_logical()[39m,
+  partner_employ_describe = [33mcol_logical()[39m
+  # ... with 22 more columns
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  day_type_1 = [31mcol_character()[39m,
+  day_type_2 = [31mcol_character()[39m,
+  other_caregiver_1 = [31mcol_character()[39m,
+  other_caregiver_2 = [33mcol_logical()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  ID = [32mcol_double()[39m,
+  Scanner = [31mcol_character()[39m
+)
+"
+"2","Parsed with column specification:
+cols(
+  ID = [32mcol_double()[39m,
+  FA = [32mcol_double()[39m,
+  MD = [32mcol_double()[39m,
+  RD = [32mcol_double()[39m,
+  AD = [32mcol_double()[39m,
+  OD = [32mcol_double()[39m,
+  ICVF = [32mcol_double()[39m
+)
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double()
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  shipley_timestamp = [34mcol_datetime(format = """")[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"

@@ -1,0 +1,15 @@
+"0","lena_final_wf %>% 
+  filter(!is.na(ctc_max_2)) %>% 
+  select(
+    awc_hour_max_1,
+    awc_hour_max_2
+  ) %>% 
+  psych::ICC()
+"
+"2","Model failed to converge with max|grad| = 0.0135117 (tol = 0.002, component 1)"
+"1","Call: "
+"1","psych::ICC(x = .)
+"
+"1","
+Intraclass correlation coefficients 
+"

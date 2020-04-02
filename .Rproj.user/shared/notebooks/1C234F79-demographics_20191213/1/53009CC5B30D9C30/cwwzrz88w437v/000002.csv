@@ -1,0 +1,4 @@
+"0","demo_cs %>% 
+  count(annual_income_txt)
+"
+"2","Factor `annual_income_txt` contains implicit NA, consider using `forcats::fct_explicit_na`"

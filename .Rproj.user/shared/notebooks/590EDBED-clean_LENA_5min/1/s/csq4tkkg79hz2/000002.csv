@@ -1,0 +1,114 @@
+"0","lena_followup_cs_day1 <-"
+"0","  read_csv(lena_followup_day1_cs_file) %>% "
+"0","  rename(ID = record_id) %>% "
+"0","  mutate(ID = as.integer(ID), day = 1) %>% "
+"0","  filter(lena_day_1_followup_questions_complete == 2) %>% "
+"0","  select(ID, day, lena_caregivers___1:lena_notes)"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_1_followup_questions_timestamp = [31mcol_character()[39m,
+  lenaday_date = [31mcol_character()[39m,
+  lena_recordno = [31mcol_character()[39m,
+  other_caregiver = [31mcol_character()[39m,
+  lena_probyes = [31mcol_character()[39m,
+  lena_sickyes = [31mcol_character()[39m,
+  lena_crowdstime = [34mcol_time(format = """")[39m,
+  lena_notes = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","lena_followup_cs_day2 <-"
+"0","  read_csv(lena_followup_day2_cs_file) %>% "
+"0","  rename_all("
+"0","    funs(str_replace(., ""_2"", """"))"
+"0","  ) %>% "
+"0","  rename(ID = record_id) %>% "
+"0","  mutate(ID = as.integer(ID), day = 2) %>% "
+"0","  filter(lena_day_followup_questions_complete == 2) %>% "
+"0","  select(ID, day, lena_caregivers___1:lena_notes)"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  record_id = [31mcol_character()[39m,
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_2_followup_questions_timestamp = [34mcol_datetime(format = """")[39m,
+  lenaday_date_2 = [34mcol_date(format = """")[39m,
+  lena_recordno_2 = [31mcol_character()[39m,
+  other_caregiver_2 = [31mcol_character()[39m,
+  lena_probyes_2 = [31mcol_character()[39m,
+  lena_sickyes_2 = [31mcol_character()[39m,
+  lena_crowdstime_2 = [34mcol_time(format = """")[39m,
+  lena_notes_2 = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"2","NAs introduced by coercion"
+"0","lena_followup_lg_day1 <-"
+"0","  read_csv(lena_followup_day1_lg_file) %>% "
+"0","  rename(ID = record_id) %>% "
+"0","  mutate(ID = as.integer(ID), day = 1) %>% "
+"0","  filter(lena_day_1_followup_questions_complete == 2) %>% "
+"0","  select(ID, day, lena_caregivers___1:lena_notes)"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_1_followup_questions_timestamp = [34mcol_datetime(format = """")[39m,
+  lenaday_date = [34mcol_date(format = """")[39m,
+  lena_recordno = [33mcol_logical()[39m,
+  other_caregiver = [31mcol_character()[39m,
+  lena_probyes = [33mcol_logical()[39m,
+  lena_sickyes = [31mcol_character()[39m,
+  lena_crowdstime = [34mcol_time(format = """")[39m,
+  lena_notes = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","lena_followup_lg_day2 <-"
+"0","  read_csv(lena_followup_day2_lg_file) %>% "
+"0","  rename_all("
+"0","    funs(str_replace(., ""_2"", """"))"
+"0","  ) %>% "
+"0","  rename(ID = record_id) %>% "
+"0","  mutate(ID = as.integer(ID), day = 2) %>% "
+"0","  filter(lena_day_followup_questions_complete == 2) %>% "
+"0","  select(ID, day, lena_caregivers___1:lena_notes)"
+"2","Parsed with column specification:
+cols(
+  .default = col_double(),
+  redcap_event_name = [31mcol_character()[39m,
+  redcap_survey_identifier = [33mcol_logical()[39m,
+  lena_day_2_followup_questions_timestamp = [34mcol_datetime(format = """")[39m,
+  lenaday_date_2 = [34mcol_date(format = """")[39m,
+  lena_recordno_2 = [33mcol_logical()[39m,
+  other_caregiver_2 = [33mcol_logical()[39m,
+  lena_probyes_2 = [33mcol_logical()[39m,
+  lena_sickyes_2 = [31mcol_character()[39m,
+  lena_crowdstime_2 = [34mcol_time(format = """")[39m,
+  lena_notes_2 = [31mcol_character()[39m
+)
+"
+"2","See spec(...) for full column specifications.
+"
+"0","lena_followup <-"
+"0","  lena_followup_cs_day1 %>% "
+"0","  bind_rows("
+"0","    lena_followup_cs_day2"
+"0","  ) %>% "
+"0","  bind_rows("
+"0","    lena_followup_lg_day1"
+"0","  ) %>% "
+"0","  bind_rows("
+"0","    lena_followup_lg_day2"
+"0","  ) %>% "
+"0","  select("
+"0","    -lena_prob:-lena_notes"
+"0","  )"

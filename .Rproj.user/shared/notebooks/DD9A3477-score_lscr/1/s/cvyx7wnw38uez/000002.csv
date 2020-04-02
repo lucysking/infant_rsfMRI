@@ -1,0 +1,65 @@
+"0","```r
+cs_data1 <-
+  read_xlsx(cs_stress_file1) %>% 
+  mutate(
+    timepoint = \"CX 6mo\"
+  ) %>% 
+  select(
+    -redcap_event_name:-lscr_file,
+    -lscr_interviewer,
+    -contains(\"date\")
+  )
+```"
+"1","
+-
+/
+                                                                                                                                    
+"
+"0","```r
+cs_data2 <-
+  read_xlsx(cs_stress_file2) %>% 
+  mutate(
+    timepoint = \"CX 6mo\"
+  ) %>% 
+  select(
+    -redcap_event_name:-lscr_file,
+    -lscr_interviewer,
+    -contains(\"date\")
+  )
+```"
+"1","
+-
+/
+                                                                                                                                    
+"
+"0","```r
+cs_data <- 
+  bind_rows(cs_data1, cs_data2) %>% 
+  left_join(
+    read_csv(cs_dob_file),
+    by = \"record_id\"
+  ) %>% 
+  left_join(
+    read_csv(cs_visit_date_file) %>% 
+      mutate(record_id = as.numeric(record_id)),
+    by = \"record_id\"
+  ) %>% 
+  rename(
+    ID = record_id
+  )
+```"
+"1","Parsed with column specification:
+cols(
+  record_id = [32mcol_double()[39m,
+  date_phonescr = [31mcol_character()[39m,
+  mom_dob = [31mcol_character()[39m,
+  baby_dob = [31mcol_character()[39m,
+  baby_due_date = [31mcol_character()[39m
+)
+Parsed with column specification:
+cols(
+  record_id = [31mcol_character()[39m,
+  visit_date = [31mcol_character()[39m
+)
+NAs introduced by coercion
+"

@@ -1,0 +1,36 @@
+"0","```r
+lg_data_t3 <-
+  lg_data_t3 %>% 
+  mutate(
+    num_types_post = pmap_int(
+      select(., post_exp_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    sum_sev_post = pmap_dbl(
+      select(., post_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sev_post =  pmap_dbl(
+      select(., post_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    sum_sub_sev_post = pmap_dbl(
+      select(., post_sub_sev_vars),
+      function(...) sum(c(...), na.rm = TRUE)
+    ),
+    max_sub_sev_post =  pmap_dbl(
+      select(., post_sub_sev_vars),
+      function(...) max(c(...), na.rm = TRUE)
+    ),
+    max_sev_post = if_else(
+      max_sev_post == -Inf,
+      0, max_sev_post
+    ),
+    max_sub_sev_post = if_else(
+      max_sev_post == -Inf,
+      0, max_sev_post
+    )
+  )
+```"
+"1","no non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Infno non-missing arguments to max; returning -Inf
+"

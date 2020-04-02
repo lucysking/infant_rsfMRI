@@ -1,0 +1,12 @@
+"0","```r
+lg_data_wf <- 
+  lg_data %>% 
+  select(
+    ID,
+    timepoint,
+    contains(\"sev\")
+  ) %>% 
+  gather(variable, value, lscr_disas_sev:sev_con_other2) %>% 
+  unite(new, timepoint, variable) %>% 
+  spread(new, value)
+```"
