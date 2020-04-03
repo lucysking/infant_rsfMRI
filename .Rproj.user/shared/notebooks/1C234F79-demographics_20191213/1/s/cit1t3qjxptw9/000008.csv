@@ -359,8 +359,8 @@
 "0","  group_by(ID) %>% "
 "0","  mutate("
 "0","    ppl_in_home_tot_t1 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t1,"
-"0","    ppl_in_home_tot_t2 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t2,"
-"0","    ppl_in_home_tot_t3 = ppl_in_home_adults_t1 + ppl_in_home_allchild_t3"
+"0","    ppl_in_home_tot_t2 = ppl_in_home_adults_t2 + ppl_in_home_allchild_t2,"
+"0","    ppl_in_home_tot_t3 = ppl_in_home_adults_t3 + ppl_in_home_allchild_t3"
 "0","  ) %>% "
 "0","  ungroup() %>% "
 "0","  mutate_at("
@@ -412,7 +412,7 @@
 "0","    -visit_date_t2,"
 "0","    -partner_in_home_t1,"
 "0","    -partner_in_home_t2,"
-"0","    -partner_in_home_t3,"
+"0","    -partner_in_home_t3"
 "0","  ) "
 "2","Parsed with column specification:
 cols(

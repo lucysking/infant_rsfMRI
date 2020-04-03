@@ -489,6 +489,9 @@ d_sample %>%
     vars(front_coherence_z, temp_coherence_z),
     funs(mean, sd)
   )
+
+d_sample %>% 
+  count(scanner_6mo)
 ```
 
 ## Bilingual status differences 
@@ -764,6 +767,56 @@ ggsave(
   width = 6,
   height = 4
 )
+```
+
+```{r}
+d_share <-
+  d_sample %>% 
+  select(
+    ID,
+    male,
+    gestational_weeks_birth,
+    mom_race,
+    mom_latinx,
+    education_txt,
+    annual_income_txt,
+    annual_income_num,
+    ppl_in_home_tot,
+    income_needs,
+    birth_weight_total_lbs,
+    mom_age,
+    primarylang,
+    primary_english,
+    pregnant_times,
+    age_1_lena,
+    age_scan,
+    age_scan_corr,
+    NEG,
+    breastfed,
+    digitspan_totalscore,
+    shipley_6mo_total,
+    ctc_hour_max_1,
+    awc_hour_max_1,
+    cvc_hour_max_1,
+    ctc_prop_1,
+    awc_prop_1,
+    aud_foperc:STS_TP,
+    front_coherence_z,
+    temp_coherence_z
+  ) %>% 
+  mutate(
+    github_id = 1:n()
+  ) %>% 
+  select(
+    ID,
+    github_id,
+    everything()
+  )
+
+glimpse(d_share)
+
+write_csv(d_share, "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/king_LENA_infant_rsfmri_share_20200403.csv")
+
 ```
 
 
