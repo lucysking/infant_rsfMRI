@@ -2,67 +2,16 @@
 "0","library(corrr)"
 "0","library(sjstats)"
 "0","library(psych)"
-"2","
-Attaching package: ‘psych’
-
-"
-"2","The following object is masked from ‘package:sjstats’:
-
-    phi
-
-"
-"2","The following objects are masked from ‘package:ggplot2’:
-
-    %+%, alpha
-
-"
 "0","library(ggcorrplot)"
 "0","library(car)"
-"2","Loading required package: carData
-"
-"2","
-Attaching package: ‘car’
-
-"
-"2","The following object is masked from ‘package:psych’:
-
-    logit
-
-"
-"2","The following object is masked from ‘package:dplyr’:
-
-    recode
-
-"
-"2","The following object is masked from ‘package:purrr’:
-
-    some
-
-"
 "0","library(ggsci)"
 "0","library(BayesFactor)"
-"2","Loading required package: coda
-"
-"2","Loading required package: Matrix
-"
-"2","
-Attaching package: ‘Matrix’
-
-"
-"2","The following objects are masked from ‘package:tidyr’:
-
-    expand, pack, unpack
-
-"
-"2","************
-Welcome to BayesFactor 0.9.12-4.2. If you have questions, please contact Richard Morey (richarddmorey@gmail.com).
-
-Type BFManual() to open the manual.
-************
-"
+"0","# for meff function"
+"0","source('https://osf.io/ws6xc/download')"
 "0","data_home_personal <- ""~/Box/lucy_king_files/BABIES/rsfMRI/data/"""
 "0","data_home_mooddata <- ""~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/"""
 "0","rs_file <- paste0(data_home_personal, ""language/coherence_tidy_20200203.csv"")"
+"0","fd_file <- paste0(data_home_personal, ""summarized_fd.csv"")"
 "0","demo_file <- paste0(data_home_mooddata, ""demographics/demo_6mo_cleaned_final.csv"")"
 "0","lena_file <- paste0(data_home_mooddata, ""LENA/lena_final_wf_day1day2_20200208.csv"")"
 "0","scanner_file <- paste0(data_home_personal, ""6mo_scanner_20200209.csv"")"
@@ -71,7 +20,6 @@ Type BFManual() to open the manual.
 "0","prams_file <- paste0(data_home_mooddata, ""PRAMS/prams_alldata_cleaned.csv"")"
 "0","ibq_file <- paste0(data_home_mooddata, ""IBQ/ibq_scored_final.csv"")"
 "0","digit_span_file <- paste0(data_home_personal, ""digit_span_6mo_complete.csv"")"
-"0","sep_file <- paste0(data_home_mooddata, ""SEP/sep_cleaned_wf.csv"")"
 "0","  "
 "0","theme_lena <-"
 "0","  theme_minimal() +"

@@ -15,11 +15,14 @@ library(ggcorrplot)
 library(car)
 library(ggsci)
 library(BayesFactor)
+# for meff function
+source('https://osf.io/ws6xc/download')
 
 data_home_personal <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/"
 data_home_mooddata <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/"
 
 rs_file <- paste0(data_home_personal, "language/coherence_tidy_20200203.csv")
+fd_file <- paste0(data_home_personal, "summarized_fd.csv")
 demo_file <- paste0(data_home_mooddata, "demographics/demo_6mo_cleaned_final.csv")
 lena_file <- paste0(data_home_mooddata, "LENA/lena_final_wf_day1day2_20200208.csv")
 scanner_file <- paste0(data_home_personal, "6mo_scanner_20200209.csv")
@@ -28,7 +31,7 @@ nutrition_file <- paste0(data_home_personal, "HOME_nutrition_cleaned_20200208.cs
 prams_file <- paste0(data_home_mooddata, "PRAMS/prams_alldata_cleaned.csv")
 ibq_file <- paste0(data_home_mooddata, "IBQ/ibq_scored_final.csv")
 digit_span_file <- paste0(data_home_personal, "digit_span_6mo_complete.csv")
-sep_file <- paste0(data_home_mooddata, "SEP/sep_cleaned_wf.csv")
+
   
 theme_lena <-
   theme_minimal() +
@@ -52,13 +55,13 @@ d <-
   read_csv(demo_file) %>%  
   left_join(read_csv(lena_file), by = "ID") %>% 
   left_join(read_csv(rs_file), by = "ID") %>% 
+  left_join(read_csv(fd_file), by = "ID") %>% 
   left_join(read_csv(scanner_file), by = "ID") %>% 
   left_join(read_csv(shipley_file), by = "ID") %>% 
   left_join(read_csv(nutrition_file), by = "ID") %>% 
   left_join(read_csv(digit_span_file), by = "ID") %>% 
   left_join(read_csv(prams_file), by = "ID") %>%  
   left_join(read_csv(ibq_file), by = "ID") %>% 
-  left_join(read_csv(sep_file), by = "ID") %>% 
   rename(
     age_1_lena = age_1,
     age_2_lena = age_2
@@ -104,8 +107,6 @@ t.test(d$education ~ d$included)
 t.test(d$shipley_6mo_total ~ d$included)
 t.test(d$digitspan_totalscore ~ d$included)
 t.test(d$prev_preg_total ~ d$included)
-t.test(d$sixmonth_usstatus_ladder ~ d$included)
-t.test(d$sixmonth_commstatus_ladder ~ d$included)
 t.test(d$pregnancy_weight_diff ~ d$included)
 ```
 
@@ -193,7 +194,6 @@ d_sample_means <-
       mom_age,
       prev_preg_total,
       income_needs,
-      sixmonth_usstatus_ladder,
       digitspan_totalscore,
       shipley_6mo_total,
       awc_hour_max_1,
@@ -219,7 +219,6 @@ d_sample_sds <-
       mom_age,
       prev_preg_total,
       income_needs,
-      sixmonth_usstatus_ladder,
       digitspan_totalscore,
       shipley_6mo_total,
       awc_hour_max_1,
@@ -245,7 +244,6 @@ d_sample_mins <-
       mom_age,
       prev_preg_total,
       income_needs,
-      sixmonth_usstatus_ladder,
       digitspan_totalscore,
       shipley_6mo_total,
       awc_hour_max_1,
@@ -271,7 +269,6 @@ d_sample_maxs <-
       mom_age,
       prev_preg_total,
       income_needs,
-      sixmonth_usstatus_ladder,
       digitspan_totalscore,
       shipley_6mo_total,
       awc_hour_max_1,
@@ -346,8 +343,6 @@ lena_corr <-
     income_needs,
     shipley_6mo_total,
     digitspan_totalscore,
-    sixmonth_usstatus_ladder,
-    sixmonth_commstatus_ladder,
     pregnancy_weight_diff,
     NEG,
     age_diff_lena_scan_1
@@ -427,8 +422,6 @@ connect_corr <-
     income_needs,
     shipley_6mo_total,
     digitspan_totalscore,
-    sixmonth_usstatus_ladder,
-    sixmonth_commstatus_ladder,
     pregnancy_weight_diff,
     NEG,
     REG, 
@@ -445,6 +438,32 @@ write_csv(connect_corr, paste0(data_home_personal, "language/connect_covariates.
 cor.test(d_sample$front_coherence_z, d_sample$education, method = "spearman")
 cor.test(d_sample$temp_coherence_z, d_sample$shipley_6mo_total)
 cor.test(d_sample$temp_coherence_z, d_sample$NEG)
+```
+
+## Frame-wise displacement 
+```{r}
+fd_corr <- 
+  d_sample %>% 
+  select(
+    rawFD,
+    censoredFD,
+    temp_coherence_z,
+    front_coherence_z,
+    ctc_hour_max_1,
+    awc_hour_max_1,
+    cvc_hour_max_1,
+    ctc_prop_1,
+    awc_prop_1
+  ) %>% 
+  correlate(method = "pearson") %>% 
+  mutate_at(
+    vars(-rowname),
+    funs(round(., 3))
+  )
+
+write_csv(fd_corr, paste0(data_home_personal, "language/FD_LENA_connectivity.csv"))
+
+cor.test(d_sample$censoredFD, d_sample$awc_prop_1)
 ```
 
 ## Sex differences
@@ -530,8 +549,6 @@ mlm_base1 <- lm(
     education,
     data = d_sample
 )
-
-summary(mlm_base1)
 Anova(mlm_base1)
 
 # dropping education: did not improve model fit
@@ -541,10 +558,8 @@ mlm_base2 <- lm(
     scanner_6mo,
     data = d_sample
 )
-summary(mlm_base2)
 Anova(mlm_base2)
 
-summary_base2 <- summary(mlm_base2)
 r.squaredT_base <- summary_base2$`Response temp_coherence_z`$r.squared
 r.squaredF_base <- summary_base2$`Response front_coherence_z`$r.squared
 ```
@@ -571,7 +586,7 @@ mlm_CTq <- lm(
     data = d_sample
 )
 summary(mlm_CTq)
-Anova(mlm_CTq)
+Manova(mlm_CTq)
 
 lm_CTq_temp <- lm(
   scale(temp_coherence_z) ~
