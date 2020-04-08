@@ -611,6 +611,38 @@ model_d_ctcq <-
 bayesianLR = generalTestBF(temp_coherence_z ~ ., data = model_d_ctcq)
 ```
 
+```{r}
+mlm_CTq_ses1 <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1) +
+    income_needs +
+    education,
+    data = d_sample
+)
+Manova(mlm_CTq_ses1)
+
+
+mlm_CTq_ses2 <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1) *
+    income_needs,
+    data = d_sample
+)
+Manova(mlm_CTq_ses2)
+
+
+mlm_CTq_ses3 <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1) *
+    education,
+    data = d_sample
+)
+Manova(mlm_CTq_ses3)
+```
+
 ## Consistency of language exposure 
 
 ### AW
@@ -622,7 +654,7 @@ mlm_AWc <- lm(
     data = d_sample
 )
 summary(mlm_AWc)
-Anova(mlm_AWc)
+Manova(mlm_AWc)
 ```
 
 ### CT
@@ -634,7 +666,7 @@ mlm_CTc <- lm(
     data = d_sample
 )
 summary(mlm_CTc)
-Anova(mlm_CTc)
+Manova(mlm_CTc)
 ```
 
 ## Sensitivity analyses: Infant vocalizations
