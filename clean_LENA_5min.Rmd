@@ -13,6 +13,7 @@ library(tidyverse)
 library(lubridate)
 library(hms)
 library(psych)
+library(ggsci)
 
 # Files
 
@@ -85,7 +86,7 @@ lena_5min_sp <-
     Recording_DOB = as.character(Recording_DOB),
     StartTime = as.character(StartTime)
   ) %>% 
-  select(
+  dplyr::select(
     ExternalReferenceID,
     Recording_DOB,
     StartTime,
@@ -117,7 +118,7 @@ lena_5min_sp <-
     Silence = as.hms(Silence),
     Timestamp = StartTime
   ) %>% 
-  select(
+  dplyr::select(
     -ExternalReferenceID,
     -Recording_DOB,
     -Recording_Gender,
@@ -130,7 +131,7 @@ lena_5min_sp <-
     Timestamp = str_replace(Timestamp, " \\(America/Los_Angeles\\)", ""),
     time_record = parse_date_time(Timestamp, "mdy HMS p!")
   ) %>% 
-  select(
+  dplyr::select(
     -Timestamp
   )
 ```
@@ -145,7 +146,7 @@ lena_5min <-
     Timestamp = as.character(Timestamp),
     Meaningful = as.hms(Meaningful)
   ) %>% 
-  select(
+  dplyr::select(
     -Type,
     -ChildKey,
     -Id,
@@ -164,7 +165,7 @@ lena_5min <-
   mutate(
     ID = as.numeric(ID)
   ) %>% 
-  select(
+  dplyr::select(
     -Timestamp
   )
 ```
@@ -192,12 +193,12 @@ lena_5min2_old <-
       )
   ) %>% 
   unnest(data) %>% 
-  select(-path) %>% 
+  dplyr::select(-path) %>% 
   mutate(
     Birthdate = as.character(Birthdate),
     Timestamp = as.character(Timestamp)
   ) %>% 
-  select(
+  dplyr::select(
     -Type,
     -ChildKey,
     -Id,
@@ -216,7 +217,7 @@ lena_5min2_old <-
     ),
     time_record = parse_date_time(Timestamp, c("mdy HM", "ymd HM"))
   ) %>% 
-  select(
+  dplyr::select(
     ID,
     everything(),
     -Timestamp,
@@ -248,7 +249,7 @@ lena_5min2_new <-
     Recording_DOB = as.character(Recording_DOB),
     StartTime = as.character(StartTime)
   ) %>% 
-  select(
+  dplyr::select(
     ExternalReferenceID,
     Recording_DOB,
     StartTime,
@@ -280,7 +281,7 @@ lena_5min2_new <-
     Silence = as.hms(Silence),
     Timestamp = StartTime
   ) %>% 
-  select(
+  dplyr::select(
     -ExternalReferenceID,
     -Recording_DOB,
     -Recording_Gender,
@@ -293,11 +294,10 @@ lena_5min2_new <-
     Timestamp = str_replace(Timestamp, " \\(America/Los_Angeles\\)", ""),
     time_record = parse_date_time(Timestamp, "mdy HMS p!")
   ) %>% 
-  select(
+  dplyr::select(
     -Timestamp
   )
 ```
-
 
 
 ## Combine all data
@@ -389,7 +389,7 @@ lena_5min_cl <-
   rename(
     baby_age_lena = age
   ) %>% 
-  select(-include)
+  dplyr::select(-include)
 
 lena_5min_cl %>% 
   count(day)
@@ -411,7 +411,7 @@ lena_followup_cs_day1 <-
   rename(ID = record_id) %>% 
   mutate(ID = as.integer(ID), day = 1) %>% 
   filter(lena_day_1_followup_questions_complete == 2) %>% 
-  select(ID, day, lena_caregivers___1:lena_notes)
+  dplyr::select(ID, day, lena_caregivers___1:lena_notes)
 
 lena_followup_cs_day2 <-
   read_csv(lena_followup_day2_cs_file) %>% 
@@ -421,14 +421,14 @@ lena_followup_cs_day2 <-
   rename(ID = record_id) %>% 
   mutate(ID = as.integer(ID), day = 2) %>% 
   filter(lena_day_followup_questions_complete == 2) %>% 
-  select(ID, day, lena_caregivers___1:lena_notes)
+  dplyr::select(ID, day, lena_caregivers___1:lena_notes)
 
 lena_followup_lg_day1 <-
   read_csv(lena_followup_day1_lg_file) %>% 
   rename(ID = record_id) %>% 
   mutate(ID = as.integer(ID), day = 1) %>% 
   filter(lena_day_1_followup_questions_complete == 2) %>% 
-  select(ID, day, lena_caregivers___1:lena_notes)
+  dplyr::select(ID, day, lena_caregivers___1:lena_notes)
 
 lena_followup_lg_day2 <-
   read_csv(lena_followup_day2_lg_file) %>% 
@@ -438,7 +438,7 @@ lena_followup_lg_day2 <-
   rename(ID = record_id) %>% 
   mutate(ID = as.integer(ID), day = 2) %>% 
   filter(lena_day_followup_questions_complete == 2) %>% 
-  select(ID, day, lena_caregivers___1:lena_notes)
+  dplyr::select(ID, day, lena_caregivers___1:lena_notes)
 
 lena_followup <-
   lena_followup_cs_day1 %>% 
@@ -451,7 +451,7 @@ lena_followup <-
   bind_rows(
     lena_followup_lg_day2
   ) %>% 
-  select(
+  dplyr::select(
     -lena_prob:-lena_notes
   )
 ```
@@ -476,7 +476,7 @@ lena_time <-
 ```{r}
 ids_dates_included <-
   lena_5min_cl %>% 
-  select(
+  dplyr::select(
     ID,
     date_record,
     day
@@ -515,7 +515,7 @@ lena_time_cl <-
       time_hours >= 17 & time_hours < ct_last_time ~ "PM"
     )
   ) %>% 
-  select(-ct_last_row, -ct_first_row) %>% 
+  dplyr::select(-ct_last_row, -ct_first_row) %>% 
   # remove observations froms times of day before first CT or after last CT
   filter(!is.na(time_day))
 ```
@@ -613,7 +613,7 @@ lena_final_lf <-
 lena_final_wf <-
   lena_final_lf %>% 
   distinct(ID, day, ctc_prop, .keep_all = TRUE) %>% 
-  select(
+  dplyr::select(
     -time_day, 
     -date_record,
     -cvc_time_rate,
@@ -719,7 +719,7 @@ lena_day1 <-
       is.na(cvc_max_1), percent_mother_2, percent_mother_1
     )
   ) %>% 
-  select(ID, age:percent_mother)
+  dplyr::select(ID, age:percent_mother)
   
 ```
 
@@ -736,7 +736,7 @@ identify_outliers_hist(lena_final_wf, awc_prop_1)
 ```{r}
 lena_final_wf %>% 
   filter(!is.na(ctc_max_2)) %>% 
-  select(
+  dplyr::select(
     awc_rate_1,
     awc_rate_2
   ) %>% 
@@ -744,7 +744,7 @@ lena_final_wf %>%
 
 lena_final_wf %>% 
   filter(!is.na(ctc_max_2)) %>% 
-  select(
+  dplyr::select(
     ctc_rate_1,
     ctc_rate_2
   ) %>% 
@@ -752,7 +752,7 @@ lena_final_wf %>%
 
 lena_final_wf %>% 
   filter(!is.na(ctc_max_2)) %>% 
-  select(
+  dplyr::select(
     awc_hour_max_1,
     awc_hour_max_2
   ) %>% 
@@ -760,7 +760,7 @@ lena_final_wf %>%
 
 lena_final_wf %>% 
   filter(!is.na(ctc_max_2)) %>% 
-  select(
+  dplyr::select(
     ctc_hour_max_1,
     ctc_hour_max_2
   ) %>% 
@@ -768,7 +768,7 @@ lena_final_wf %>%
 
 lena_final_wf %>% 
   filter(!is.na(ctc_max_2)) %>% 
-  select(
+  dplyr::select(
     cvc_hour_max_1,
     cvc_hour_max_2
   ) %>% 
@@ -783,7 +783,7 @@ lena_5min_viz <-
   lena_time_cl %>% 
   left_join(
     lena_final_wf %>% 
-      select(
+      dplyr::select(
         ID,
         awc_hour_max_1,
         ctc_hour_max_1,
@@ -799,15 +799,17 @@ lena_5min_viz %>%
   filter(ID == 1081 | ID == 21) %>% 
   mutate(
     ID = as.factor(ID),
-    ID = recode(
+    ID = dplyr::recode(
       ID,
-      "1081" = "- Consistency, + Quantity",
-      "21" = "- Quantity, + Consistency"
+      "1081" = "Lower Consistency, Higher Quantity",
+      "21" = "Lower Quantity, Higher Consistency"
     )
   ) %>% 
   ggplot(aes(time_hours, CTC.Actual, color = ID)) +
   geom_step(direction = "vh", size = 1) +
+  scale_x_continuous(breaks = seq.int(6, 20, 2)) +
   scale_color_npg() +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE)) +
   theme_minimal() +
   theme(
     panel.grid = element_blank(),
@@ -825,19 +827,19 @@ lena_5min_viz %>%
   )
 
 ggsave(
-  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/quantity_v_consistency.png",
-  width = 8.75,
-  height = 7
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/quantity_v_consistency.eps",
+  width = 17.6,
+  height = 16,
+  units = "cm",
+  dpi = 300
 )
 ```
-
-
 
 
 ## Write file 
 
 ```{r}
-write_csv(lena_final_lf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_lf_20200208.csv")
-write_csv(lena_final_wf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1day2_20200208.csv")
-write_csv(lena_day1, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1_20200208.csv")
+#write_csv(lena_final_lf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_lf_20200208.csv")
+#write_csv(lena_final_wf, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1day2_20200208.csv")
+#write_csv(lena_day1, "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/LENA/lena_final_wf_day1_20200208.csv")
 ```

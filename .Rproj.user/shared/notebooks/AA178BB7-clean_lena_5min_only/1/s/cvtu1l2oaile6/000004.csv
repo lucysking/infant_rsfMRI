@@ -1,7 +1,0 @@
-"0","```r
-ggsave(\"~/Desktop/BABIES/lena_symptoms/manuscript/ctc_time_d1.png\")
-```"
-"1","Saving 7.29 x 4.51 in image
-Error in grDevices::dev.off() : 
-  QuartzBitmap_Output - unable to open file '/Users/lucyking/Desktop/BABIES/lena_symptoms/manuscript/ctc_time_d1.png'
-"

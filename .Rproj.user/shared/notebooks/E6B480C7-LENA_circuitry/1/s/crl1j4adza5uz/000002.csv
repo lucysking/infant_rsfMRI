@@ -1,7 +1,0 @@
-"0","#adjust p-value based on Holm-Bonferonni method
-p.adjust(.012, method = ""holm"", n = 4)
-"
-"1","[1]"
-"1"," 0.048"
-"1","
-"

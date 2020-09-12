@@ -1,7 +1,0 @@
-"0","```r
-# identify who will be dropped
-## based on age
-lena_5min_cl %>%
-  filter(day == 1) %>% 
-  count(age > 8)
-```"

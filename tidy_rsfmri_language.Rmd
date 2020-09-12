@@ -9,17 +9,25 @@ output: html_document
 ```{r}
 library(tidyverse)
 library(psych)
+library(ggpubr)
+
+results <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/correlation_matrix/"
+cc_file <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/conn_cc_data.csv"
+results_smoothed <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/correlation_matrix_BOLDsmoothing/"
+results_noGSR <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/correlation_matrix_nogsr/"
+demo_file <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/demographics/demo_6mo_cleaned_final.csv"
 ```
 
-```{r}
-results <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/correlation_matrix/"
-dirs <- grep("[0-9]$", list.dirs(results, recursive = FALSE), value = TRUE)
+# no BOLD smoothing 
 
-files <-
+```{r warning=FALSE}
+dirs_nosmoothing <- grep("[0-9]$", list.dirs(results, recursive = FALSE), value = TRUE)
+
+files_nosmoothing <-
   tibble(
     path = 
       list.files(
-        path = dirs,
+        path = dirs_nosmoothing,
         pattern = "correlation_matrix.csv",
         full.names = TRUE,
         no.. = TRUE
@@ -27,10 +35,10 @@ files <-
   ) 
 ```
 
-# Read in individual-level data 
-```{r}
+## Read in individual-level data 
+```{r warning=FALSE}
 rs_matrix <- 
-  files %>% 
+  files_nosmoothing %>% 
   mutate(
     data = map(
       path,
@@ -41,21 +49,22 @@ rs_matrix <-
   mutate(
     ID = as.numeric(str_extract(path, "\\d{4}"))
   ) %>% 
-  select(
+  dplyr::select(
     ID,
     everything(),
     -path
   ) 
-```
 
+```
 
 ```{r}
 rs <- 
   rs_matrix %>% 
   gather(key, value, `left temporal pole`:`left_front_operc`) %>% 
   arrange(ID) %>% 
+  rename(region_name = X1) %>% 
   mutate(
-    region_name = recode(
+    region_name = dplyr::recode(
       region_name,
       "left temporal pole" = "TP",
       "left STS" = "STS",
@@ -67,7 +76,7 @@ rs <-
       "left_aud_cortex" = "aud",
       "left_front_operc" = "foperc"
     ),
-    key = recode(
+    key = dplyr::recode(
       key,
       "left temporal pole" = "TP",
       "left STS" = "STS",
@@ -83,7 +92,7 @@ rs <-
   unite("key", region_name, key, sep = "_") %>% 
   filter(value != 1) %>% 
   spread(key, value) %>% 
-  select(
+  dplyr::select(
     ID,
     aud_foperc:aud_TP,
     foperc_IFGop:foperc_TP,
@@ -94,25 +103,326 @@ rs <-
     rTPJ_STS:rTPJ_TP,
     STS_TP
   ) %>% 
-  # threshold correlations at .1 and .05
+  # threshold correlations at .1 
   mutate_at(
     vars(-ID),
     funs(
       ".1" =
       if_else(abs(.) < .1, NA_real_, .)
     )
+  )
+ 
+```
+
+## Read in clustering coefficient data and coherence data defined by iterative Louvain community detection; merge with other data
+
+```{r}
+rs_dd <-
+  read_csv(cc_file) %>% 
+  rename(ID = X1) %>% 
+  mutate(ID = as.integer(ID)) %>% 
+  rename(
+    front_dd_p = N1_corr,
+    temp_dd_p = N2_corr,
+    front_cc = N1_cc,
+    temp_cc = N2_cc
+  ) 
+
+rs <-
+  rs %>% 
+  left_join(rs_dd, by = "ID")
+```
+
+# 4mm BOLD signal smoothing kernal
+```{r warning=FALSE}
+dirs_4mm <- grep("[0-9]", list.dirs(results_smoothed, recursive = FALSE), value = TRUE)
+
+files_4mm <-
+  tibble(
+    path = 
+      list.files(
+        path = paste0(dirs_4mm, "/_fwhm_4/"),
+        pattern = "correlation_matrix.csv",
+        full.names = TRUE,
+        no.. = TRUE
+      )
+  ) 
+
+```
+
+## Read in individual-level data 
+```{r, warning=FALSE}
+rs_4mm_matrix <- 
+  files_4mm %>% 
+  mutate(
+    data = map(
+      path,
+      read_csv
+    )
   ) %>% 
-  mutate_at(
-    vars(aud_foperc:STS_TP),
+  unnest(data) %>% 
+  mutate(
+    ID = as.numeric(str_extract(path, "\\d{4}"))
+  ) %>% 
+  dplyr::select(
+    ID,
+    everything(),
+    -path
+  ) 
+```
+
+```{r}
+rs_4mm <- 
+  rs_4mm_matrix %>% 
+  gather(key, value, `left temporal pole`:`left_front_operc`) %>% 
+  arrange(ID) %>% 
+  rename(region_name = X1) %>% 
+  mutate(
+    region_name = dplyr::recode(
+      region_name,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    ),
+    key = dplyr::recode(
+      key,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    )
+  ) %>% 
+  unite("key", region_name, key, sep = "_") %>% 
+  filter(value != 1) %>% 
+  spread(key, value) %>% 
+  dplyr::select(
+    ID,
+    aud_foperc:aud_TP,
+    foperc_IFGop:foperc_TP,
+    IFGop_IFGor:IFGop_TP,
+    IFGor_IFGtr:IFGor_TP,
+    IFGtr_lTPJ:IFGtr_TP,
+    lTPJ_rTPJ:lTPJ_TP,
+    rTPJ_STS:rTPJ_TP,
+    STS_TP
+  ) %>% 
+  rename_at(
+    vars(-ID),
     funs(
-      ".05" =
-      if_else(abs(.) < .05, NA_real_, .)
+      . %>% 
+      paste0("_4mm")
+    )
+  )
+```
+
+# 8mm BOLD signal smoothing kernal
+```{r warning=FALSE}
+dirs_8mm <- grep("[0-9]", list.dirs(results_smoothed, recursive = FALSE), value = TRUE)
+
+files_8mm <-
+  tibble(
+    path = 
+      list.files(
+        path = paste0(dirs_4mm, "/_fwhm_8/"),
+        pattern = "correlation_matrix.csv",
+        full.names = TRUE,
+        no.. = TRUE
+      )
+  ) 
+
+```
+
+## Read in individual-level data 
+```{r, warning = FALSE}
+rs_8mm_matrix <- 
+  files_8mm %>% 
+  mutate(
+    data = map(
+      path,
+      read_csv
+    )
+  ) %>% 
+  unnest(data) %>% 
+  mutate(
+    ID = as.numeric(str_extract(path, "\\d{4}"))
+  ) %>% 
+  dplyr::select(
+    ID,
+    everything(),
+    -path
+  ) 
+```
+
+```{r}
+rs_8mm <- 
+  rs_8mm_matrix %>% 
+  gather(key, value, `left temporal pole`:`left_front_operc`) %>% 
+  arrange(ID) %>% 
+  rename(region_name = X1) %>% 
+  mutate(
+    region_name = dplyr::recode(
+      region_name,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    ),
+    key = dplyr::recode(
+      key,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    )
+  ) %>% 
+  unite("key", region_name, key, sep = "_") %>% 
+  filter(value != 1) %>% 
+  spread(key, value) %>% 
+  dplyr::select(
+    ID,
+    aud_foperc:aud_TP,
+    foperc_IFGop:foperc_TP,
+    IFGop_IFGor:IFGop_TP,
+    IFGor_IFGtr:IFGor_TP,
+    IFGtr_lTPJ:IFGtr_TP,
+    lTPJ_rTPJ:lTPJ_TP,
+    rTPJ_STS:rTPJ_TP,
+    STS_TP
+  ) %>% 
+  rename_at(
+    vars(-ID),
+    funs(
+      . %>% 
+      paste0("_8mm")
+    )
+  )
+```
+
+# No GSR
+```{r warning = FALSE}
+dirs_nGSR <- grep("[0-9]$", list.dirs(results_noGSR, recursive = FALSE), value = TRUE)
+
+files_noGSR <-
+  tibble(
+    path = 
+      list.files(
+        path = dirs_nGSR,
+        pattern = "correlation_matrix.csv",
+        full.names = TRUE,
+        no.. = TRUE
+      )
+  ) 
+```
+
+## Read in individual-level data 
+```{r, warning = FALSE}
+rs_noGSR_matrix <- 
+  files_noGSR %>% 
+  mutate(
+    data = map(
+      path,
+      read_csv
+    )
+  ) %>% 
+  unnest(data) %>% 
+  mutate(
+    ID = as.numeric(str_extract(path, "\\d{4}"))
+  ) %>% 
+  dplyr::select(
+    ID,
+    everything(),
+    -path
+  ) 
+```
+
+```{r}
+rs_noGSR <- 
+  rs_noGSR_matrix %>% 
+  gather(key, value, `left temporal pole`:`left_front_operc`) %>% 
+  arrange(ID) %>% 
+  rename(region_name = X1) %>% 
+  mutate(
+    region_name = dplyr::recode(
+      region_name,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    ),
+    key = dplyr::recode(
+      key,
+      "left temporal pole" = "TP",
+      "left STS" = "STS",
+      "right TPJ" = "rTPJ",
+      "left TPJ" = "lTPJ",
+      "left IFG (opercularis)" = "IFGop",
+      "left IFG (triangularis)" = "IFGtr",
+      "left IFG (orbitalis)" = "IFGor",
+      "left_aud_cortex" = "aud",
+      "left_front_operc" = "foperc"
+    )
+  ) %>% 
+  unite("key", region_name, key, sep = "_") %>% 
+  filter(value != 1) %>% 
+  spread(key, value) %>% 
+  dplyr::select(
+    ID,
+    aud_foperc:aud_TP,
+    foperc_IFGop:foperc_TP,
+    IFGop_IFGor:IFGop_TP,
+    IFGor_IFGtr:IFGor_TP,
+    IFGtr_lTPJ:IFGtr_TP,
+    lTPJ_rTPJ:lTPJ_TP,
+    rTPJ_STS:rTPJ_TP,
+    STS_TP
+  ) %>% 
+  rename_at(
+    vars(-ID),
+    funs(
+      . %>% 
+      paste0("_noGSR")
     )
   )
 
 ```
 
-# Compute coherence
+# Merge all files
+```{r, warning=FALSE}
+rs <-
+  rs %>% 
+  left_join(rs_4mm, by = "ID") %>% 
+  left_join(rs_8mm, by = "ID") %>% 
+  left_join(rs_noGSR, by = "ID") %>% 
+  left_join(read_csv(demo_file), by = "ID")
+```
+
+# Compute coherence for networks defined by visual inspection of adjacency matrix
 
 Overall network:
 left temporal pole
@@ -138,17 +448,34 @@ right TPJ
 left TPJ
 left_aud_cortex
 
-### Select variables
+## no spatial smoothing data 
 ```{r}
 # no threshold__________________________________________________________________
 all_rois <-
   rs %>% 
-  select(aud_foperc:STS_TP) %>% 
+  dplyr::select(
+    IFGop_IFGor,
+    IFGop_IFGtr,
+    IFGor_IFGtr,
+    IFGop_TP,
+    IFGor_TP,
+    IFGtr_TP,
+    foperc_IFGop,
+    foperc_IFGor,
+    foperc_IFGtr,
+    foperc_TP,
+    rTPJ_STS,
+    lTPJ_STS,
+    lTPJ_rTPJ,
+    aud_lTPJ,
+    aud_rTPJ,
+    aud_STS
+  ) %>% 
   names()
 
 front_rois <-
   rs %>% 
-  select(
+  dplyr::select(
     IFGop_IFGor,
     IFGop_IFGtr,
     IFGor_IFGtr,
@@ -164,7 +491,7 @@ front_rois <-
 
 temp_rois <-
   rs %>% 
-  select(
+  dplyr::select(
     rTPJ_STS,
     lTPJ_STS,
     lTPJ_rTPJ,
@@ -173,16 +500,18 @@ temp_rois <-
     aud_STS
   ) %>% 
   names()
+```
 
+```{r}
 # .1 threshold__________________________________________________________________
 all_rois.1 <-
   rs %>% 
-  select(contains(".1")) %>% 
+  dplyr::select(contains(".1")) %>% 
   names()
 
 front_rois.1 <-
   rs %>% 
-  select(
+  dplyr::select(
     IFGop_IFGor_.1,
     IFGop_IFGtr_.1,
     IFGor_IFGtr_.1,
@@ -198,7 +527,7 @@ front_rois.1 <-
 
 temp_rois.1 <-
   rs %>% 
-  select(
+  dplyr::select(
     rTPJ_STS_.1,
     lTPJ_STS_.1,
     lTPJ_rTPJ_.1,
@@ -208,43 +537,8 @@ temp_rois.1 <-
   ) %>% 
   names()
 
-# .05 threshold_________________________________________________________________
-all_rois.05 <-
-  rs %>% 
-  select(contains(".05")) %>% 
-  names()
-
-front_rois.05 <-
-  rs %>% 
-  select(
-    IFGop_IFGor_.05,
-    IFGop_IFGtr_.05,
-    IFGor_IFGtr_.05,
-    IFGop_TP_.05,
-    IFGor_TP_.05,
-    IFGtr_TP_.05,
-    foperc_IFGop_.05,
-    foperc_IFGor_.05,
-    foperc_IFGtr_.05,
-    foperc_TP_.05
-  ) %>% 
-  names()
-
-temp_rois.05 <-
-  rs %>% 
-  select(
-    rTPJ_STS_.05,
-    lTPJ_STS_.05,
-    lTPJ_rTPJ_.05,
-    aud_lTPJ_.05,
-    aud_rTPJ_.05,
-    aud_STS_.05
-  ) %>% 
-  names()
-
 ```
 
-## Compute
 ```{r}
 rs <- 
   rs %>% 
@@ -252,104 +546,700 @@ rs <-
     # no threshold
     av_coherence_p = 
       pmap_dbl(
-        select(., all_rois),
+        dplyr::select(., all_rois),
         function(...) mean(c(...), na.rm = TRUE)
-    ),
+      ),
     av_coherence_z = fisherz(av_coherence_p),
     front_coherence_p = 
       pmap_dbl(
-        select(., front_rois),
+        dplyr::select(., front_rois),
         function(...) mean(c(...), na.rm = TRUE)
-    ),
+      ),
     front_coherence_z = fisherz(front_coherence_p),
     temp_coherence_p = 
       pmap_dbl(
-        select(., temp_rois),
+        dplyr::select(., temp_rois),
         function(...) mean(c(...), na.rm = TRUE)
-    ),
+      ),
     temp_coherence_z = fisherz(temp_coherence_p),
-    # .1 threshold
-    av_coherence_p.1 = 
-      pmap_dbl(
-        select(., all_rois.1),
-        function(...) mean(c(...), na.rm = TRUE)
-    ),
-    av_coherence_z.1 = fisherz(av_coherence_p.1),
     front_coherence_p.1 = 
       pmap_dbl(
-        select(., front_rois.1),
+        dplyr::select(., front_rois.1),
         function(...) mean(c(...), na.rm = TRUE)
-    ),
+      ),
     front_coherence_z.1 = fisherz(front_coherence_p.1),
     temp_coherence_p.1 = 
       pmap_dbl(
-        select(., temp_rois.1),
+        dplyr::select(., temp_rois.1),
         function(...) mean(c(...), na.rm = TRUE)
-    ),
-    temp_coherence_z.1 = fisherz(temp_coherence_p.1),
-     # .05 threshold
-    av_coherence_p.05 = 
+      ),
+    temp_coherence_z.1 = fisherz(temp_coherence_p.1)
+  )
+```
+
+## 4mm data 
+```{r}
+# no threshold__________________________________________________________________
+all_rois_4mm <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_4mm,
+    IFGop_IFGtr_4mm,
+    IFGor_IFGtr_4mm,
+    IFGop_TP_4mm,
+    IFGor_TP_4mm,
+    IFGtr_TP_4mm,
+    foperc_IFGop_4mm,
+    foperc_IFGor_4mm,
+    foperc_IFGtr_4mm,
+    foperc_TP_4mm,
+    rTPJ_STS_4mm,
+    lTPJ_STS_4mm,
+    lTPJ_rTPJ_4mm,
+    aud_lTPJ_4mm,
+    aud_rTPJ_4mm,
+    aud_STS_4mm
+  ) %>% 
+  names()
+
+front_rois_4mm <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_4mm,
+    IFGop_IFGtr_4mm,
+    IFGor_IFGtr_4mm,
+    IFGop_TP_4mm,
+    IFGor_TP_4mm,
+    IFGtr_TP_4mm,
+    foperc_IFGop_4mm,
+    foperc_IFGor_4mm,
+    foperc_IFGtr_4mm,
+    foperc_TP_4mm
+  ) %>% 
+  names()
+
+temp_rois_4mm <-
+  rs %>% 
+  dplyr::select(
+    rTPJ_STS_4mm,
+    lTPJ_STS_4mm,
+    lTPJ_rTPJ_4mm,
+    aud_lTPJ_4mm,
+    aud_rTPJ_4mm,
+    aud_STS_4mm
+  ) %>% 
+  names()
+
+```
+
+```{r}
+rs <- 
+  rs %>% 
+  mutate(
+    # no threshold
+    av_coherence_p_4mm = 
       pmap_dbl(
-        select(., all_rois.05),
+        dplyr::select(., all_rois_4mm),
         function(...) mean(c(...), na.rm = TRUE)
     ),
-    av_coherence_z.05 = fisherz(av_coherence_p.05),
-    front_coherence_p.05 = 
+    av_coherence_z_4mm = fisherz(av_coherence_p_4mm),
+    front_coherence_p_4mm = 
       pmap_dbl(
-        select(., front_rois.05),
+        dplyr::select(., front_rois_4mm),
         function(...) mean(c(...), na.rm = TRUE)
     ),
-    front_coherence_z.05 = fisherz(front_coherence_p.1),
-    temp_coherence_p.05 = 
+    front_coherence_z_4mm = fisherz(front_coherence_p_4mm),
+    temp_coherence_p_4mm = 
       pmap_dbl(
-        select(., temp_rois.05),
+        dplyr::select(., temp_rois_4mm),
         function(...) mean(c(...), na.rm = TRUE)
     ),
-    temp_coherence_z.05 = fisherz(temp_coherence_p.05)
-  ) 
+    temp_coherence_z_4mm = fisherz(temp_coherence_p_4mm)
+  )
+```
+
+## 8mm data 
+```{r}
+# no threshold__________________________________________________________________
+all_rois_8mm <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_8mm,
+    IFGop_IFGtr_8mm,
+    IFGor_IFGtr_8mm,
+    IFGop_TP_8mm,
+    IFGor_TP_8mm,
+    IFGtr_TP_8mm,
+    foperc_IFGop_8mm,
+    foperc_IFGor_8mm,
+    foperc_IFGtr_8mm,
+    foperc_TP_8mm,
+    rTPJ_STS_8mm,
+    lTPJ_STS_8mm,
+    lTPJ_rTPJ_8mm,
+    aud_lTPJ_8mm,
+    aud_rTPJ_8mm,
+    aud_STS_8mm
+  ) %>% 
+  names()
+
+front_rois_8mm <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_8mm,
+    IFGop_IFGtr_8mm,
+    IFGor_IFGtr_8mm,
+    IFGop_TP_8mm,
+    IFGor_TP_8mm,
+    IFGtr_TP_8mm,
+    foperc_IFGop_8mm,
+    foperc_IFGor_8mm,
+    foperc_IFGtr_8mm,
+    foperc_TP_8mm
+  ) %>% 
+  names()
+
+temp_rois_8mm <-
+  rs %>% 
+  dplyr::select(
+    rTPJ_STS_8mm,
+    lTPJ_STS_8mm,
+    lTPJ_rTPJ_8mm,
+    aud_lTPJ_8mm,
+    aud_rTPJ_8mm,
+    aud_STS_8mm
+  ) %>% 
+  names()
+
+```
+
+```{r}
+rs <- 
+  rs %>% 
+  mutate(
+    # no threshold
+    av_coherence_p_8mm = 
+      pmap_dbl(
+        dplyr::select(., all_rois_8mm),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    av_coherence_z_8mm = fisherz(av_coherence_p_8mm),
+    front_coherence_p_8mm = 
+      pmap_dbl(
+        dplyr::select(., front_rois_8mm),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    front_coherence_z_8mm = fisherz(front_coherence_p_8mm),
+    temp_coherence_p_8mm = 
+      pmap_dbl(
+        dplyr::select(., temp_rois_8mm),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    temp_coherence_z_8mm = fisherz(temp_coherence_p_8mm)
+  )
+```
+
+## no GSR
+```{r}
+# no threshold__________________________________________________________________
+all_rois_noGSR <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_noGSR,
+    IFGop_IFGtr_noGSR,
+    IFGor_IFGtr_noGSR,
+    IFGop_TP_noGSR,
+    IFGor_TP_noGSR,
+    IFGtr_TP_noGSR,
+    foperc_IFGop_noGSR,
+    foperc_IFGor_noGSR,
+    foperc_IFGtr_noGSR,
+    foperc_TP_noGSR,
+    rTPJ_STS_noGSR,
+    lTPJ_STS_noGSR,
+    lTPJ_rTPJ_noGSR,
+    aud_lTPJ_noGSR,
+    aud_rTPJ_noGSR,
+    aud_STS_noGSR
+  ) %>% 
+  names()
+
+front_rois_noGSR <-
+  rs %>% 
+  dplyr::select(
+    IFGop_IFGor_noGSR,
+    IFGop_IFGtr_noGSR,
+    IFGor_IFGtr_noGSR,
+    IFGop_TP_noGSR,
+    IFGor_TP_noGSR,
+    IFGtr_TP_noGSR,
+    foperc_IFGop_noGSR,
+    foperc_IFGor_noGSR,
+    foperc_IFGtr_noGSR,
+    foperc_TP_noGSR
+  ) %>% 
+  names()
+
+temp_rois_noGSR <-
+  rs %>% 
+  dplyr::select(
+    rTPJ_STS_noGSR,
+    lTPJ_STS_noGSR,
+    lTPJ_rTPJ_noGSR,
+    aud_lTPJ_noGSR,
+    aud_rTPJ_noGSR,
+    aud_STS_noGSR
+  ) %>% 
+  names()
+```
+
+```{r}
+rs <- 
+  rs %>% 
+  mutate(
+    # no threshold
+    av_coherence_p_noGSR = 
+      pmap_dbl(
+        dplyr::select(., all_rois_noGSR),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    av_coherence_z_noGSR = fisherz(av_coherence_p_noGSR),
+    front_coherence_p_noGSR = 
+      pmap_dbl(
+        dplyr::select(., front_rois_noGSR),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    front_coherence_z_noGSR = fisherz(front_coherence_p_noGSR),
+    temp_coherence_p_noGSR = 
+      pmap_dbl(
+        dplyr::select(., temp_rois_noGSR),
+        function(...) mean(c(...), na.rm = TRUE)
+      ),
+    temp_coherence_z_noGSR = fisherz(temp_coherence_p_noGSR)
+  )
+```
+
+## Fisher z transform for coherence of networks defined by Louvain community detection
+```{r}
+rs <-
+  rs %>% 
+  mutate(
+    front_dd_z = fisherz(front_dd_p),
+    temp_dd_z = fisherz(temp_dd_p)
+  )
 ```
 
 # Histograms
-```{r}
-rs %>% 
-  ggplot(aes(av_coherence_z)) +
-  geom_histogram()
 
-rs %>% 
+## no spatial smoothing coherence data defined by visual inspection
+```{r}
+hist_front_ns <-
+  rs %>% 
   ggplot(aes(front_coherence_z)) +
-  geom_histogram()
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z) + 3*sd(rs$front_coherence_z),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z) - 3*sd(rs$front_coherence_z),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  theme_pubr() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the frontotemporal network (z)"
+  )
 
-rs %>% 
+hist_front_ns
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/fronto_hist.png",
+  width = 5,
+  height = 4
+)
+
+hist_post_ns <-
+  rs %>% 
   ggplot(aes(temp_coherence_z)) +
-  geom_histogram()
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z) + 3*sd(rs$temp_coherence_z),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z) - 3*sd(rs$temp_coherence_z),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the posterior temporal network (z)\n(no spatial smoothing)"
+  )
+
+hist_post_ns
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/posterior_hist.png",
+  width = 5,
+  height = 4
+)
+
+hists_nosmoothing <-
+  ggarrange(
+  hist_front_ns + rremove("x.title"),
+  hist_post_ns + rremove("x.title") + rremove("y.title"),
+  labels = c(
+    "A",
+    "B"
+  ),
+  align = "v"
+)
+
+hists_nosmoothing <- 
+  annotate_figure(
+  hists_nosmoothing,
+  bottom = text_grob("Connectivity (z) in frontotemporal (A) and posterior temporal (B) networks ", size = 16)
+)
+
+hists_nosmoothing
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hists_ns.png",
+  width = 10,
+  height = 4
+)
 ```
 
+## no spatial smoothing coherence data defined by Louvain community detection
 ```{r}
-rs %>% 
-  ggplot(aes(av_coherence_z.1)) +
-  geom_histogram()
+hist_front_dd <-
+  rs %>% 
+  ggplot(aes(front_dd_z)) +
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$front_dd_z) + 3*sd(rs$front_dd_z),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_dd_z) - 3*sd(rs$front_dd_z),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the frontotemporal network (z)\ndefined by Louvain community detection"
+  )
 
-rs %>% 
-  ggplot(aes(front_coherence_z.1)) +
-  geom_histogram()
+hist_front_dd
 
-rs %>% 
-  ggplot(aes(temp_coherence_z.1)) +
-  geom_histogram()
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/fronto_dd_hist.png",
+  width = 5,
+  height = 4
+)
+
+hist_post_dd <-
+  rs %>% 
+  ggplot(aes(temp_dd_z)) +
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$temp_dd_z) + 3*sd(rs$temp_dd_z),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_dd_z) - 3*sd(rs$temp_dd_z),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the posterior temporal network (z)\ndefined by Louvain community detection"
+  )
+
+hist_post_dd
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/posterior_dd_hist.png",
+  width = 5,
+  height = 4
+)
+
+hists_dd <-
+  ggarrange(
+  hist_front_dd + rremove("x.title"),
+  hist_post_dd + rremove("x.title") + rremove("y.title"),
+  labels = c(
+    "A",
+    "B"
+  ),
+  align = "v"
+)
+
+hists_dd <- 
+  annotate_figure(
+  hists_dd,
+  bottom = text_grob("Connectivity (z) in frontotemporal (A) and posterior temporal (B) networks\ndefined by Louvain community detection", size = 16)
+)
+
+hists_dd
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hists_dd.png",
+  width = 10,
+  height = 4
+)
 ```
 
+## 4mm smoothing coherence data 
+```{r}
+hist_front_4mm <-
+  rs %>% 
+  ggplot(aes(front_coherence_z_4mm)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_4mm) + 3*sd(rs$front_coherence_z_4mm),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_4mm) - 3*sd(rs$front_coherence_z_4mm),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Connectivity in the frontotemporal network (z)\n(4mm smoothing kernal)"
+  )
+
+hist_front_4mm
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/fronto_4mm_hist.png",
+  width = 5,
+  height = 4
+)
+
+hist_post_4mm <- 
+  rs %>% 
+  ggplot(aes(temp_coherence_z_4mm)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_4mm) + 3*sd(rs$temp_coherence_z_4mm),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_4mm) - 3*sd(rs$temp_coherence_z_4mm),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Connectivity in the posterior temporal network (z)\n(4mm smoothing kernal)"
+  )
+
+hist_post_4mm
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/posterior_4mm_hist.png",
+  width = 5,
+  height = 4
+)
+```
+
+## 8mm smoothing coherence data 
 ```{r}
 rs %>% 
-  ggplot(aes(av_coherence_z.05)) +
-  geom_histogram()
+  ggplot(aes(front_coherence_z_8mm)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_8mm) + 3*sd(rs$front_coherence_z_8mm),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_8mm) - 3*sd(rs$front_coherence_z_8mm),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Connectivity in the frontotemporal network (z)\n(8mm smoothing kernal)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/fronto_8mm_hist.png",
+  width = 5,
+  height = 4
+)
 
 rs %>% 
-  ggplot(aes(front_coherence_z.05)) +
-  geom_histogram()
+  ggplot(aes(temp_coherence_z_8mm)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_8mm) + 3*sd(rs$temp_coherence_z_8mm),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_8mm) - 3*sd(rs$temp_coherence_z_8mm),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Connectivity in the posterior temporal network (z)\n(8mm smoothing kernal)"
+  )
 
-rs %>% 
-  ggplot(aes(temp_coherence_z.05)) +
-  geom_histogram()
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/posterior_8mm_hist.png",
+  width = 5,
+  height = 4
+)
+```
+
+## no GSR coherence data 
+```{r}
+hist_front_noGSR <- 
+  rs %>% 
+  ggplot(aes(front_coherence_z_noGSR)) +
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_noGSR) + 3*sd(rs$front_coherence_z_noGSR),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_coherence_z_noGSR) - 3*sd(rs$front_coherence_z_noGSR),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(0, 1, .2)) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the frontotemporal network (z)\n(no spatial smoothing, no GSR)"
+  )
+
+hist_front_noGSR
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/fronto_noGSR_hist.png",
+  width = 5,
+  height = 4
+)
+
+hist_post_noGSR <- 
+  rs %>% 
+  ggplot(aes(temp_coherence_z_noGSR)) +
+  geom_histogram(binwidth = .05) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_noGSR) + 3*sd(rs$temp_coherence_z_noGSR),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_coherence_z_noGSR) - 3*sd(rs$temp_coherence_z_noGSR),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(0, 1, .2)) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the posterior temporal network (z)\n(no spatial smoothing, no GSR)"
+  )
+
+hist_post_noGSR
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/posterior_noGSR_hist.png",
+  width = 5,
+  height = 4
+)
+
+hists_noGSR <-
+  ggarrange(
+  hist_front_noGSR + rremove("x.title"),
+  hist_post_noGSR + rremove("x.title") + rremove("y.title"),
+  labels = c(
+    "A",
+    "B"
+  ),
+  align = "v"
+)
+
+hists_noGSR <- 
+  annotate_figure(
+  hists_noGSR,
+  bottom = text_grob("Connectivity (z) in frontotemporal (A) and posterior temporal (B) networks\nwithout mean signal regression", size = 16)
+)
+
+hists_noGSR
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hists_noGSR.png",
+  width = 10,
+  height = 4
+)
+```
+
+## Clustering coefficients
+```{r}
+rs %>%
+  ggplot(aes(front_cc)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$front_cc) + 3*sd(rs$front_cc),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$front_cc) - 3*sd(rs$front_cc),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Clustering coefficient of the frontotemporal network (z)\n(no spatial smoothing)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/front_cc_hist.png",
+  width = 5,
+  height = 4
+)
+
+rs %>%
+  ggplot(aes(temp_cc)) +
+  geom_histogram() +
+  geom_vline(
+    xintercept = mean(rs$temp_cc) + 3*sd(rs$temp_cc),
+    color = "red"
+  ) +
+  geom_vline(
+    xintercept = mean(rs$temp_cc) - 3*sd(rs$temp_cc),
+    color = "red"
+  ) +
+  scale_x_continuous(breaks = seq.int(-.2, .8, .1)) +
+  labs(
+    x = "Clustering coefficient of the posterior temporal network (z)\n(no spatial smoothing)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/temp_cc_hist.png",
+  width = 5,
+  height = 4
+)
 ```
 
 ```{r}
@@ -359,10 +1249,258 @@ rs %>%
 
 rs <-
   rs %>% 
-  filter(ID != 115)
+  mutate(
+    front_coherence_z = if_else(
+      ID == 115, NA_real_,  front_coherence_z
+    ),
+    front_coherence_z_4mm = if_else(
+      ID == 115, NA_real_,  front_coherence_z_4mm
+    ),
+    front_coherence_z_8mm = if_else(
+      ID == 115, NA_real_,  front_coherence_z_8mm
+    ),
+    front_dd_z = if_else(
+      ID == 115, NA_real_,  front_dd_z
+    )
+  )
 ```
 
+# Associations between coherence and clustering coefficient measures
+
+## Frontotemporal and posterior temporal coherence 
+
+### Based on visual inspection
 ```{r}
-write_csv(rs, "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/coherence_tidy_20200203.csv")
+rs %>% 
+  ggplot(aes(temp_coherence_z, front_coherence_z)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+rs %>% 
+  ggplot(aes(temp_coherence_z_4mm, front_coherence_z_4mm)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### Based on Louvain community detection
+```{r}
+rs %>% 
+  ggplot(aes(temp_dd_z, front_dd_z)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## Coherence between no spatial smoothing and 4mm 
+```{r}
+rs %>% 
+  ggplot(aes(front_coherence_z, front_coherence_z_4mm)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    x = "Connectivity in the frontotemporal network\n(no spatial smoothing)",
+    y = "Connectivity in the frontotemporal network\n(4mm smoothing kernal)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/frontNOsmooth_front_4mm.png",
+  width = 5,
+  height = 4
+)
+
+cor.test(rs$front_coherence_z, rs$front_coherence_z_4mm)
+
+rs %>% 
+  ggplot(aes(temp_coherence_z, temp_coherence_z_4mm)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    x = "Connectivity in the posterior temporal network\n(no spatial smoothing)",
+    y = "Connectivity in the posterior temporal network\n(4mm smoothing kernal)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/postNOsmooth_post_4mm.png",
+  width = 5,
+  height = 4
+)
+
+cor.test(rs$temp_coherence_z, rs$temp_coherence_z_4mm)
+```
+
+## Coherence between no spatial smoothing and 8mm 
+```{r}
+rs %>% 
+  ggplot(aes(front_coherence_z, front_coherence_z_8mm)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    x = "Connectivity in the frontotemporal network\n(no spatial smoothing)",
+    y = "Connectivity in the frontotemporal network\n(8mm smoothing kernal)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/frontNOsmooth_front_8mm.png",
+  width = 5,
+  height = 4
+)
+
+cor.test(rs$front_coherence_z, rs$front_coherence_z_8mm)
+
+rs %>% 
+  ggplot(aes(temp_coherence_z, temp_coherence_z_4mm)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(
+    x = "Connectivity in the posterior temporal network\n(no spatial smoothing)",
+    y = "Connectivity in the posterior temporal network\n(8mm smoothing kernal)"
+  )
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/postNOsmooth_post_8mm.png",
+  width = 5,
+  height = 4
+)
+
+cor.test(rs$temp_coherence_z, rs$temp_coherence_z_8mm)
+```
+
+## Clustering coefficient and age 
+```{r}
+# GSR
+age_front_cc <-
+  rs %>% 
+  ggplot(aes(age_scan_corr, front_cc)) +
+  geom_point() +
+  geom_smooth(method = "lm", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Infant corrected age at scan (months)",
+    y = "Local clustering coefficient"
+  ) 
+
+age_front_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/age_frontcc.png",
+  width = 5,
+  height = 4
+)
+
+age_temp_cc <-
+  rs %>% 
+  ggplot(aes(age_scan_corr, temp_cc)) +
+  geom_point() +
+  geom_smooth(method = "lm", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Infant corrected age at scan (months)",
+    y = "Local clustering coefficient"
+  )
+
+age_temp_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/age_tempcc.png",
+  width = 5,
+  height = 4
+)
+
+
+#all near 0 values treated as 0; and everything with a positive/negative magnitude treated as 1
+```
+
+## Clustering coefficient and coherence 
+```{r}
+# GSR
+front_z_cc <-
+  rs %>% 
+  ggplot(aes(front_coherence_z, front_cc)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the frontotemporal network\n(with mean signal regression)",
+    y = "Local clustering coefficient"
+  ) 
+
+front_z_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/frontconn_frontcc.png",
+  width = 5,
+  height = 4
+)
+
+temp_z_cc <-
+  rs %>% 
+  ggplot(aes(temp_coherence_z, temp_cc)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the posterior temporal network\n(with mean signal regression)",
+    y = "Local clustering coefficient"
+  )
+
+temp_z_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/tempconn_tempcc.png",
+  width = 5,
+  height = 4
+)
+
+
+conn_cc <-
+  ggarrange(
+  front_z_cc + rremove("x.title"),
+  temp_z_cc + rremove("x.title") + rremove("y.title"),
+  labels = c(
+    "A",
+    "B"
+  ),
+  align = "v"
+)
+
+conn_cc <- 
+  annotate_figure(
+  conn_cc,
+  bottom = text_grob("Connectivity (z) in frontotemporal (A) and posterior temporal (B) networks ", size = 16)
+)
+
+conn_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/conn_cc.png",
+  width = 10,
+  height = 4
+)
+
+#all near 0 values treated as 0; and everything with a positive/negative magnitude treated as 1
+```
+
+
+```{r}
+rs <-
+  rs %>% 
+  dplyr::select(-male:-income_needs)
+
+#write_csv(rs, "~/Box/lucy_king_files/BABIES/rsfMRI/data/language/rs_tidy_20200821.csv")
 ```
 

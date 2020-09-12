@@ -1,4 +1,0 @@
-"0","```r
-write_csv(lena_d1, \"~/Box/lucy_king_files/BABIES/final_caregiving_data/lena_d1_20191015.csv\")
-write_csv(lena_time_cl, \"~/Box/lucy_king_files/BABIES/final_caregiving_data/lena_d1_time_20191015.csv\")
-```"

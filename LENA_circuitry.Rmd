@@ -2,11 +2,11 @@
 title: "Infant language exposure and language networks"
 author: "Lucy King"
 date: "2/4/2020"
-output: html_document
+output: html_notebook
 ---
 
 # Environment set up 
-```{r}
+```{r echo=FALSE}
 library(tidyverse)
 library(corrr)
 library(sjstats)
@@ -15,23 +15,33 @@ library(ggcorrplot)
 library(car)
 library(ggsci)
 library(BayesFactor)
+library(pwr)
+library(ggfortify)
+library(broom)
+library(MASS)
+library(olsrr)
+library(ggpubr)
 # for meff function
-source('https://osf.io/ws6xc/download')
+#source('https://osf.io/ws6xc/download')
 
 data_home_personal <- "~/Box/lucy_king_files/BABIES/rsfMRI/data/"
 data_home_mooddata <- "~/Box/Mooddata_Coordinating/BABIES/Data/final_scored_data/"
 
-rs_file <- paste0(data_home_personal, "language/coherence_tidy_20200203.csv")
-fd_file <- paste0(data_home_personal, "summarized_fd.csv")
+rs_file <- paste0(data_home_personal, "language/rs_tidy_20200821.csv")
+
+fd_file <- paste0(data_home_personal, "language/summarized_fd.csv")
+motion_info_file <-  paste0(data_home_personal, "language/rest_subjects_motion_info_20200804.csv")
 demo_file <- paste0(data_home_mooddata, "demographics/demo_6mo_cleaned_final.csv")
 lena_file <- paste0(data_home_mooddata, "LENA/lena_final_wf_day1day2_20200208.csv")
+lena_exclusion_file <- "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/LENA_inclusion_exclusion.csv"
 scanner_file <- paste0(data_home_personal, "6mo_scanner_20200209.csv")
 shipley_file <- paste0(data_home_personal,"language/shipley_6mo_final_20200208.csv")
 nutrition_file <- paste0(data_home_personal, "HOME_nutrition_cleaned_20200208.csv")
 prams_file <- paste0(data_home_mooddata, "PRAMS/prams_alldata_cleaned.csv")
 ibq_file <- paste0(data_home_mooddata, "IBQ/ibq_scored_final.csv")
 digit_span_file <- paste0(data_home_personal, "digit_span_6mo_complete.csv")
-
+crisys_file <- paste0(data_home_mooddata, "CRISYS/crisys_scored_wf_complete.csv")
+participant_flow_file <- ("~/Box/lucy_king_files/BABIES/rsfMRI/LENA/JNeuro/simple_participant_flow_LENA_rsfMRI_paper.xlsx")
   
 theme_lena <-
   theme_minimal() +
@@ -51,17 +61,31 @@ options(scipen = 999)
 # Read in data
 
 ```{r}
+lena_exclusion <-
+  read_csv(lena_exclusion_file)
+```
+
+```{r}
+participant_flow <-
+  readxl::read_xlsx(participant_flow_file)
+```
+
+```{r}
 d <-
   read_csv(demo_file) %>%  
   left_join(read_csv(lena_file), by = "ID") %>% 
   left_join(read_csv(rs_file), by = "ID") %>% 
   left_join(read_csv(fd_file), by = "ID") %>% 
+  left_join(read_csv(motion_info_file), by = "ID") %>% 
   left_join(read_csv(scanner_file), by = "ID") %>% 
   left_join(read_csv(shipley_file), by = "ID") %>% 
   left_join(read_csv(nutrition_file), by = "ID") %>% 
   left_join(read_csv(digit_span_file), by = "ID") %>% 
   left_join(read_csv(prams_file), by = "ID") %>%  
   left_join(read_csv(ibq_file), by = "ID") %>% 
+  left_join(read_csv(crisys_file), by = "ID") %>% 
+  left_join(participant_flow, by = "ID") %>% 
+  filter(T3 == 1) %>% 
   rename(
     age_1_lena = age_1,
     age_2_lena = age_2
@@ -81,18 +105,46 @@ d <-
       mom_race == "White",
       1, 0
     ),
-    age_diff_lab_scan = age_scan - age_behav
+    age_diff_lab_scan = age_scan - age_behav,
+    mom_college = if_else(
+      education_txt == "Bachelor's degree" | education_txt == "Graduate degree",
+      ">=college", "<college"
+    )
   )
+
 ```
 
+
 # Participants
+
+### LENA exclusion reasons
+```{r}
+lena_exclusion %>% 
+  group_by(ID) %>% 
+  mutate(include_sum = sum(include)) %>% 
+  ungroup() %>% 
+  filter(include_sum == 0) %>% 
+  distinct(ID, age_exclude)
+```
+
+### Scan completion
+```{r}
+participant_flow %>% 
+  count(T3_MRI_attempt)
+
+participant_flow %>% 
+  count(T3_MRI_T2w)
+
+participant_flow %>% 
+  count(T3_MRI_T2w, T3_MRI_rest)
+```
 
 ### Compare included vs. not on LENA and covariates
 ```{r}
 d <-
   d %>% 
   mutate(
-    included = !is.na(front_coherence_z) & !is.na(ctc_hour_max_1)
+    included = !is.na(front_dd_z) & !is.na(ctc_hour_max_1)
   )
 
 d %>% 
@@ -103,12 +155,11 @@ d %>%
 # mom characteristics
 t.test(d$mom_age ~ d$included)
 t.test(d$income_needs ~ d$included)
-t.test(d$education ~ d$included)
 t.test(d$shipley_6mo_total ~ d$included)
 t.test(d$digitspan_totalscore ~ d$included)
 t.test(d$prev_preg_total ~ d$included)
-t.test(d$pregnancy_weight_diff ~ d$included)
 ```
+
 
 ```{r}
 # baby chracteristics
@@ -116,10 +167,9 @@ t.test(d$age_scan ~ d$included)
 t.test(d$age_scan_corr ~ d$included)
 t.test(d$gestational_weeks_birth ~ d$included)
 t.test(d$NEG ~ d$included)
-t.test(d$SUR ~ d$included)
-t.test(d$REG ~ d$included)
 t.test(d$birth_weight_total_lbs ~ d$included)
 ```
+
 
 ```{r}
 # LENA
@@ -130,58 +180,94 @@ t.test(d$ctc_prop_1 ~ d$included)
 t.test(d$awc_prop_1 ~ d$included)
 ```
 
+
 ```{r}
 # categorical variables 
 chisq.test(d$included, d$male)
 chisq.test(d$included, d$mom_latinx)
-chisq.test(d$included, d$baby_latinx)
 chisq.test(d$included, d$white)
 chisq.test(d$included, d$scanner_6mo)
-chisq.test(d$included, d$breastfed)
-chisq.test(d$included, d$now_breastfed)
 chisq.test(d$included, d$primary_english)
+chisq.test(d$included, d$mom_college)
 ```
 
+```{r}
+# descriptives not included 
+d %>% 
+  filter(included == 0) %>% 
+  summarize_at(
+    vars(
+      mom_age,
+      digitspan_totalscore,
+      income_needs,
+      shipley_6mo_total,
+      prev_preg_total,
+      age_scan,
+      gestational_weeks_birth,
+      NEG,
+      birth_weight_total_lbs,
+      ctc_hour_max_1,
+      awc_hour_max_1,
+      cvc_hour_max_1,
+      ctc_prop_1,
+      awc_prop_1
+    ),
+    funs(mean, sd), na.rm = TRUE
+  )
+
+d %>% 
+  filter(included == 0) %>% 
+  count(male)
+
+d %>% 
+  filter(included == 0) %>% 
+  count(mom_latinx)
+
+d %>% 
+  filter(included == 0) %>% 
+  count(primary_english)
+
+d %>% 
+  filter(included == 0) %>% 
+  count(white)
+
+d %>% 
+  filter(included == 0) %>% 
+  count(scanner_6mo)
+
+d %>% 
+  filter(included == 0) %>% 
+  count(education_txt)
+```
 
 ```{r}
 d_sample <-
   d %>% 
   filter(included == TRUE)
-
-d_sample %>% 
-  count(primarylang)
-
-d_sample %>% 
-  count(scanner_6mo)
-
-d_sample %>% 
-  count(breastfed) %>% 
-  mutate(
-    per = n / sum(n)
-  )
 ```
 ## Distance between scan, lab session, and LENA assessment
 ```{r}
 d_sample %>% 
-  ggplot(aes(age_diff_lena_scan_1)) +
-  geom_histogram()
-
-d_sample %>% 
-  ggplot(aes(age_diff_lab_scan)) +
+  ggplot(aes(abs(age_diff_lena_scan_1))) +
   geom_histogram()
 
 d_sample %>% 
   mutate(
-    age_diff_lena_scan_1 = age_diff_lena_scan_1 * 4,
-    age_diff_lab_scan = age_diff_lab_scan * 4
+    age_diff_lena_scan_1 = abs(age_diff_lena_scan_1 * 4)
   ) %>% 
   summarise_at(
-    vars(age_diff_lena_scan_1, age_diff_lab_scan),
-    funs(mean, sd), na.rm = TRUE
+    vars(age_diff_lena_scan_1),
+    funs(mean, sd, min, max), na.rm = TRUE
   )
 ```
 
-## Table 1
+## Table 2
+```{r}
+d_sample %>% 
+  count(primarylang) %>% 
+  arrange(desc(n))
+```
+
 ```{r}
 d_sample_means <-
   d_sample %>% 
@@ -304,41 +390,62 @@ d_sample %>%
 
 d_sample %>% 
   count(mom_latinx)
+
+d_sample %>% 
+  count(now_breastfed)
+
+d_sample %>% 
+  count(!is.na(income_needs))
+
+d_sample %>% 
+  count(!is.na(NEG))
+
+d_sample %>% 
+  count(!is.na(birth_weight_total_lbs))
+
+d_sample %>% 
+  count(!is.na(digitspan_totalscore))
+
+d_sample %>% 
+  count(!is.na(shipley_6mo_total))
+
+d_sample %>% 
+  count(!is.na(prev_preg_total))
 ```
 
 # Corrected p-value
 ```{r}
 lena_d <-
   d_sample %>% 
-  select(
+  dplyr::select(
     ctc_prop_1,
     awc_prop_1,
     ctc_hour_max_1,
     awc_hour_max_1
   )
 
-meff_lena <- meff(lena_d)
+#meff_lena <- meff(lena_d)
 
-.05/meff_lena
+#.05/meff_lena
 ```
 
 # Correlations and t-tests
 
 ## LENA measures
+
+
 ```{r}
 lena_corr <- 
   d_sample %>% 
-  select(
+  dplyr::select(
     ctc_prop_1,
     awc_prop_1,
     ctc_hour_max_1,
     awc_hour_max_1,
     cvc_hour_max_1,
-    age_1_lena,
     age_scan_corr,
     gestational_weeks_birth,
     birth_weight_total_lbs,
-    education,
     mom_age,
     income_needs,
     shipley_6mo_total,
@@ -347,19 +454,25 @@ lena_corr <-
     NEG,
     age_diff_lena_scan_1
   ) %>% 
-  correlate(method = "spearman") %>% 
+  correlate(method = "pearson") %>% 
   mutate_at(
     vars(-rowname),
     funs(round(., 3))
   )
 
 write_csv(lena_corr, paste0(data_home_personal, "language/lena_covariates.csv"))
+
+cor.test(d_sample$education, d_sample$ctc_hour_max_1, method = "spearman")
+cor.test(d_sample$education, d_sample$awc_hour_max_1, method = "spearman")
+cor.test(d_sample$education, d_sample$cvc_hour_max_1, method = "spearman")
+cor.test(d_sample$education, d_sample$ctc_prop_1, method = "spearman")
+cor.test(d_sample$education, d_sample$awc_prop_1, method = "spearman")
 ```
 
 ```{r}
 lena_corr_plot <- 
   d_sample %>% 
-  select(
+  dplyr::select(
     `Infant vocalizations` = cvc_hour_max_1,
     `CT consistency` = ctc_prop_1,
     `AW consistency` = awc_prop_1,
@@ -379,7 +492,11 @@ ggcorrplot(
   lab_size = 6
   )
 
-ggsave(paste0(data_home_personal, "language/lena_corr_plot.png"))
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/lena_corr_plot.tiff",
+  units = "cm",
+  dpi = 300
+)
 ```
 
 ```{r}
@@ -407,11 +524,42 @@ cor.test(d_sample$cvc_hour_max_1, d_sample$birth_weight_total_lbs)
 cor.test(d_sample$ctc_prop_1, d_sample$birth_weight_total_lbs)
 ```
 
+```{r}
+d_sample %>% 
+  group_by(male) %>% 
+  summarise_at(
+    vars(ctc_prop_1, ctc_hour_max_1, awc_prop_1, awc_hour_max_1, cvc_hour_max_1),
+    funs(mean, sd), na.rm = TRUE
+  )
+
+t.test(d_sample$ctc_prop_1 ~ d_sample$male)
+t.test(d_sample$ctc_hour_max_1 ~ d_sample$male)
+t.test(d_sample$awc_prop_1 ~ d_sample$male)
+t.test(d_sample$awc_hour_max_1 ~ d_sample$male)
+t.test(d_sample$cvc_hour_max_1 ~ d_sample$male)
+```
+
+```{r}
+t.test(d_sample$ctc_prop_1 ~ d_sample$now_breastfed)
+t.test(d_sample$ctc_hour_max_1 ~ d_sample$now_breastfed)
+t.test(d_sample$awc_prop_1 ~ d_sample$now_breastfed)
+t.test(d_sample$awc_hour_max_1 ~ d_sample$now_breastfed)
+t.test(d_sample$cvc_hour_max_1 ~ d_sample$now_breastfed)
+```
+
+```{r}
+t.test(d_sample$ctc_prop_1 ~ d_sample$primary_english)
+t.test(d_sample$ctc_hour_max_1 ~ d_sample$primary_english)
+t.test(d_sample$awc_prop_1 ~ d_sample$primary_english)
+t.test(d_sample$awc_hour_max_1 ~ d_sample$primary_english)
+t.test(d_sample$cvc_hour_max_1 ~ d_sample$primary_english)
+```
+
 ## Connectivity measures
 ```{r}
 connect_corr <- 
   d_sample %>% 
-  select(
+  dplyr::select(
     temp_coherence_z,
     front_coherence_z,
     age_scan_corr,
@@ -423,9 +571,7 @@ connect_corr <-
     shipley_6mo_total,
     digitspan_totalscore,
     pregnancy_weight_diff,
-    NEG,
-    REG, 
-    SUR
+    NEG
   ) %>% 
   correlate(method = "spearman") %>% 
   mutate_at(
@@ -440,13 +586,51 @@ cor.test(d_sample$temp_coherence_z, d_sample$shipley_6mo_total)
 cor.test(d_sample$temp_coherence_z, d_sample$NEG)
 ```
 
-## Frame-wise displacement 
+```{r}
+d_sample %>% 
+  group_by(male) %>% 
+  summarise_at(
+    vars(front_coherence_z, temp_coherence_z),
+    funs(mean, sd), na.rm = TRUE
+  )
+
+t.test(d$front_coherence_z ~ d$male)
+t.test(d$temp_coherence_z ~ d$male)
+```
+
+```{r}
+t.test(d$front_coherence_z ~ d$primary_english)
+t.test(d$temp_coherence_z ~ d$primary_english)
+```
+
+```{r}
+t.test(d$front_coherence_z ~ d$now_breastfed)
+t.test(d$temp_coherence_z ~ d$now_breastfed)
+```
+
+```{r}
+d_sample %>% 
+  group_by(scanner_6mo) %>% 
+  summarise_at(
+    vars(front_coherence_z, temp_coherence_z),
+    funs(mean, sd)
+  )
+```
+
+## Frame-wise displacement and other motion QA
+
+```{r}
+d_sample %>% 
+  count(short_gaps)
+```
+
 ```{r}
 fd_corr <- 
   d_sample %>% 
-  select(
+  dplyr::select(
     rawFD,
     censoredFD,
+    usable_minutes,
     temp_coherence_z,
     front_coherence_z,
     ctc_hour_max_1,
@@ -464,67 +648,13 @@ fd_corr <-
 write_csv(fd_corr, paste0(data_home_personal, "language/FD_LENA_connectivity.csv"))
 
 cor.test(d_sample$censoredFD, d_sample$awc_prop_1)
-```
-
-## Sex differences
-```{r}
-d_sample %>% 
-  group_by(male) %>% 
-  summarise_at(
-    vars(ctc_prop_1, ctc_hour_max_1, awc_prop_1, awc_hour_max_1, cvc_hour_max_1),
-    funs(mean, sd), na.rm = TRUE
-  )
-
-t.test(d_sample$ctc_prop_1 ~ d_sample$male)
-t.test(d_sample$ctc_hour_max_1 ~ d_sample$male)
-t.test(d_sample$awc_prop_1 ~ d_sample$male)
-t.test(d_sample$awc_hour_max_1 ~ d_sample$male)
-t.test(d_sample$cvc_hour_max_1 ~ d_sample$male)
+cor.test(d_sample$censoredFD, d_sample$cvc_hour_max_1)
+cor.test(d_sample$usable_minutes, d_sample$front_coherence_z)
 ```
 
 ```{r}
-d_sample %>% 
-  group_by(male) %>% 
-  summarise_at(
-    vars(front_coherence_z, temp_coherence_z),
-    funs(mean, sd), na.rm = TRUE
-  )
-
-t.test(d$front_coherence_z ~ d$male)
-t.test(d$temp_coherence_z ~ d$male)
-```
-
-## Scanner differences
-```{r}
-scan_diff_front <- lm(front_coherence_z ~ scanner_6mo, data = d_sample)
-anova(scan_diff_front)
-
-scan_diff_temp <- lm(temp_coherence_z ~ scanner_6mo, data = d_sample)
-anova(scan_diff_temp)
-      
-d_sample %>% 
-  group_by(scanner_6mo) %>% 
-  summarise_at(
-    vars(front_coherence_z, temp_coherence_z),
-    funs(mean, sd)
-  )
-
-d_sample %>% 
-  count(scanner_6mo)
-```
-
-## Bilingual status differences 
-```{r}
-t.test(d_sample$ctc_prop_1 ~ d_sample$primary_english)
-t.test(d_sample$ctc_hour_max_1 ~ d_sample$primary_english)
-t.test(d_sample$awc_prop_1 ~ d_sample$primary_english)
-t.test(d_sample$awc_hour_max_1 ~ d_sample$primary_english)
-t.test(d_sample$cvc_hour_max_1 ~ d_sample$primary_english)
-```
-
-```{r}
-t.test(d$front_coherence_z ~ d$primary_english)
-t.test(d$temp_coherence_z ~ d$primary_english)
+t.test(d_sample$temp_coherence_z ~ d_sample$short_gaps)
+t.test(d_sample$front_coherence_z ~ d_sample$short_gaps)
 ```
 
 # Models
@@ -539,6 +669,218 @@ contrasts(d_sample$scanner_6mo) <- cbind(
   CNIv3T2 = c(-1/3, 2/3, -1/3), 
   CNIv3T3 = c(2/3, -1/3, -1/3)
 )
+```
+
+## Formal model fitting to determine covariate inclusion
+Covariates considered: gestational age at birth, corrected age at scan, birthweight, negative emotionality, breastfeeding (ever), breastfeeding (current), primary language (english vs. other), number of previous pregnancies, education, income-to-needs ratio, maternal verbal knowledge (shipley), maternal short-term memory (digit span).
+
+```{r}
+mlm_scanner = lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo,
+    data = d_sample
+)
+```
+
+```{r}
+mlm_age_lena <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    age_diff_lena_scan_1,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_age_lena)
+```
+
+```{r}
+mlm_gestation <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    gestational_weeks_birth,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_gestation)
+```
+
+```{r}
+mlm_age_scan <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    age_scan_corr,
+    data = d_sample
+)
+anova(mlm_scanner, mlm_age_scan)
+```
+
+```{r}
+mlm_age_scan2 <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    poly(scale(age_scan_corr), 2),
+    data = d_sample
+)
+anova(mlm_scanner, mlm_age_scan2)
+```
+
+```{r}
+mlm_sex <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    male,
+    data = d_sample
+)
+anova(mlm_scanner, mlm_sex)
+```
+
+```{r}
+d_sample_weight <-
+  d_sample %>% 
+  filter(!is.na(birth_weight_total_lbs))
+
+mlm_scanner.1 <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo,
+    data = d_sample_weight
+)
+
+mlm_weight <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    birth_weight_total_lbs,
+    data = d_sample_weight
+)
+
+anova(mlm_scanner.1, mlm_weight)
+```
+
+```{r}
+d_sample_breastfed <-
+  d_sample %>% 
+  filter(!is.na(breastfed))
+
+mlm_scanner.2 <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo,
+    data = d_sample_breastfed
+)
+
+mlm_breastfed <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    breastfed,
+    data = d_sample_breastfed
+)
+
+anova(mlm_scanner.2, mlm_breastfed)
+```
+
+```{r}
+d_sample_breastfed_npw <-
+  d_sample %>% 
+  filter(!is.na(now_breastfed))
+
+mlm_scanner.3 <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo,
+    data = d_sample_breastfed_npw
+)
+
+mlm_breastfed_now <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    now_breastfed,
+    data = d_sample_breastfed_npw
+)
+
+anova(mlm_scanner.3, mlm_breastfed_now)
+```
+
+```{r}
+mlm_bilingual <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    primary_english,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_bilingual)
+```
+
+```{r}
+mlm_age <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    mom_age,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_age)
+```
+
+```{r}
+mlm_income <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    income_needs,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_income)
+```
+
+```{r}
+mlm_income <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    income_needs,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_income)
+```
+
+```{r}
+mlm_education <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    education,
+    data = d_sample
+)
+
+anova(mlm_scanner, mlm_education)
+```
+
+```{r}
+mlm_shipley <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    shipley_6mo_total,
+    data = d_sample
+)
+anova(mlm_scanner, mlm_shipley)
+
+```
+
+```{r}
+d_sample_digitspan <-
+  d_sample %>% 
+  filter(!is.na(digitspan_totalscore))
+
+mlm_scanner.4 <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo,
+    data = d_sample_digitspan
+)
+
+mlm_digitspan <- lm(
+  cbind(temp_coherence_z, front_coherence_z) ~ 
+    scanner_6mo +
+    digitspan_totalscore,
+    data = d_sample_digitspan
+)
+anova(mlm_scanner.4, mlm_digitspan)
 ```
 
 ## Base models
@@ -559,6 +901,7 @@ mlm_base2 <- lm(
     data = d_sample
 )
 Anova(mlm_base2)
+summary_base2 <- summary(mlm_base2)
 
 r.squaredT_base <- summary_base2$`Response temp_coherence_z`$r.squared
 r.squaredF_base <- summary_base2$`Response front_coherence_z`$r.squared
@@ -583,9 +926,8 @@ mlm_CTq <- lm(
   cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
     scanner_6mo +
     scale(ctc_hour_max_1),
-    data = d_sample
+    data = d
 )
-summary(mlm_CTq)
 Manova(mlm_CTq)
 
 lm_CTq_temp <- lm(
@@ -602,7 +944,7 @@ r.sauaredT_delta_CTq <- r.squaredT_CTq - r.squaredT_base
 
 model_d_ctcq <-
   d_sample %>% 
-  select(
+  dplyr::select(
     temp_coherence_z,
     scanner_6mo,
     ctc_hour_max_1
@@ -611,6 +953,7 @@ model_d_ctcq <-
 bayesianLR = generalTestBF(temp_coherence_z ~ ., data = model_d_ctcq)
 ```
 
+#### Covary SES
 ```{r}
 mlm_CTq_ses1 <- lm(
   cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
@@ -622,7 +965,6 @@ mlm_CTq_ses1 <- lm(
 )
 Manova(mlm_CTq_ses1)
 
-
 mlm_CTq_ses2 <- lm(
   cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
     scanner_6mo +
@@ -632,7 +974,6 @@ mlm_CTq_ses2 <- lm(
 )
 Manova(mlm_CTq_ses2)
 
-
 mlm_CTq_ses3 <- lm(
   cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
     scanner_6mo +
@@ -641,6 +982,40 @@ mlm_CTq_ses3 <- lm(
     data = d_sample
 )
 Manova(mlm_CTq_ses3)
+```
+
+#### Check outlying values for main result
+
+```{r}
+# plot residuals
+ols_plot_resid_stud(lm_CTq_temp)
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/ctc_temp_resid_hist.png",
+  width = 6,
+  height = 4
+)
+
+# test whether observations with high studentized residuals are outliers
+outlierTest(lm_CTq_temp)
+```
+
+```{r}
+# spearman correlation
+cor.test(d_sample$temp_coherence_z, d_sample$ctc_hour_max_1, method = "spearman")
+cor.test(d_sample$temp_coherence_z, d_sample$ctc_hour_max_1, method = "pearson")
+```
+
+```{r}
+# robust regression
+lm_CTq_temp_robust <- rlm(
+  scale(temp_coherence_z_4mm) ~
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+  data = d_sample
+)
+summary(lm_CTq_temp_robust)
+summary(lm_CTq_temp)
 ```
 
 ## Consistency of language exposure 
@@ -653,7 +1028,6 @@ mlm_AWc <- lm(
     scale(awc_prop_1),
     data = d_sample
 )
-summary(mlm_AWc)
 Manova(mlm_AWc)
 ```
 
@@ -665,7 +1039,6 @@ mlm_CTc <- lm(
     scale(ctc_prop_1),
     data = d_sample
 )
-summary(mlm_CTc)
 Manova(mlm_CTc)
 ```
 
@@ -694,7 +1067,7 @@ r.sauaredT_delta_CVq <- r.squaredT_CVq - r.squaredT_base
 
 model_d_cvcq <-
   d_sample %>% 
-  select(
+  dplyr::select(
     temp_coherence_z,
     scanner_6mo,
     cvc_hour_max_1
@@ -703,98 +1076,701 @@ model_d_cvcq <-
 bayesianLR = generalTestBF(temp_coherence_z ~ ., data = model_d_cvcq)
 ```
 
-## Sensitivity analyses: Connectivity values thresholded at .05 and .1
+# Supplementary analyses
 
-### Quantity of language exposure
+## Networks thresholded at .1
+
+### Networks thresholded, quantity of language exposure
 
 #### AW
 ```{r}
-mlm_AWq.1 <- lm(
+mlm_AWq_.1 <- lm(
   cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
     scanner_6mo +
     scale(awc_hour_max_1),
     data = d_sample
 )
-Manova(mlm_AWq.1)
+Manova(mlm_AWq_.1)
+```
+#### CT
+```{r}
+mlm_CTq_.1 <- lm(
+  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_CTq_.1)
 
-mlm_AWq.05 <- lm(
-  cbind(scale(temp_coherence_z.05), scale(front_coherence_z.05)) ~ 
+summary(mlm_CTq_.1)
+
+lm_CTq_.1 <-
+  lm(
+    scale(temp_coherence_z.1) ~
+      scanner_6mo +
+      scale(ctc_hour_max_1),
+    data = d_sample
+  )
+confint(lm_CTq_.1)
+```
+
+### Networks thresholded, consistency of language exposure 
+
+#### AW
+```{r}
+mlm_AWc_.1 <- lm(
+  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+    scanner_6mo +
+    scale(awc_prop_1),
+    data = d_sample
+)
+Manova(mlm_AWc_.1)
+```
+
+#### CT
+```{r}
+mlm_CTc_.1 <- lm(
+  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+    scanner_6mo +
+    scale(ctc_prop_1),
+    data = d_sample
+)
+Manova(mlm_CTc_.1)
+```
+
+## Networks determined by Louvain community detection
+
+### Networks determined by Louvain community detection, quantity of language exposure
+
+#### AW
+```{r}
+mlm_AWq_dd <- lm(
+  cbind(scale(temp_dd_z), scale(front_dd_z)) ~ 
     scanner_6mo +
     scale(awc_hour_max_1),
     data = d_sample
 )
-Manova(mlm_AWq.05)
+Manova(mlm_AWq_dd)
 ```
 
 #### CT
 ```{r}
-mlm_CTq.1 <- lm(
-  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+mlm_CTq_dd <- lm(
+  cbind(scale(temp_dd_z), scale(front_dd_z)) ~ 
     scanner_6mo +
     scale(ctc_hour_max_1),
     data = d_sample
 )
-Manova(mlm_CTq.1)
+Manova(mlm_CTq_dd)
+summary(mlm_CTq_dd)
 
-mlm_CTq.05 <- lm(
-  cbind(scale(temp_coherence_z.05), scale(front_coherence_z.05)) ~ 
-    scanner_6mo +
-    scale(ctc_hour_max_1),
+lm_CTq_temp_dd <-
+  lm(
+    scale(temp_dd_z) ~
+      scanner_6mo +
+      scale(ctc_hour_max_1),
     data = d_sample
-)
-Manova(mlm_CTq.05)
+  )
+confint(lm_CTq_temp)
 ```
 
-### Consistency of language exposure
+### Networks determined by Louvain community detection, consistency of language exposure
 
 #### AW
 ```{r}
-mlm_AWc.1 <- lm(
-  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+mlm_AWc_dd <- lm(
+  cbind(scale(temp_dd_z), scale(front_dd_z)) ~ 
     scanner_6mo +
     scale(awc_prop_1),
     data = d_sample
 )
-Manova(mlm_AWc.1)
-
-mlm_AWc.05 <- lm(
-  cbind(scale(temp_coherence_z.05), scale(front_coherence_z.05)) ~ 
-    scanner_6mo +
-    scale(awc_prop_1),
-    data = d_sample
-)
-Manova(mlm_AWc.05)
+Manova(mlm_AWc_dd)
 ```
 
 #### CT
 ```{r}
-mlm_CTc.1 <- lm(
-  cbind(scale(temp_coherence_z.1), scale(front_coherence_z.1)) ~ 
+mlm_CTc_dd <- lm(
+  cbind(scale(temp_dd_z), scale(front_dd_z)) ~ 
     scanner_6mo +
     scale(ctc_prop_1),
     data = d_sample
 )
-Manova(mlm_CTc.1)
+Manova(mlm_CTc_dd)
+```
 
-mlm_CTc.05 <- lm(
-  cbind(scale(temp_coherence_z.05), scale(front_coherence_z.05)) ~ 
+## 4 mm spatial smoothed data
+
+### 4mm spatial smoothed data, quantity of language exposure
+
+#### AW
+```{r}
+mlm_AWq_4 <- lm(
+  cbind(scale(temp_coherence_z_4mm), scale(front_coherence_z_4mm)) ~ 
+    scanner_6mo +
+    scale(awc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_AWq_4)
+```
+
+#### CT
+```{r}
+mlm_CTq_4 <- lm(
+  cbind(scale(temp_coherence_z_4mm), scale(front_coherence_z_4mm)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_CTq_4)
+
+summary(mlm_CTq_4)
+confint(mlm_CTq_4)
+```
+
+### ### 4mm spatial smoothed data, consistency of language exposure 
+
+#### AW
+```{r}
+mlm_AWc_4 <- lm(
+  cbind(scale(temp_coherence_z_4mm), scale(front_coherence_z_4mm)) ~ 
+    scanner_6mo +
+    scale(awc_prop_1),
+    data = d_sample
+)
+Manova(mlm_AWc_4)
+```
+
+#### CT
+```{r}
+mlm_CTc_4 <- lm(
+  cbind(scale(temp_coherence_z_4mm), scale(front_coherence_z_4mm)) ~ 
     scanner_6mo +
     scale(ctc_prop_1),
     data = d_sample
 )
-Manova(mlm_CTc.05)
+Manova(mlm_CTc_4)
+```
+
+## 8 mm spatial smoothed data
+
+### 8mm spatial smoothed data, quantity of language exposure
+
+#### AW
+```{r}
+mlm_AWq_8 <- lm(
+  cbind(scale(temp_coherence_z_8mm), scale(front_coherence_z_8mm)) ~ 
+    scanner_6mo +
+    scale(awc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_AWq_8)
+```
+
+#### CT
+```{r}
+mlm_CTq_8 <- lm(
+  cbind(scale(temp_coherence_z_8mm), scale(front_coherence_z_8mm)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_CTq_8)
+
+summary(mlm_CTq_8)
+confint(mlm_CTq_8)
+```
+
+### 8mm spatial smoothed data, consistency of language exposure 
+
+#### AW
+```{r}
+mlm_AWc_8 <- lm(
+  cbind(scale(temp_coherence_z_8mm), scale(front_coherence_z_8mm)) ~ 
+    scanner_6mo +
+    scale(awc_prop_1),
+    data = d_sample
+)
+Manova(mlm_AWc_8)
+```
+
+#### CT
+```{r}
+mlm_CTc_8 <- lm(
+  cbind(scale(temp_coherence_z_8mm), scale(front_coherence_z_8mm)) ~ 
+    scanner_6mo +
+    scale(ctc_prop_1),
+    data = d_sample
+)
+Manova(mlm_CTc_8)
+```
+
+## Covarying for distance between LENA and scan assessment
+```{r}
+mlm_AWq_c <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(age_diff_lena_scan_1) +
+    scale(awc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_AWq_c)
+```
+```{r}
+mlm_CTq_c <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(age_diff_lena_scan_1) +
+    scale(ctc_hour_max_1),
+    data = d_sample
+)
+Manova(mlm_CTq_c)
+summary(mlm_CTq_c)
+confint(mlm_CTq_c)
+
+```
+
+```{r}
+mlm_AWc_c <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(age_diff_lena_scan_1) +
+    scale(awc_prop_1),
+    data = d_sample
+)
+Manova(mlm_AWc_c)
+```
+```{r}
+mlm_CTc_c <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(age_diff_lena_scan_1) +
+    scale(ctc_prop_1),
+    data = d_sample
+)
+Manova(mlm_CTc_c)
+```
+
+## Removing infants with longer gaps in signal due to motion censoring
+```{r}
+d_sample_short <-
+  d_sample %>% 
+  filter(short_gaps == 1)
+```
+
+
+```{r}
+mlm_CTq_s <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(awc_hour_max_1),
+    data = d_sample_short
+)
+Manova(mlm_CTq_s)
+```
+
+```{r}
+mlm_CTq_s <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+    data = d_sample_short
+)
+Manova(mlm_CTq_s)
+summary(mlm_CTq_s)
+confint(mlm_CTq_s)
+```
+
+```{r}
+mlm_AWc_s <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(awc_prop_1),
+    data = d_sample_short
+)
+Manova(mlm_AWc_s)
+```
+
+```{r}
+mlm_CTc_s <- lm(
+  cbind(scale(temp_coherence_z), scale(front_coherence_z)) ~ 
+    scanner_6mo +
+    scale(ctc_prop_1),
+    data = d_sample_short
+)
+Manova(mlm_CTc_s)
+```
+
+## Clustering coefficient in posterior temporal network
+```{r}
+lm_CTq_cc <- lm(
+  scale(temp_cc) ~
+    scanner_6mo +
+    scale(ctc_hour_max_1),
+    data = d_sample
+)
+
+summary(lm_CTq_cc)
+confint(lm_CTq_cc)
 ```
 
 
 # Visualize effects
 
+## Distributions 
+
+### Functional connectivity
 ```{r}
 d_sample %>% 
-  ggplot(aes(ctc_hour_max_1, temp_coherence_z)) +
+  dplyr::select(
+    `Frontotemporal network` = front_coherence_z,
+    `Posterior temporal network` = temp_coherence_z
+  ) %>% 
+  gather(measure, value) %>% 
+  ggplot(aes(value)) +
+  geom_histogram(binwidth = .1) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 16),
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Functional connectivity (z)"
+  ) +
+  facet_wrap(.~ fct_rev(measure), scales = "free")
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hist_FC_final_sample.tiff",
+  width = 17.6,
+  height = 12,
+  units = "cm",
+  dpi = 300
+)
+```
+
+```{r}
+d_sample %>% 
+  dplyr::select(
+    `Frontotemporal network` = front_coherence_z_noGSR,
+    `Posterior temporal network` = temp_coherence_z_noGSR
+  ) %>% 
+  gather(measure, value) %>% 
+  ggplot(aes(value)) +
+  geom_histogram(binwidth = .1) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 16),
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Functional connectivity (z)\nestimated without mean signal regression"
+  ) +
+  facet_wrap(.~ fct_rev(measure), scales = "free")
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hist_FC_noGSR_final_sample.tiff",
+  width = 17.6,
+  height = 12,
+  units = "cm",
+  dpi = 300
+)
+```
+
+### Language input
+```{r}
+d_sample %>% 
+  dplyr::select(
+    awc_hour_max_1,
+    ctc_hour_max_1,
+    awc_prop_1,
+    ctc_prop_1
+  ) %>% 
+  gather(measure, value) %>% 
+  mutate(
+    measure = factor(
+      measure,
+      levels = c("awc_hour_max_1", "ctc_hour_max_1", "awc_prop_1", "ctc_prop_1"),
+      labels = c("AW quantity", "CT quantity", "AW consistency", "CT consistency")
+    )
+  ) %>% 
+  ggplot(aes(value)) +
+  geom_histogram() +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 16),
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Language input value"
+  ) +
+  facet_wrap(.~ measure, scales = "free")
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hist_LENA_final_sample.tiff",
+  width = 17.6,
+  height = 16,
+  units = "cm",
+  dpi = 300
+)
+```
+
+## Primary analyses
+
+### c(Posterior temporal, Frontotemporal) ~ AW quantity
+```{r}
+FC_AWQ <- 
+  d_sample %>% 
+  dplyr::select(awc_hour_max_1, front_coherence_z, temp_coherence_z) %>% 
+  gather(Subnetwork, Connectivity, -awc_hour_max_1) %>% 
+  mutate(
+    Subnetwork = fct_recode(
+      Subnetwork, 
+      "Frontotemporal" = "front_coherence_z",
+      "Posterior temporal" = "temp_coherence_z"
+    )
+  ) %>% 
+  ggplot(aes(awc_hour_max_1, Connectivity)) +
+  geom_point(size = 3, alpha = 1/2) +
+  geom_smooth(size = 2, method = "lm", color = "black") +
+  scale_x_continuous(breaks = seq.int(1000, 8000, 2000)) +
+  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 17),
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Quantity of adult words",
+    y = "Functional connectivity (z)"
+  ) +
+  facet_grid(.~fct_rev(Subnetwork), scales = "free")
+
+FC_AWQ
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/awc_front_temp.png",
+  width = 8,
+  height = 5
+)
+```
+
+## c(Posterior temporal, Frontotemporal) ~ CT quantity
+```{r}
+FC_CTQ <-
+  d_sample %>% 
+  dplyr::select(ctc_hour_max_1, front_coherence_z, temp_coherence_z) %>% 
+  gather(Subnetwork, Connectivity, -ctc_hour_max_1) %>% 
+  mutate(
+    Subnetwork = fct_recode(
+      Subnetwork, 
+      "Frontotemporal" = "front_coherence_z",
+      "Posterior temporal" = "temp_coherence_z"
+    )
+  ) %>% 
+  ggplot(aes(ctc_hour_max_1, Connectivity)) +
+  geom_point(size = 3, alpha = 1/2) +
+  geom_smooth(size = 2, method = "lm", color = "black") +
+  scale_x_continuous(breaks = seq.int(25, 150, 25)) +
+  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 17),
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Quantity of conversational turns",
+    y = "Functional connectivity (z)"
+  ) +
+  facet_grid(.~fct_rev(Subnetwork), scales = "free")
+
+FC_CTQ
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/ctc_front_temp.tiff",
+  width = 17.6,
+  height = 13.5,
+  units = "cm",
+  dpi = 300
+)
+```
+
+## c(Posterior temporal, Frontotemporal) ~ AW Consistency
+```{r}
+FC_AWP <- 
+  d_sample %>% 
+  dplyr::select(awc_prop_1, front_coherence_z, temp_coherence_z) %>% 
+  gather(Subnetwork, Connectivity, front_coherence_z, temp_coherence_z) %>% 
+  mutate(
+    Subnetwork = fct_recode(
+      Subnetwork, 
+      "Frontotemporal" = "front_coherence_z",
+      "Posterior temporal" = "temp_coherence_z"
+    )
+  ) %>% 
+  ggplot(aes(awc_prop_1, Connectivity)) +
+  geom_point(size = 3, alpha = 1/2) +
+  geom_smooth(size = 2, method = "lm", color = "black") +
+  #scale_x_continuous(breaks = seq.int(25, 150, 25)) +
+  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 17),
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Consistency of adult words",
+    y = "Functional connectivity (z)"
+  ) +
+  facet_grid(.~fct_rev(Subnetwork), scales = "free")
+
+FC_AWP 
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/awprop_front_temp.png",
+  width = 8,
+  height = 5
+)
+```
+
+## c(Posterior temporal, Frontotemporal) ~ CT Consistency
+```{r}
+FC_CTP <- 
+  d_sample %>% 
+  dplyr::select(ctc_prop_1, front_coherence_z, temp_coherence_z) %>% 
+  gather(Subnetwork, Connectivity, front_coherence_z, temp_coherence_z) %>% 
+  mutate(
+    Subnetwork = fct_recode(
+      Subnetwork, 
+      "Frontotemporal" = "front_coherence_z",
+      "Posterior temporal" = "temp_coherence_z"
+    )
+  ) %>% 
+  ggplot(aes(ctc_prop_1, Connectivity)) +
+  geom_point(size = 3, alpha = 1/2) +
+  geom_smooth(size = 2, method = "lm", color = "black") +
+  #scale_x_continuous(breaks = seq.int(25, 150, 25)) +
+  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  theme_pubr() +
+  theme(
+    strip.text = element_text(size = 17),
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Consistency of conversational turns",
+    y = "Functional connectivity (z)"
+  ) +
+  facet_grid(.~fct_rev(Subnetwork), scales = "free")
+
+FC_CTP
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/ctprop_front_temp.png",
+  width = 8,
+  height = 5
+)
+```
+
+### All primary plots in panels
+```{r}
+primary_plots <-
+  ggarrange(
+    FC_AWQ,
+    FC_CTQ + rremove("y.title"),
+    FC_AWP ,
+    FC_CTP + rremove("y.title"),
+    nrow = 2,
+    ncol = 2,
+    align = "v"
+  )
+
+primary_plots
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/FC_LENA.tiff",
+  width = 13,
+  height = 7,
+  dpi = 1500
+)
+```
+
+## c(Posterior temporal, Frontotemporal) ~ Infant vocalizations
+```{r}
+d_sample %>% 
+  dplyr::select(cvc_hour_max_1, front_coherence_z, temp_coherence_z) %>% 
+  gather(Subnetwork, Connectivity, front_coherence_z, temp_coherence_z) %>% 
+  mutate(
+    Subnetwork = fct_recode(
+      Subnetwork, 
+      "Frontotemporal" = "front_coherence_z",
+      "Posterior temporal" = "temp_coherence_z"
+    )
+  ) %>% 
+  ggplot(aes(cvc_hour_max_1, Connectivity)) +
+  geom_point(size = 3, alpha = 1/2) +
+  geom_smooth(size = 2, method = "lm", color = "black") +
+  #scale_x_continuous(breaks = seq.int(25, 150, 25)) +
+  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 17),
+    panel.grid = element_blank(),
+    plot.title = element_text(size = 18, hjust = .5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 14),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = "Quantity of infant vocalizations",
+    y = "Functional connectivity (z)"
+  ) +
+  facet_grid(.~fct_rev(Subnetwork))
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/infantvoc_front_temp.png",
+  width = 8,
+  height = 5
+)
+
+```
+
+## Supplemental figures
+
+### Posterior temporal cortex clustering coefficient ~ CT quantity 
+```{r}
+d_sample %>% 
+  ggplot(aes(ctc_hour_max_1, temp_cc)) +
   geom_point(size = 3, alpha = 1/2) +
   geom_smooth(method = "lm", size = 2, color = "black") +
   scale_x_continuous(breaks = seq.int(25, 150, 25)) +
-  scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
+  #scale_y_continuous(breaks = seq.int(-.2, .4, .1)) +
   theme_minimal() +
   theme(
     strip.text = element_text(size = 17),
@@ -806,15 +1782,130 @@ d_sample %>%
   ) +
   labs(
     x = "Quantity of conversational turns",
-    y = "Posterior temporal\nnetwork connectivity (z)"
+    y = "Posterior temporal network\n local clustering coefficient"
   )
 
 ggsave(
-  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/ctc_temp.png",
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/ctc_temp_clustering.png",
   width = 6,
   height = 4
 )
 ```
 
 
+## Clustering coefficient and coherence 
+```{r}
+front_z_cc <-
+  d_sample %>% 
+  ggplot(aes(front_coherence_z, front_cc)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the frontotemporal network\n(with mean signal regression)",
+    y = "Local clustering coefficient"
+  ) 
+
+front_z_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/frontconn_frontcc.png",
+  width = 5,
+  height = 4
+)
+
+temp_z_cc <-
+  d_sample %>% 
+  ggplot(aes(temp_coherence_z, temp_cc)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 1) +
+  theme_minimal() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  ) +
+  labs(
+    x = "Connectivity in the posterior temporal network\n(with mean signal regression)",
+    y = "Local clustering coefficient"
+  )
+
+temp_z_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/tempconn_tempcc.png",
+  width = 5,
+  height = 4
+)
+
+conn_cc <-
+  ggarrange(
+  front_z_cc + rremove("x.title"),
+  temp_z_cc + rremove("x.title") + rremove("y.title"),
+  labels = c(
+    "A",
+    "B"
+  ),
+  align = "v"
+)
+
+conn_cc <- 
+  annotate_figure(
+  conn_cc,
+  bottom = text_grob("Connectivity (z) in frontotemporal (A) and posterior temporal (B) networks ", size = 16)
+)
+
+conn_cc
+
+ggsave(
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/conn_cc.png",
+  width = 10,
+  height = 4
+)
+
+#all near 0 values treated as 0; and everything with a positive/negative magnitude treated as 1
+```
+
+# Export analyzed data
+```{r}
+d_export <-
+  d_sample %>% 
+  dplyr::select(
+    ID,
+    male,
+    gestational_weeks_birth,
+    age_scan,
+    age_scan_corr,
+    birth_weight_total_lbs,
+    NEG,
+    now_breastfed,
+    mom_age,
+    mom_race,
+    white,
+    mom_latinx,
+    education,
+    education_txt,
+    annual_income_txt,
+    ppl_in_home_tot,
+    income_needs,
+    prev_preg_total,
+    primarylang,
+    primary_english,
+    digitspan_totalscore,
+    shipley_6mo_total,
+    awc_hour_max_1,
+    ctc_hour_max_1,
+    awc_prop_1,
+    ctc_prop_1,
+    cvc_hour_max_1,
+    front_coherence_z,
+    temp_coherence_z
+  ) %>% 
+  arrange(ID)
+
+write_csv(d_export, "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/JNeuro/sub2/king_jneuro_2020_analyzed_data.csv")
+```
 
