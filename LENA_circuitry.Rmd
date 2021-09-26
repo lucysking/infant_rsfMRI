@@ -245,6 +245,7 @@ d_sample <-
   d %>% 
   filter(included == TRUE)
 ```
+
 ## Distance between scan, lab session, and LENA assessment
 ```{r}
 d_sample %>% 
@@ -1427,7 +1428,7 @@ d_sample %>%
   ) %>% 
   gather(measure, value) %>% 
   ggplot(aes(value)) +
-  geom_histogram(binwidth = .1) +
+  geom_histogram(binwidth = .05) +
   theme_pubr() +
   theme(
     strip.text = element_text(size = 16),
@@ -1440,9 +1441,9 @@ d_sample %>%
   facet_wrap(.~ fct_rev(measure), scales = "free")
 
 ggsave(
-  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hist_FC_final_sample.tiff",
+  "~/Box/lucy_king_files/BABIES/rsfMRI/LENA/figures/hist_FC_final_sample.jpeg",
   width = 17.6,
-  height = 12,
+  height = 9,
   units = "cm",
   dpi = 300
 )

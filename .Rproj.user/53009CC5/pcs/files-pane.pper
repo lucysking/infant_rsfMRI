@@ -1,9 +1,9 @@
 {
-    "path" : "~/Desktop/BABIES/infant_rsfMRI",
-    "sortOrder" : [
+    "path": "~/Desktop/BABIES/infant_rsfMRI",
+    "sortOrder": [
         {
-            "ascending" : true,
-            "columnIndex" : 2
+            "columnIndex": 2,
+            "ascending": true
         }
     ]
 }
